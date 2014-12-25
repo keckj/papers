@@ -9,8 +9,8 @@
 \usepackage{float}
 \usepackage{lmodern}%pour un meilleur rendu des polices
 \usepackage{verbatim}%du texte non interprt
-\usepackage{amsmath,amssymb}%maths
-\usepackage{graphicx}%images
+\usepackage[cmex10]{amsmath}
+\usepackage{amssymb}%maths
 \usepackage{xspace}
 \usepackage[dvipsnames,svgnames,table]{xcolor}
 \usepackage{listings}
@@ -19,11 +19,24 @@
 \usepackage{titlesec}
 \usepackage{titletoc}
 \usepackage{lastpage}
-\usepackage[pdftex,
-bookmarks=true,
-bookmarksnumbered=true,
-]{hyperref}
+\usepackage[pdftex,bookmarks=true,bookmarksnumbered=true]{hyperref}
 \usepackage{ctable} % for \specialrule command
+\usepackage[nocompress]{cite}
+\usepackage[pdftex]{graphicx}
+%\usepackage{framed}
+\usepackage{algorithm2e}
+\usepackage{alltt}
+\usepackage{array}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{dblfloatfix}
+\usepackage{url}
+\usepackage[usenames,dvipsnames]{color}
+
+\graphicspath{{img/}}
+\DeclareGraphicsExtensions{.pdf,.jpeg,.jpg,.png}
 
 %% taille du papier
 \textwidth 16 true cm
