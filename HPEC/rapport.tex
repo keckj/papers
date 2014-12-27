@@ -19,11 +19,9 @@
 \usepackage{titlesec}
 \usepackage{titletoc}
 \usepackage{lastpage}
-\usepackage[pdftex,bookmarks=true,bookmarksnumbered=true]{hyperref}
+\usepackage[bookmarks=true,bookmarksnumbered=true]{hyperref}
 \usepackage{ctable} % for \specialrule command
-\usepackage[nocompress]{cite}
-\usepackage[pdftex]{graphicx}
-%\usepackage{framed}
+\usepackage{cite}
 \usepackage{algorithm2e}
 \usepackage{alltt}
 \usepackage{array}
@@ -33,7 +31,10 @@
 \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
 \usepackage{dblfloatfix}
 \usepackage{url}
-\usepackage[usenames,dvipsnames]{color}
+%\usepackage{natbib}
+%\usepackage[pdftex]{graphicx}
+%\usepackage{framed}
+%\usepackage[usenames]{color}
 
 \graphicspath{{img/}}
 \DeclareGraphicsExtensions{.pdf,.jpeg,.jpg,.png}
@@ -115,9 +116,12 @@
       \vskip 1cm
       {\colorc\textit{A variation on the theorem of Bauer-Strassen}}
   }
-\author{Jean-Baptiste \bsc{Keck}\\
-\bsc{M2 Msiam}}
-\date{27 janvier 2014}
+\author{%
+    Jean-Baptiste \bsc{Keck}
+    \vskip 0.5cm
+    \bsc{M2 Msiam}
+}
+%\date{27 janvier 2014}
 \makeatletter
 
 \def\maketitle{%
@@ -146,15 +150,23 @@
 
 \begin{document}
 \pagestyle{fancy}
-\maketitle
-\newpage
-\tableofcontents
 
-\section{Abstract}
+\maketitle
+
+\tableofcontents
+\clearpage
+
+\section{Introduction}
+
+This paper is about an alternative algorithmic proof of the Baur-Strassen result given and proved in \cite{A1,A2,A3,A4} 
+
 \section{Notations}
-\section{Theorem of Bauer-Strassen}
+\section{Theorem of Baur-Strassen}
 \section{Proof}
 \section{Conclusion}
+
+\bibliographystyle{plain}
+\bibliography{master}
 
 \end{document}
 
