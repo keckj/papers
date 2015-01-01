@@ -50,9 +50,12 @@
 
 %-------- couleurs
 \definecolor{grisf}{rgb}{.47,.47,.47} % barre de droite gris fonce
-\newcommand{\colorc}{\color{MidnightBlue}}
-\newcommand{\colorb}{\color{NavyBlue}}
-\newcommand{\colora}{\color{Cerulean}}
+\definecolor{imag}{RGB}{50,0,100}
+\definecolor{darkimag}{RGB}{65,15,100}
+\definecolor{darkgreen}{RGB}{65,15,100}
+\newcommand{\colorc}{\color{darkimag}}
+\newcommand{\colorb}{\color{darkimag}}
+\newcommand{\colora}{\color{Blue}}
 
 %----------- sections et TOC
 % chapitres
@@ -91,10 +94,10 @@
 
                                                                     
 \fancyhf{}
-\fancyhead[R]{\sffamily Article summary }
-\fancyfoot[R]{\sffamily\small{\thepage/\pageref{LastPage}}}
-\fancyhead[L]{\sffamily\small{Jean-Baptiste Keck}}
-\fancyfoot[L]{\sffamily\small{M2 MSIAM -- High Performance Exact Computing -- 2014-2015}}
+\fancyhead[R]{\sffamily\colorb{Report}}
+\fancyfoot[R]{\sffamily\small\colorb{\thepage/\pageref{LastPage}}}
+\fancyhead[L]{\sffamily\small\colorb{Jean-Baptiste Keck}}
+\fancyfoot[L]{\sffamily\small\colorb{M2 MSIAM -- Inverse Methods -- 2014-2015}}
 \renewcommand{\headrulewidth}{0.2pt} %0.4
 \renewcommand{\footrulewidth}{0.2pt} %0
 \addtolength{\headheight}{0.pt}
@@ -113,11 +116,11 @@
   
   %------------------- front page ------------------%
   \title{
-      \bsc{Paper Review}
+      \bsc{TP Inverse Methods}
       \vskip 1cm
-      {\colorb\textbf{How to Compute Fast a Function and All Its Derivatives}}
+      {\colorb\textbf{Lorenz Equations}}
       \vskip 1cm
-      {\colorc\textit{A variation on the theorem of Bauer-Strassen}}
+      \colorb\textit{Report}
   }
 \author{%
     Jean-Baptiste \bsc{Keck}
@@ -161,190 +164,9 @@
 %\tableofcontents
 %\clearpage
 
-\section{Introduction}
-
-This paper is about an alternative algorithmic proof of the Baur-Strassen result given and proved in \ccite{1}, showing that the complexity of the evaluation of a rational function of several variables and all its derivatives is bounded above by three times the complexity of the evaluation of the function itself.
-
-\section{Notations}
-
-The notation is mainly the one used in the original paper \cite{0} and \cite{1} with some minor changes.
-
-\vskip 0.5cm
-$\mathbb{K}$ is an infinite field.\\
-\indent$F$ is a rational function of $n$ variables $x_1,x_2,...,x_n$.\\
-\indent$\widetilde{F}$ is a rational function of $n+1$ variables $x_1,x_2,...,x_n,y$.
-\vskip 0.3cm
-\indent The set of partial derivatives of F is denoted $F' = \left \{ \pd{F}{x_1},\pd{F}{x_2}, ... ,\pd{F}{x_n} \right \}.
-\vskip 0.3cm
-Let \textbullseye\, be an arithmetical operation and $x = (x_1,x_2,...,x_n)$.\\
-$$
-\left(\textrm{a \textbullseye\, b is an \textbf{essential operation}}\right)
-\Leftrightarrow
-\[
-   \left \{
-   \begin{array}{l}
-       a = f(x)\textrm{ and }b = g(x) \\
-       \textrm{\textbf{or }}a \in \mathbb{K}, b = g(x)\textrm{ and \textbullseye\, is a division.}
-   \end{array}
-   \right .
-\]
-$$
-
-Let \u{A} be an algorithm computing F from $x_1,x_2,...,x_n$ and $\mathbb{K}$.
-\vskip 0.3cm
-$$
-\exists\,\, u \in \mathbb{N} \,\,\, \u{A} = \left\{ g_1,g_2,...,g_u \right\}
-\textrm{ with }
-\[
-   \left \{
-   \begin{array}{l}
-       g_k \in \left\{x_1,x_2,...,x_n\right\} \cup \mathbb{K}\\
-       \textrm{\textbf{or }} g_k = g_{k_1} \textrm{ \textbullseye\, } g_{k_2}\textrm{ with }k_1,k_2 < k
-   \end{array}
-   \right .
-\]
-$$
-
-Finally let :
-
-\begin{itemize}
-\item $s(F)$ be the number of \textbf{essential multiplications and divisions} in $\u{A}$.
-    \item $m(F)$ be the total number of \textbf{multiplications and divisions} in $\u{A}$.
-    \item $T(F)$ the total number of \textbf{essential operations} in $\u{A}$.
-    \item $\Theta(F)$ the total number of \textbf{operations} in $\u{A}$.
-\end{itemize}
-
-\section{Baur-Strassen's Theorem}
-    From each algorithm $\u{A}$ computing $F$ one can derive and algorithm $\mathring{A}$ computing $F$ and $F'$ such that :
-
-$$
-    (P) \Leftrightarrow
-    \[
-   \left \{
-   \begin{array}{l c l}
-       s(F,F') &\leq & \mathbf{3} \,s(F)\\
-       m(F,F') &\leq & \mathbf{3} \,m(F)\\
-       T(F,F') &\leq & \mathbf{5} \,T(F)\\
-       \Theta(F,F') &\leq & \mathbf{5} \,\Theta(F)
-       
-   \end{array}
-   \right .
-\]
-$$
-
-\vskip 0.5cm
-\textbf{Those inequalities are independent of the number of variables n.}
-
-\section{Proof overview}
-
-\textbf{Foreword:} \textit{Many errors have been corrected from the original paper and I tried to make some parts clearer so that it appears less confusing. However, new errors might as well have been introduced too.}
-
-\vskip 0.2cm
-The proof is made by \textbf{induction on the length of the algorithm}. Let $\u{A}_u$ be an algorithm of length u computing a rational function $F$ and $g_1$ be the result of the first operation of $\u{A}_u$.
-\vskip 0.2cm
-Define $\widetilde{F}$ a function of $n+1$ variables such that $F(x_1,x_2,...,x_n)=\widetilde{F}(x_1,x_2,...,x_n,\mathbf{y})$ with $y = g_1(x_1,x_2,...,x_n)$.
-\vskip 0.2cm
-$\u{A}_u}$ induces an algorithm $\u{A}_{u-1}$ which computes $\widetilde{F}$ from $x_1,x_2,...,x_n,g_1$ and $\mathbb{K}$ in one less operation ($\u{A}_{u-1}$ is of length $u-1$). \textbf{By induction hypothesis, $\widetilde{F}$ satisfies (P).}
-\vskip 0.5cm
-We have $\forall h \in \llbracket 1,n \rrbracket \,\,\, \pd{F}{x_h} = \pd{\widetilde{F}}{x_h} + \pd{\widetilde{F}}{y}\cdot\pd{g_1}{x_h}\ \ (1).$
-
-\vskip 0.5cm
-\textbf{The idea is then to examine all six possible cases :}
-\vskip 0.3cm
-
-1. Example case $\mathbf{g_1 = \textcolor{red}{c \cdot x_i}}$ where $c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$ : 
-$$
-    (1) \Rightarrow 
-    \[
-   \left \{
-   \begin{array}{l r}
-   \pd{F}{x_h}(x_1,...,x_n) = \textcolor{purple}{\pd{\widetilde{F}}{x_h}(x_1,...,x_n) \,\mathbf{+}}\, \textcolor{blue}{c \cdot \pd{\widetilde{F}}{y}(x_1,...,x_n)} & \textrm{ if }h = i\\ \\
-       \pd{F}{x_h}(x_1,...,x_n) = \pd{\widetilde{F}}{x_h}(x_1,...,x_n) & \textrm{ if } h \neq i
-   \end{array}
-   \right .
-\]
-$$
-
-\vskip 0.5cm
-$
-\textrm{In this case we have :}
-\[
-   \left \{
-   \begin{array}{l c l l l l l l l}
-   s(F,F') & = & s(\widetilde{F}},\widetilde{F}') &&\\
-   m(F,F') &\leq & m(\widetilde{F}},\widetilde{F}')&+&\textcolor{blue}{1}&+&\textcolor{red}{1}\\
-   T(F,F') &\leq & T(\widetilde{F}},\widetilde{F}')&+&\textcolor{purple}{1}\\
-       \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{1}&+&\textcolor{blue}{1}&+&\textcolor{red}{1}
-   \end{array}
-   \right .
-\]
-$
-
-\vskip 0.5cm
-2. Case $\mathbf{g_1 = \textcolor{red}{x_i \cdot x_j}}$ where $i,j \in \llbracket 1,n \rrbracket$.
-
-
-$$
-    (1) \Rightarrow 
-    \[
-   \left \{
-   \begin{array}{l r}
-   \pd{F}{x_h}(x_1,...,x_n) = \textcolor{purple}{\pd{\widetilde{F}}{x_h}(x_1,...,x_n) \,\mathbf{+}}\, \textcolor{blue}{x_j \cdot \pd{\widetilde{F}}{y}(x_1,...,x_n)} & \textrm{ if }h = i\\ \\
-   \pd{F}{x_h}(x_1,...,x_n) = \textcolor{purple}{\pd{\widetilde{F}}{x_h}(x_1,...,x_n) \,\mathbf{+}}\, \textcolor{blue}{x_i \cdot \pd{\widetilde{F}}{y}(x_1,...,x_n)} & \textrm{ if }h = j\\ \\
-       \pd{F}{x_h}(x_1,...,x_n) = \pd{\widetilde{F}}{x_h}(x_1,...,x_n) & \textrm{ if } h \notin \{i,j\}
-   \end{array}
-   \right .
-\]
-$$
-
-\vskip 0.5cm
-$
-\textrm{In this case we have :}
-\[
-   \left \{
-   \begin{array}{l c l l l l l l l}
-   s(F,F') &\leq & s(\widetilde{F}},\widetilde{F}')&+&\textcolor{blue}{2}&+&\textcolor{red}{1}\\
-   m(F,F') &\leq & m(\widetilde{F}},\widetilde{F}')&+&\textcolor{blue}{2}&+&\textcolor{red}{1}\\
-       T(F,F') &\leq & T(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{2}&+&\textcolor{blue}{2}&+&\textcolor{red}{1}&
-       \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{2}&+&\textcolor{blue}{2}&+&\textcolor{red}{1}
-   \end{array}
-   \right .
-\]
-$
-
-\clearpage
-\textbf{We do exactly the same for the 4 other cases :}
-\vskip 0.5cm
-    3. Case $\mathbf{g_1 = c/x_i}$ where c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
-\vskip 0.1cm
-    4. Case $\mathbf{g_1 = x_i/x_j}$ where $i,j \in \llbracket 1,n \rrbracket$.
-\vskip 0.1cm
-    5. Case $\mathbf{g_1 = x_i+d}$ where $d \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
-\vskip 0.1cm
-    6. Case $\mathbf{g_1 = x_i+x_j}$ where $i,j \in \llbracket 1,n \rrbracket$.
-
-\vskip 0.5cm
-Putting everything together and using (P) for $\widetilde{F}$, we get at most the inequalities:
-$$
-\[
-   \left \{
-   \begin{array}{l c l l l c l l l c l}
-   s(F,F') &\leq & s(\widetilde{F}},\widetilde{F}')&+&3&\leq&3\,s(\widetilde{F})&+&3&\leq&3\,s(F)\\
-   m(F,F') &\leq & m(\widetilde{F}},\widetilde{F}')&+&3&\leq&3\,m(\widetilde{F})&+&3&\leq&3\,m(F)\\
-   T(F,F') &\leq & T(\widetilde{F}},\widetilde{F}')&+&5&\leq&5\,T(\widetilde{F})&+&5&\leq&5\,T(F)\\
-       \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&5&\leq&5\,\Theta(\widetilde{F})&+&5&=&5\,\Theta(F)
-   \end{array}
-   \right .
-\] \Rightarrow \textrm{(P) for F, which proves the theorem since the beginning of the induction is trivial.}
-$$
-
-\vskip 0.5cm
-
-Those inequalities are independent of the number of variables n since we just added a bounded number of new operations.
-
-\section{Conclusion}
-
-From this new proof of the theorem we can deduce a constructive recursive backward way to build an algorithm for the computation of all partial derivatives of $F$ at a given point $x$ from any algorithm computing $F$ at this point.
+\section{Theorical work on the continuous model}
+\section{Discrete model}
+\section{Data assimilation experiments}
 
 \end{document}
 
