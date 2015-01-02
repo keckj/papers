@@ -6,3 +6,5 @@
 *.pdf
 *.toc
 *.dvi
+*.nav
+*.snm
