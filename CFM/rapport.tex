@@ -158,13 +158,19 @@
 \renewcommand{\vector}[1]{\overrightarrow{#1}}
 
 \renewcommand{\Tau}{\tensor{\mathlarger{\uptau}}}
-\renewcommand{\v}{\vector{v}}
+\renewcommand{\v}{\vector{u}}
 \renewcommand{\W}{\tensor{W\left( \v \right)}}
 \renewcommand{\D}{\tensor{D\left( \v \right)}}
 \renewcommand{\grad}{\vector{\nabla}}
 \renewcommand{\gradv}{\tensor{\nabla\v}}
 \renewcommand{\div}[1]{div \left( #1 \right)}}
-\renewcommand{\divv}[1]{\vector{div} \left( #1 \right)}}
+\renewcommand{\divv}[1]{\vector{div} \left( #1 \right)}
+\renewcommand{\UU}{\mathcal{U}}
+\renewcommand{\M}{\mathcal{M}}
+\renewcommand{\A}[2]{\mathcal{A}_{#1}\left( #2 \right)}
+\renewcommand{\Uu}{\UU^{n}}
+\renewcommand{\Uv}{\UU^{n+\theta}}
+\renewcommand{\Uw}{\UU^{n+1-\theta}}
 %%%%%%%
 
 \begin{document}
@@ -190,7 +196,7 @@ $$
     \left[\dfrac{\gradv - \gradv^T}{2}\right]
     \\
     \\
-    \Tau&
+    \Tau_&
     =&
     \underbrace{\Tau_d}_{\underset{(shear)}{deviatoric\ stress}}&
     +&
@@ -218,12 +224,20 @@ $
 |\Tau|^2=
 \Tau : \Tau =
 tr\left(\Tau^T \Tau \right) =
-\displaystyle \sum_{0\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{(usual matrix Euclidean norm)}
+\displaystyle \sum_{1\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{(usual matrix Euclidean norm)}
 $
            
-
+\clearpage
 \section{Model parameters and notations}
 
+{\colorb\textbf{Model parameters:}}
+\vskip 0.5cm
+\indent\textbf{Dimension: } $d \in \left\{ 2,3\right\}$
+\vskip 0.2cm
+\indent\textbf{Jaumann operator parameter: } $a \in \left[-1,1\right]$
+\vskip 0.2cm
+\indent\textbf{Fluid properties:}
+\vskip 0.3cm
 \left[
 \begin{array}{l l}
     $\rho$ &solution\ density&
@@ -245,9 +259,42 @@ $
 \end{array}
 \right]
 
+\vskip 0.5cm
 
+\noindent{\colorb\textbf{Notations:}}\\
+
+\textbf{Cauchy stress tensor:} $\Tau_{tot} = \underbrace{\Tau}_{elastic\ stress} - \underbrace{p\tensor{Id}}_{pressure} + \underbrace{2\eta_s\D}_{viscous\ friction}$
+
+\vskip 0.5cm
+\indent\textbf{Yield response:} $\mathcal{K}(|\Tau_d|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham viscoplasticity)}.$\\
+\vskip 0.1cm
+\indent\hskip 3.1cm $\Tau_d$ is the elastic shear stress
+
+\vskip 0.5cm
+
+\clearpage
+\section{Domain:} 
+
+\begin{table}[h]
+    \centering
+    \begin{array}{l c c c c c r}
+        $\mathlarger{\Omega \subset \mathbb{R}^d}$ &
+        &&   
+        $\mathlarger{\partial\Omega = \Gamma_d \cup \Gamma_n \cup \Gamma_s}$ &
+        &&
+        $\underbrace{\mathlarger{\partial\Omega_- = \Gamma_- = \left\{x\in \partial\Omega\ |\ \v.\vector{n} < 0\right\}}}_{upstream\ boundary} $
+    \end{array}
+\end{table}
+
+\begin{figure}[h!]
+   \includegraphics[scale=0.7]{domain.png}
+   \caption{Experimental configuration}
+\end{figure}
+
+
+\clearpage
 \section{Model equations}
-Find $(\Tau,\v, p) : \; ]0,T[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+Find $\ \mathcal{U} = (\Tau,\v, p) : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
 
 $$
 (P) \Leftrightarrow 
@@ -263,22 +310,81 @@ $$
            =&
        0_{\mathbb{R}^d}&
          &&&&       
-           (3)& \div{\v} &=& 0_\mathbb{R}
-       \end{array}
+           (3)& \div{\v} &=& 0_\mathbb{R}&
+         &&&&
+       (4)& \v = \vector{v_{\Gamma_d}} \hskip 0.75cm \textrm{ in } \left] 0,T \right[ \times \Gamma_d
+   \hskip 2.6cm \v . \vector{n} = 0\textrm{ in } \left]0,T[ \times \Gamma_s&&&
+         &&&&
+   (5)& \vector{F} = \Tau \vector{n} = 0 \textrm{ in } \left]0,T\right[ \times \Gamma_n
+       \hskip 0.5cm 
+   \vector{F_t} = \Tau \vector{n} - \Tau_{nn} \vector{n}} = 0 \textrm{ in } \left]0,T[ \times \Gamma_s&&&
+        &&&&
+   (6)& \Tau = \Tau_- \hskip 1.05cm \textrm{ in } \left]0,T\right[ \times \Gamma_-
+   \end{array}
    \right .
 \]
 $$
 
+\begin{figure}[h!]
+   \includegraphics[scale=0.5]{force.png}
+\end{figure}
 
-$$
-\textrm{with }
-\left [
-       \begin{array}{l}
-           \mathcal{K}(\xi) = \left[ \dfrac{\xi - Bi}{n \xi}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{\xi} \right) \textrm{ with } n = 1.
+\clearpage
+
+\section{Algorithm}
+
+{\colorb \textbf{Operator splitting:}}
+
+\vskip 0.5cm
+
+$(P) \Leftrightarrow$ Find $\ \mathcal{U} = (\Tau,\v, p) : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+
+\vskip 0.2cm
+\hskip 1.3cm
+    $\[
+        \left\{
+            \begin{array}{l}
+                \M \pd{\UU}{t} + \A{}{\UU}= 0_{\mathbb{R}^{d\times d}\times \mathbb{R}^d \times \mathbb{R}} &
+                &
+                (4) \hskip 0.5cm (5) \hskip 0.5cm (6) \hskip 0.5cm \textrm{(Boundary conditions)}
+            \end{array}
+            \right.
+        \]$
+
+        \vskip 0.5cm
+\hskip 1.0cm with $\M = \[
+    \left [
+       \begin{array}{c c c}
+           W_e&0&0&
+           0&R_e&0&
+           0&0&0&
        \end{array}
-   \right .
-\]
+    \right ]
+    \textrm{ and } \A{}{\UU} = \A{1}{\UU} + \A{2}{\UU}
+\]$
+
+\vskip 0.5cm
 $$
+\A{}{\UU} = 
+\underbrace{
+    \left[\begin{array}{c}
+            \textcolor{red}{\mathcal{K} \left( | \Tau_d | \right) \Tau} - 2\alpha \tensor{D(\v)}&
+            -\divv{\Tau} + \grad p - (1-\alpha)\Delta\v&
+            \div{\v}&
+\end{array}\right]}_{\A{1}{\UU}\ contains\ all\ viscoplastic\ effects}
++
+\underbrace{
+    \left[\begin{array}{c}
+           W_e\left[\textcolor{blue}{\left(\v . \grad \right) \Tau + \tensor{\beta_a \left( \Tau, \gradv \right)}}\right]&
+           0&
+           0&
+\end{array}\right]}_{\A{2}{\UU}\ contains\ all\ viscoelastic\ effects}
+$$
+
+\clearpage
+\section{Algorithm}
+
+{\colorb $\mathbf{\Theta}$ \textbf{- Scheme :}}
 
 
 \end{document}
@@ -288,8 +394,8 @@ $$
 
  
  
- 
- 
+     
+     
  
  
  
