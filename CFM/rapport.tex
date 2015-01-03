@@ -166,11 +166,21 @@
 \renewcommand{\div}[1]{div \left( #1 \right)}}
 \renewcommand{\divv}[1]{\vector{div} \left( #1 \right)}
 \renewcommand{\UU}{\mathcal{U}}
+\renewcommand{\VV}{\mathcal{U}}
 \renewcommand{\M}{\mathcal{M}}
 \renewcommand{\A}[2]{\mathcal{A}_{#1}\left( #2 \right)}
 \renewcommand{\Uu}{\UU^{n}}
 \renewcommand{\Uv}{\UU^{n+\theta}}
 \renewcommand{\Uw}{\UU^{n+1-\theta}}
+\renewcommand{\Ux}{\UU^{n+1}}
+\renewcommand{\Uk}{\UU^{k}}
+\renewcommand{\Ukk}{\UU^{k+1}}
+\renewcommand{\Vk}{\VV^{k}}
+\renewcommand{\Vkk}{\VV^{k+1}}
+\renewcommand{\Tauk}{\Tau^{k+1}}
+\renewcommand{\vk}{\v^{k+1}}
+\renewcommand{\pk}{p^{k+1}}
+\renewcommand{\Dk}{\tensor{D\left( \vk \right)}}
 %%%%%%%
 
 \begin{document}
@@ -266,14 +276,14 @@ $
 \textbf{Cauchy stress tensor:} $\Tau_{tot} = \underbrace{\Tau}_{elastic\ stress} - \underbrace{p\tensor{Id}}_{pressure} + \underbrace{2\eta_s\D}_{viscous\ friction}$
 
 \vskip 0.5cm
-\indent\textbf{Yield response:} $\mathcal{K}(|\Tau_d|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham viscoplasticity)}.$\\
+\indent\textbf{Yield response:} $\mathcal{K}(|\Tau_d|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham)}.$\\
 \vskip 0.1cm
 \indent\hskip 3.1cm $\Tau_d$ is the elastic shear stress
 
 \vskip 0.5cm
 
 \clearpage
-\section{Domain:} 
+\section{Domain} 
 
 \begin{table}[h]
     \centering
@@ -294,7 +304,7 @@ $
 
 \clearpage
 \section{Model equations}
-Find $\ \mathcal{U} = (\Tau,\v, p) : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+Find $\ \mathcal{U} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
 
 $$
 (P) \Leftrightarrow 
@@ -331,13 +341,13 @@ $$
 
 \clearpage
 
-\section{Algorithm}
+\section{Operator splitting}
 
-{\colorb \textbf{Operator splitting:}}
+{\colorb \textbf{We rewrite the model as:}}
 
 \vskip 0.5cm
 
-$(P) \Leftrightarrow$ Find $\ \mathcal{U} = (\Tau,\v, p) : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+$(P) \Leftrightarrow$ Find $\ \mathcal{U} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
 
 \vskip 0.2cm
 \hskip 1.3cm
@@ -382,11 +392,113 @@ $$
 $$
 
 \clearpage
-\section{Algorithm}
+\section{$\mathbf{\Theta}$ \textbf{- Scheme}}
 
-{\colorb $\mathbf{\Theta}$ \textbf{- Scheme :}}
+{\colorb \textbf{Three-steps $\theta$-scheme time-approximation of the previous equation :}}
+
+\vskip 0.5cm
+Let $\Delta t > 0$ and $\theta \in \left] 0,1/2 \right[$ and $\UU_n$ be given. 
+    
+    \textbf{To compute } \textcolor{blue}{$\mathbf{\UU_{n+1}}$} \textbf{compute successively the following subproblems} :
+$$
+\begin{array}{l c c c l c l c r}
+    \mathcal{P}_1\left(\textcolor{blue}{\Uv},\Uu\right)&\Leftrightarrow&
+    \M\dfrac{\textcolor{blue}{\Uv} - \Uu}{\theta \Delta t}&+&\A{1}{\textcolor{blue}{\Uv}}&+&\A{2}{\Uu}&=&0\\
+    \\
+    \mathcal{P}_2\left(\textcolor{blue}{\Uw},\Uv\right)&\Leftrightarrow&
+    \M\dfrac{\textcolor{blue}{\Uw} - \Uv}{(1-2\theta) \Delta t}&+&\A{1}{\Uv}&+&\A{2}{\textcolor{blue}{\Uw}}&=&0\\
+    \\
+    \mathcal{P}_1\left(\textcolor{blue}{\Ux},\Uw\right)&\Leftrightarrow&
+    \M\dfrac{\textcolor{blue}{\Ux} - \Uw}{\theta \Delta t}&+&\A{1}{\textcolor{blue}{\Ux}}&+&\A{2}{\Uw}&=&0
+\end{array}
+$$
+The third step is similar to the first one.
+
+\clearpage
+\section{Solving the first problem $\mathcal{P}_1$}
+
+Let $\Uk = \left[ \Tau^k, \v^k, p^k \right]^T$ be given. $\mathcal{P}_1$ is a \textbf{non linear Stokes problem} :
+
+$\mathcal{P}_1\left(\textcolor{blue}{\Ukk},\Uk\right)
+\hskip 0.5cm
+\Leftrightarrow
+\hskip 0.5cm
+\M\dfrac{\textcolor{blue}{\Ukk}}{\theta \Delta t}+\A{1}{\textcolor{blue}{\Ukk}} = \mathcal{M}\dfrac{\Uk}{\theta \Delta t} - \A{2}{\Uk} = \mathcal{V}^k
+
+\vskip 0.5cm
+\Leftrightarrow
+\left\{
+    \begin{array}{l c l}
+        W_e\dfrac{\Tau^{k+1}}{\theta\Delta t} + \textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} - 2\alpha \Dk&=&\mathcal{V}^k_1\\
+        \\
+        Re\dfrac{\vk}{\theta\Delta t}-\divv{\Tauk} + \grad \pk - (1-\alpha)\Delta\vk&=&\mathcal{V}^k_2\\
+        \\
+        \div{\vk}&=&0
+    \end{array}
+\right .
+$
+
+\vskip 0.5cm
+\noindent{\colorb \textbf{Fixed point algorithm :}}
+
+Linearize problem $\mathcal{P}_1$ with $\textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} \simeq \underbrace{\mathcal{K} \left( \textcolor{RoyalPurple}{| \Tau_d^{k} |} \right)}_{explicit} \Tauk 
+\Rightarrow \mathcal{P}_1^{lin}$ {\small\textbf{"simple Stokes problem"}}
+
+\textbf{Step $\mathbf{s = 0}$:} 
+Let $\UU^k_0 = \UU^k
+\hspace{1.1cm} i.e. \hspace{0.5cm}
+\left(\Tau^k_0, \v^k_0, p^k_0\right) = \left(\Tau^k, \v^k, p^k\right)$
+
+\textbf{Step $\mathbf{s > 0}$:} 
+Solve $\mathcal{P}_1^{lin} 
+\left( \textcolor{blue}{\UU^k_{s+1}}, \UU^k_s \right)$ with boundary conditions (4) and (5) to compute $\textcolor{blue}{\UU^k_{s+1}}$ .
+
+\textbf{Finally :}
+\hspace{0.3cm}
+Set $\Ukk = \UU^k_{s_{\infty}} 
+\hspace{0.5cm} i.e. \hspace{0.5cm}
+\left(\Tauk, \vk, \pk\right) =
+\left(\Tau^k_{s_{\infty}}, \v^k_{s_{\infty}}, p^k_{s_{\infty}}\right)$
 
 
+\clearpage
+\section{Solving the second problem $\mathcal{P}_2$}
+
+Let $\Vk = \left[ \Tau^k, \v^k, p^k \right]^T$ and $\theta'=1-2\theta$ be given. $\mathcal{P}_2$ is a \textbf{stress transport problem} :
+
+$\mathcal{P}_2\left(\textcolor{blue}{\Vkk},\Vk\right)
+\hskip 0.5cm
+\Leftrightarrow
+\hskip 0.5cm
+\M\dfrac{\textcolor{blue}{\Vkk}}{\theta' \Delta t}+\A{2}{\textcolor{blue}{\Vkk}} = \mathcal{M}\dfrac{\Vk}{\theta' \Delta t} - \A{1}{\Vk} = \mathcal{W}^k
+
+\vskip 0.5cm
+\Leftrightarrow
+\left\{
+    \begin{array}{l c l}
+        \dfrac{\Tauk}{\theta'\Delta t} + \textcolor{blue}{\left(\v^{k+1} . \grad \right) \Tau^{k+1} + \tensor{\beta_a \left( \Tau^{k+1}, \gradv^{k+1} \right)}}&=&\mathcal{W}^k_1\\
+        \\
+        Re\dfrac{\vk}{\theta'\Delta t}=
+        Re\dfrac{\v^k}{\theta'\Delta t}+\divv{\Tau^k} - \grad p^k + (1-\alpha)\Delta\v^k
+        &=&\mathcal{W}_2^k
+    \end{array}
+\right .
+$
+
+\vskip 0.5cm
+\textbf{If we previously have solved} $\mathbf{\mathcal{P}_1 \left(\UU^k, \UU^{k-1}\right)}$ \textbf{:}
+
+\vskip 0.2cm
+$\mathcal{W}_2^k 
+= Re\left[\dfrac{\v^{k}}{\theta'\Delta t} + \dfrac{\v^{k}}{\theta\Delta t}\right] - \mathcal{V}^k_2
+= Re\left[\dfrac{\v^{k}}{\theta'\Delta t} + \dfrac{\v^{k}}{\theta\Delta t} +  \dfrac{\v^{k-1}}{\theta\Delta t} \right]
+\Rightarrow
+\vk=\underbrace{\dfrac{1-\theta}{\theta}\v^k -  \dfrac{1-2\theta}{\theta}\v^{k-1}}_{explicit}$
+
+$\Rightarrow \mathcal{P}_2$ becomes a \textbf{linear Friedrich’s first-order system}.
+
+\vskip 0.2cm
+It admits a solution if $\Delta t < \dfrac{1}{\theta'} - 2\ |a|\  ||\tensor{D(\v^k)}||_\infty$
 \end{document}
 
 
