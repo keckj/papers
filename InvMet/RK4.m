@@ -11,9 +11,10 @@ function Y_t = RK4(Y_0, f, dt, tmax)
     Y = Y_0;
     t = 0.0;
     
-    Y_t = [t;Y];
+    Y_t = [t;Y_0]; %do not keep the starting point
+    n = ceil(tmax/dt);
     
-    while(t < tmax)
+     for k=1:n
         t = t + dt;
         k1 = f(Y);
         k2 = f(Y+dt/2*k1);
