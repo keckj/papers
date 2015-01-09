@@ -1,0 +1,445 @@
+\documentclass[11pt,a4paper]{article} 
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[french,english]{babel}
+
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{lmodern}%pour un meilleur rendu des polices
+\usepackage{verbatim}%du texte non interprt
+\usepackage[cmex10]{amsmath}
+\usepackage{amssymb}%maths
+\usepackage{xspace}
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{etoolbox}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{lastpage}
+\usepackage[bookmarks=true,bookmarksnumbered=true]{hyperref}
+\usepackage{ctable} % for \specialrule command
+\usepackage{cite}
+\usepackage{algorithm2e}
+\usepackage{alltt}
+\usepackage{array}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{dblfloatfix}
+\usepackage{url}
+\usepackage{tipa}
+\usepackage{stmaryrd}
+\usepackage{mathrsfs}
+
+%\usepackage{natbib}
+%\usepackage[pdftex]{graphicx}
+%\usepackage{framed}
+%\usepackage[usenames]{color}
+
+\graphicspath{{img/}}
+\DeclareGraphicsExtensions{.pdf,.jpeg,.jpg,.png}
+
+%% taille du papier
+\textwidth 16 true cm
+\textheight 24 true cm
+\addtolength{\hoffset}{-1.5cm}
+\addtolength{\voffset}{-1.5cm}
+
+%-------- couleurs
+\definecolor{grisf}{rgb}{.47,.47,.47} % barre de droite gris fonce
+\definecolor{imag}{RGB}{50,0,100}
+\definecolor{darkimag}{RGB}{65,15,100}
+\definecolor{darkgreen}{RGB}{65,15,100}
+\newcommand{\colorc}{\color{darkimag}}
+\newcommand{\colorb}{\color{darkimag}}
+\newcommand{\colora}{\color{Blue}}
+
+%----------- sections et TOC
+% chapitres
+\titleformat{\chapter}[display]
+  {\normalfont\sffamily\bfseries\huge\colora\centering}{\thechapter}{1ex}
+  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{{\titlerule[1pt]}}]
+  
+% chapitres etoiles  
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\sffamily\bfseries\LARGE\colora\centering}{}{1ex}
+  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{\titlerule[1pt]}\vspace{2ex}]
+  
+% sections  
+\titleformat{\section}[hang]{\Large\normalfont\sffamily\bfseries\colora}{{\thesection\, }}{0 em}
+  {}[{\titlerule[1pt]}\vspace{1ex}]
+
+  
+% sous section, sous sous sec, paragraphes  
+\titleformat{\subsection}[hang]{\Large\normalfont\sffamily\bfseries\colorc}{{\thesubsection\, }}{0 em}
+  {}[{\titlerule}\vspace{.7ex}]
+\titleformat{\subsubsection}[hang]{\normalfont\sffamily\bfseries\large}{{\thesubsubsection\, }}{0 em}
+  {}[{\color{grisf}\titlerule}\vspace{3pt}]
+\titleformat{\paragraph}[runin]{\normalfont\sffamily\bfseries\colorb}{}{0 em}
+  {\indent}
+
+
+
+%----------------- fancy headers -------------%
+
+\makeatletter
+\patchcmd{\@fancyhead}{\rlap}{\color{grisf}\rlap}{}{}
+\patchcmd{\headrule}{\hrule}{\color{grisf}\hrule}{}{}
+\patchcmd{\@fancyfoot}{\rlap}{\color{grisf}\rlap}{}{}
+\patchcmd{\footrule}{\hrule}{\color{grisf}\hrule}{}{}
+\makeatother
+
+                                                                    
+\fancyhf{}
+\fancyhead[R]{\sffamily\colorb{Report}}
+\fancyfoot[R]{\sffamily\small\colorb{\thepage/\pageref{LastPage}}}
+\fancyhead[L]{\sffamily\small\colorb{Jean-Baptiste Keck}}
+\fancyfoot[L]{\sffamily\small\colorb{M2 MSIAM -- Inverse Methods -- 2014-2015}}
+\renewcommand{\headrulewidth}{0.2pt} %0.4
+\renewcommand{\footrulewidth}{0.2pt} %0
+\addtolength{\headheight}{0.pt}
+
+\fancypagestyle{plain}{
+  \fancyhead{}
+  \renewcommand{\headrulewidth}{0pt}
+  }
+     
+  %-- macros --%   
+  \def\hlinewd#1{%
+      \noalign{\ifnum0=`}\fi\hrule \@height #1 %
+  \futurelet\reserved@a\@xhline} 
+
+  
+  
+  %------------------- front page ------------------%
+  \title{
+      \bsc{TP Inverse Methods}
+      \vskip 1cm
+      {\colorb\textbf{Lorenz Equations}}
+      \vskip 1cm
+      \colorb\textit{Report}
+  }
+\author{%
+    Jean-Baptiste \bsc{Keck}
+    \vskip 0.5cm
+    \bsc{M2 Msiam}
+}
+%\date{27 janvier 2014}
+\makeatletter
+
+\def\maketitle{%
+    %\thispagestyle{empty}%
+    \begin{flushleft}
+        \normalfont\LARGE\par
+    \end{flushleft}
+    \vskip 3cm
+    \begin{center}%
+        {\colora\specialrule{.2em}{0em}{0em}}
+        \vskip 1cm
+        {\Huge \@title}%
+        \vskip 1cm
+        {\colora\specialrule{.2em}{0em}{0em}}
+        \vskip 5cm
+        {\Huge \@author\par}%
+        \vskip 2cm
+        {\Huge \@date\par}%
+        \vskip 1cm
+
+    \end{center}%
+    \clearpage
+}
+
+\renewcommand{\ccite}[1]{\textbf{\cite{#1}}}
+\renewcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
+\renewcommand{\norm}[1]{\lVert #1 \rVert}
+\renewcommand{\dx}{\ \mathrm{d}x}
+\renewcommand{\dt}{\ \mathrm{d}x}
+\renewcommand{\u} {\mathbf{u}}
+\renewcommand{\v} {\mathbf{v}}
+\renewcommand{\f} {\mathbf{f}}
+\renewcommand{\uz}{\mathbf{u_0}}
+\renewcommand{\ud}{\mathring{\mathbf{u}}}
+\renewcommand{\ut}{\tilde{\mathbf{u}}}
+\renewcommand{\utrue}{\mathbf{u}^t}}
+\renewcommand{\utz}{\tilde{\mathbf{u}}_0}
+\renewcommand{\uh}{\hat{\mathbf{u}}}
+\renewcommand{\vh}{\hat{\mathbf{v}}}
+\renewcommand{\ub}{\bar{\mathbf{u}}}
+\renewcommand{\F}{\mathrm{F}}
+\renewcommand{\R}{\mathbb{R}}
+\renewcommand{\J}{\mathcal{J}}
+
+\newcommand{\bigo}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+\newcommand{\smallo}[1]{\ensuremath{\mathop{}\mathopen{}o\mathopen{}\left(#1\right)}}
+
+\definecolor{lightgray}{gray}{0.9}
+\renewcommand{\colbox}[1]{\colorbox{lightgray}{$ #1 $}}
+%%%%%%%
+
+\begin{document}
+\pagestyle{fancy}
+
+\maketitle
+
+%\tableofcontents
+\clearpage
+
+\section{Theorical work on the continuous model}
+
+\textbf{Lorentz Equations :}
+\vskip 0.2cm
+
+$$
+\begin{equation} \label{eq:lorentz}
+\left \{
+\begin{array}{l c l}
+    \mathring{x} & = & 10(y - x)\\
+    \mathring{y} & = & 28x - y -xz\\
+    \mathring{z} & = & xy - \frac{8}{3}z\\
+    \multicolumn{3}{l}{x(0) = x_0,\ y(0) = y_0,\ z(0) = z_0}
+\end{array}
+\right .
+\hskip 0.5cm
+\Leftrightarrow 
+\hskip 0.5cm
+\colbox{
+\left \{
+\begin{array}{l c l}
+\ud&=&\f(\u) \\
+\u_0&=&[x_0, y_0, z_0]^T
+\end{array}
+\right .
+}
+\end{equation}
+$$
+
+with $\u(t) = 
+\left [
+    \begin{array}{c}
+        x(t)&
+        y(t)&
+        z(t)
+    \end{array}
+\right ]$
+and $\f(\u) =
+\left [
+    \begin{array}{c}
+        10(y - x)\\
+        28x - y -xz\\
+        xy - \frac{8}{3}z\\
+    \end{array}
+\right ]
+$
+
+\vskip 0.5cm
+\noindent\textbf{Question 1:} 
+\vskip 0.3cm
+\noindent Let $\J$ be the following cost function :
+\vskip 0.3cm
+
+$\colbox{\J(\u_0) = \dfrac{1}{2}\displaystyle \int_0^T\norm{\utrue(t)-\u(t)}^2 \dt}$ where $\u$ is the solution of (1) with initial condition $\u_0$.
+
+\vskip 0.5cm
+\noindent Let $T \in \R^*_+,\ \alpha \in \R^*,\ \u_0 \in \R^3,\ \delta\u_0 \in \R^3$
+and
+$\ut_0 = \u_0 + \alpha\ \delta\u_0$.
+\vskip 0.1cm
+\noindent Let $\u$ (resp. $\ut$) be the unique solution of the system (\ref{eq:lorentz}) with $\u_0$ (resp. $\ut_0$) as initial condition.
+\vskip 0.1cm
+\noindent Let $\ub = \dfrac{\ut - \u}{\alpha}$,  $\uh = \lim\limits_{\alpha \to 0} \ub$
+}
+and assume 
+$\mathrm{K} = \left\{t \in\ ]0,T[\ \ |\ \ \norm{\uh(t)} = +\infty \right\}$
+is a measure-zero set.
+\vskip 0.5cm
+
+$$
+\begin{equation} \label{eq:grad}
+    \colbox{
+        d\left(\J(\u_0)\right)(\delta \u_0) 
+        =\nabla \J(\u_0) \cdot \delta\u_0
+        = \lim\limits_{\alpha \to 0}\dfrac{\J(\ut_0) - \J(\u_0)}{\alpha}\ 
+    }
+\end{equation}
+$$
+
+$
+\mathcal{J}_\alpha
+=\dfrac{\J(\utz) - \J(\uz)}{\alpha}
+= \dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \norm{\utrue(t) - \ut(t)}^2 - \norm{\utrue(t)-\u(t)}^2 \right ] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \norm{\utrue(t) - \u(t) - \alpha\ \ub(t)}^2 - \norm{\utrue(t)-\u(t)}^2 \right ] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \alpha^2\ \norm{\ub(t)}^2 + 2 \langle \utrue(t) - \u(t), \alpha\ \ub(t) \rangle\right] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+=\dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \norm{\ub(t)}^2 + 2 \langle \u(t) - \u(t), \ub(t) \rangle\right] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+$
+
+$
+\Rightarrow
+d\left(\J(\u_0)\right)(\delta \u_0) 
+= \lim\limits_{\alpha \to 0} \mathcal{J}_\alpha
+= \lim \limits_{\alpha \to 0} \dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \norm{\ub(t)}^2 + 2 \langle \utrue(t) - \u(t), \ub(t) \rangle\right] \dt
+\vskip 0.2cm
+\hskip 3.2cm
+= \lim \limits_{\alpha \to 0} 
+\left [ \dfrac{1}{2}\displaystyle  \int_{]0,T[ \backslash K} \alpha\ \underbrace{\norm{\ub(t)}^2}_{\leq M} \dt \right ]
++ \displaystyle \int_0^T \langle \utrue(t) - \u(t), \uh(t) \rangle \dt
+\vskip 0.2cm
+\hskip 3.2cm
+= 0 + \displaystyle \int_0^T \langle \utrue(t) - \u(t), \uh(t) \rangle \dt
+$
+
+\vskip 0.2cm
+$$
+\begin{equation} \label{eq:diff}
+\colbox{
+d\left(\J(\u_0)\right)(\delta \u_0) 
+= \displaystyle \int_0^T \left( \utrue(t) - \u(t) \right)^T \uh(t) \dt
+}
+\end{equation}
+$$
+
+\noindent\textbf{Tangent model :} 
+
+\vskip 0.2cm
+$
+\widetilde{(1)} - (1) 
+\Leftrightarrow
+\left \{
+\begin{array}{l c l}
+    \mathring{\ut} - \mathring{\u} &=&\f(\ut) - \f(\u)\\
+    \ut(0) - \u(0)&=&\ut_0 - \u_0
+    \right .
+\end{array}
+\right.
+\vskip 0.2cm
+\hskip 1.55cm
+\Leftrightarrow
+\left \{
+\begin{array}{l c l}
+    \alpha\ \mathring{\ub} &=& \f(\u + \alpha \ub) - \f(\u)\\
+    \alpha \ub(0)&=&\alpha\ \delta \u_0
+    \right .
+}
+\end{array}
+\right.
+\vskip 0.2cm
+\hskip 1.55cm
+\Rightarrow
+\left \{
+\begin{array}{l c l c l c l}
+    \mathring{\uh} &=&
+    \lim\limits_{\alpha \to 0}  \dfrac{\f(\u + \alpha \ub) - \f(\u)}{\alpha}&=&
+    d(\f(\u))(\uh) = J_f(\u)\ \uh\\
+    \uh(0)&=&\delta \u_0&&
+    \right .
+}
+\end{array}
+$
+
+$$
+\begin{equation} \label{eq:tangent}
+\colbox{
+\left \{
+\begin{array}{l c l}
+    \pd{\uh}{t} &=&J_f(\u)\ \uh\\
+    \uh(0)&=&\delta \u_0
+    \right .
+\end{array}
+}
+\textrm{ with }
+\colbox{
+    J_f(\u) = \pd{\f}{\u}(\u) = 
+\left [
+    \begin{array}{c c c}
+        -10&10&0\\
+        28-z&-1&-x\\
+        y&x&-\frac{8}{3}
+    \end{array}
+\right ]
+}
+\end{equation}
+$$
+
+\noindent\textbf{Adjoint model :} 
+\vskip 0.2cm
+
+Let $\vh :\ ]0,T[\ \to \R^3$ continuously differentiable. 
+
+\hskip 0.7cm
+$\uh$ may be continuously differentiable because of (4) under stronger assumptions on K 
+
+\hskip 0.7cm
+(see 2), $ie$ K$=\varnothing$.
+
+Commodity notations : $\uh \cdot \vh = \langle \uh, \vh \rangle$ and $\uh' = \pd{\uh}{t}$.
+
+\vskip 0.3cm
+By integrating by part :
+
+$$
+\left[ \vh(t) \cdot \uh(t) \right]_0^T
+=
+\displaystyle \int_0^T \left[ 
+\vh'(t) \cdot \uh(t)  
++ \vh(t) \cdot \uh'(t)
+\right] \dt
+$$
+
+$$
+\Leftrightarrow
+\underbrace{\vh(T)}_{\textrm{set to } \vec{0}} \cdot \uh(T)
+-  \vh(0) \cdot \underbrace{\uh(0)}_{\delta\uz}
+=
+\displaystyle \int_0^T \left[ 
+\vh'(t) \cdot \uh(t)
++ \underbrace{\vh(t) \cdot J_f(\u(t))\uh(t)}_{J_f^*(\u(t)) \vh(t) \cdot \uh(t)}
+\right] \dt
+$$
+
+$$
+\Leftrightarrow
+\colbox{
+\displaystyle \int_0^T 
+\left[ 
+    \vh'(t) + J_f^*(\u(t)) \vh(t) 
+\right ]
+\cdot \uh(t)
+\right] \dt
+=
+-  \vh(0) \cdot \delta\uz
+}
+$$
+
+
+\section{Discrete model}
+\section{Data assimilation experiments}
+
+\end{document}
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
