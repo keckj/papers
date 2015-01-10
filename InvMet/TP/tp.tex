@@ -387,7 +387,54 @@ $$
 \noindent\textbf{Adjoint model :} 
 \vskip 0.2cm
 
-We still have  equation (5):
+Let $\vh :\ ]0,T[\ \to \R^3$ continuously differentiable.
+
+\hskip 0.7cm
+$\uh$ may be continuously differentiable because of (4) under stronger assumptions on K 
+
+\hskip 0.7cm
+(see 2), $ie$ K$=\varnothing$.
+
+Commodity notations : $\uh \cdot \vh = \langle \uh, \vh \rangle$ and $\uh' = \pd{\uh}{t}$.
+
+\vskip 0.3cm
+By integrating the scalar product by part :
+
+$$
+\left[ \vh(t) \cdot \uh(t) \right]_0^T
+=
+\displaystyle \int_0^T \left[
+    \vh'(t) \cdot \uh(t)
+    + \vh(t) \cdot \uh'(t)
+\right] \dt
+$$
+
+$$
+\Leftrightarrow
+\underbrace{\vh(T)}_{\textrm{set to } \vec{0}} \cdot \uh(T)
+-  \vh(0) \cdot \underbrace{\uh(0)}_{\delta\uz}
+=
+\displaystyle \int_0^T \left[
+    \vh'(t) \cdot \uh(t)
+    + \underbrace{\vh(t) \cdot J_f(\u(t))\uh(t)}_{J_f^*(\u(t)) \vh(t) \cdot \uh(t)}
+\right] \dt
+$$
+
+$$
+\Leftrightarrow
+\begin{equation}
+\colbox{
+    \displaystyle \int_0^T
+    \left[
+        \vh'(t) + J_f^*(\u(t)) \vh(t)
+    \right ]
+    \cdot \uh(t)
+\right] \dt
+=
+-  \vh(0) \cdot \delta\uz
+ }
+\end{equation}
+$$
 
 \vskip 0.5cm
 Knowing $\u(t)$ and $\uobs(t)\ \forall t\in [0,T]$, and if we take $\vh$ solution of the following adjoint model:
@@ -559,6 +606,59 @@ $$
 
 The only thing that changed in the adjoint model is the expression of $h(t)$, the new adjoint model does no more take into acount the distance between $y$ and $y^{obs}$ or $z$ and $z^{obs}$.
 With this new adjoint model, we still have the same expression for the gradient : $\colbox{\nabla \J_x(\uz) = - \wh(0)}$.
+
+
+\vskip 0.5cm
+\subsection{Question 3:} 
+\vskip 0.3cm
+\noindent Let finally $\J_2$ be the following cost function :
+\vskip 0.3cm
+
+$\colbox{\J_2(\u_0) = \J_b(\u_0) + \J_1(\u_0) 
+= \dfrac{1}{2}\norm{\uz - \u^b}
++ \displaystyle \int_0^T\norm{\u(t)-\uobs(t)}^2 \dt}$
+
+where $\u$ is the solution of (1) with initial condition $\u_0$ and $\u^b \in \R^3$.
+
+\vskip 0.5cm
+\noindent\textbf{Expression of the gradient :} we directly have 
+$\colbox{
+\nabla \J_2 
+= \nabla \J^b + \nabla \J_1
+}$
+and $\colbox{\nabla \J^b(\uz) = \uz - \u^b}$.
+\vskip 0.5cm
+\noindent\textbf{Tangent model :} As before nothing changes.
+\vskip 0.5cm
+\noindent\textbf{Adjoint model :} If $\vh$ is solution of the first adjoint model (6), $\uz - \u^b - \vh(0)$ is the gradient we are looking for because we have seen that $\nabla \J_1(\uz) = -\vh(0)$.
+
+\vskip 0.2cm
+\noindent Let $\colbox{\hat{\nu} = \vh + \u^b - \uz}$, we have $\colbox{\mathring{\hat{\nu}} = \mathring{\vh}}$ and $\colbox{-\hat{\nu}(0) = \nabla \J_2(\uz)}$.
+\vskip 0.2cm
+\noindent As $\g(\vh,t)$ is linear in $\vh$ we can easily get the new adjoint model verified by $\hat{\nu}$ :
+
+$$
+\begin{equation} \label{eq:adjoint}
+\hskip 0.5cm
+\colbox{
+\left \{
+\begin{array}{l c l}
+    \mathring{\hat{\nu}}&=&\g(\hat{\nu},t) + \h^b(t)\\
+    \hat{\nu}(T)&=&u^b - u_0
+\end{array}
+\right .
+}
+\textrm{ with }
+\left \{
+\begin{array}{l l l}
+    \g(\hat{\nu},t)&=&-J_f^*(\u(t))\ \hat{\nu}(t)=-J_f^T(\u(t))\ \hat{\nu}(t)\\
+    \h^b(t)&=& u(t) - \uobs(t) + J_f^*(\u(t))\ \left[ \u^b - \uz \right]
+\end{array}
+\right .
+\end{equation}
+$$
+
+The adjoint model now takes into acount the distance between the initial conditions.
 
 \section{Discrete model}
 \section{Data assimilation experiments}
