@@ -155,23 +155,35 @@
 
 \renewcommand{\ccite}[1]{\textbf{\cite{#1}}}
 \renewcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
+\renewcommand{\abs}[1]{\left( #1 \right)}
 \renewcommand{\norm}[1]{\lVert #1 \rVert}
 \renewcommand{\dx}{\ \mathrm{d}x}
-\renewcommand{\dt}{\ \mathrm{d}x}
+\renewcommand{\dt}{\ \mathrm{d}t}
 \renewcommand{\u} {\mathbf{u}}
 \renewcommand{\v} {\mathbf{v}}
+\renewcommand{\w} {\mathbf{w}}
+\renewcommand{\h} {\mathbf{h}}
 \renewcommand{\f} {\mathbf{f}}
+\renewcommand{\g} {\mathbf{g}}
 \renewcommand{\uz}{\mathbf{u_0}}
 \renewcommand{\ud}{\mathring{\mathbf{u}}}
 \renewcommand{\ut}{\tilde{\mathbf{u}}}
 \renewcommand{\utrue}{\mathbf{u}^t}}
+\renewcommand{\uobs}{\mathbf{u}^{obs}}}
+\renewcommand{\xobs}{x^{obs}}}
 \renewcommand{\utz}{\tilde{\mathbf{u}}_0}
 \renewcommand{\uh}{\hat{\mathbf{u}}}
 \renewcommand{\vh}{\hat{\mathbf{v}}}
+\renewcommand{\wh}{\hat{\mathbf{w}}}
 \renewcommand{\ub}{\bar{\mathbf{u}}}
 \renewcommand{\F}{\mathrm{F}}
 \renewcommand{\R}{\mathbb{R}}
 \renewcommand{\J}{\mathcal{J}}
+\renewcommand{\xt}{\tilde{x}}
+\renewcommand{\xh}{\hat{x}}
+\renewcommand{\yh}{\hat{y}}
+\renewcommand{\zh}{\hat{z}}
+\renewcommand{\xb}{\bar{x}}
 
 \newcommand{\bigo}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
 \newcommand{\smallo}[1]{\ensuremath{\mathop{}\mathopen{}o\mathopen{}\left(#1\right)}}
@@ -236,12 +248,13 @@ and $\f(\u) =
 $
 
 \vskip 0.5cm
-\noindent\textbf{Question 1:} 
+\subsection{Question 1:} 
+
 \vskip 0.3cm
 \noindent Let $\J$ be the following cost function :
 \vskip 0.3cm
 
-$\colbox{\J(\u_0) = \dfrac{1}{2}\displaystyle \int_0^T\norm{\utrue(t)-\u(t)}^2 \dt}$ where $\u$ is the solution of (1) with initial condition $\u_0$.
+$\colbox{\J(\u_0) = \dfrac{1}{2}\displaystyle \int_0^T\norm{\u(t)-\uobs(t)}^2 \dt}$ where $\u$ is the solution of (1) with initial condition $\u_0$.
 
 \vskip 0.5cm
 \noindent Let $T \in \R^*_+,\ \alpha \in \R^*,\ \u_0 \in \R^3,\ \delta\u_0 \in \R^3$
@@ -270,16 +283,16 @@ $$
 $
 \mathcal{J}_\alpha
 =\dfrac{\J(\utz) - \J(\uz)}{\alpha}
-= \dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \norm{\utrue(t) - \ut(t)}^2 - \norm{\utrue(t)-\u(t)}^2 \right ] \dt
+= \dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \norm{\ut(t) - \uobs(t)}^2 - \norm{\u(t)-\uobs(t)}^2 \right ] \dt
 \vskip 0.2cm
 \hskip 3.75cm
-=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \norm{\utrue(t) - \u(t) - \alpha\ \ub(t)}^2 - \norm{\utrue(t)-\u(t)}^2 \right ] \dt
+=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \norm{\u(t) - \uobs(t) + \alpha\ \ub(t)}^2 - \norm{\u(t)-\uobs(t)}^2 \right ] \dt
 \vskip 0.2cm
 \hskip 3.75cm
-=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \alpha^2\ \norm{\ub(t)}^2 + 2 \langle \utrue(t) - \u(t), \alpha\ \ub(t) \rangle\right] \dt
+=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \alpha^2\ \norm{\ub(t)}^2 + 2 \langle \u(t) - \uobs(t), \alpha\ \ub(t) \rangle\right] \dt
 \vskip 0.2cm
 \hskip 3.75cm
-=\dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \norm{\ub(t)}^2 + 2 \langle \u(t) - \u(t), \ub(t) \rangle\right] \dt
+=\dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \norm{\ub(t)}^2 + 2 \langle \u(t) - \uobs(t), \ub(t) \rangle\right] \dt
 \vskip 0.2cm
 \hskip 3.75cm
 $
@@ -288,15 +301,15 @@ $
 \Rightarrow
 d\left(\J(\u_0)\right)(\delta \u_0) 
 = \lim\limits_{\alpha \to 0} \mathcal{J}_\alpha
-= \lim \limits_{\alpha \to 0} \dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \norm{\ub(t)}^2 + 2 \langle \utrue(t) - \u(t), \ub(t) \rangle\right] \dt
+= \lim \limits_{\alpha \to 0} \dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \norm{\ub(t)}^2 + 2 \langle \u(t) - \uobs(t), \ub(t) \rangle\right] \dt
 \vskip 0.2cm
 \hskip 3.2cm
 = \lim \limits_{\alpha \to 0} 
 \left [ \dfrac{1}{2}\displaystyle  \int_{]0,T[ \backslash K} \alpha\ \underbrace{\norm{\ub(t)}^2}_{\leq M} \dt \right ]
-+ \displaystyle \int_0^T \langle \utrue(t) - \u(t), \uh(t) \rangle \dt
++ \displaystyle \int_0^T \langle \u(t) - \uobs(t), \uh(t) \rangle \dt
 \vskip 0.2cm
 \hskip 3.2cm
-= 0 + \displaystyle \int_0^T \langle \utrue(t) - \u(t), \uh(t) \rangle \dt
+= 0 + \displaystyle \int_0^T \langle \u(t) - \uobs(t), \uh(t) \rangle \dt
 $
 
 \vskip 0.2cm
@@ -304,7 +317,7 @@ $$
 \begin{equation} \label{eq:diff}
 \colbox{
 d\left(\J(\u_0)\right)(\delta \u_0) 
-= \displaystyle \int_0^T \left( \utrue(t) - \u(t) \right)^T \uh(t) \dt
+= \displaystyle \int_0^T \left[ \u(t) - \uobs(t) \right]^T \uh(t) \dt
 }
 \end{equation}
 $$
@@ -374,53 +387,178 @@ $$
 \noindent\textbf{Adjoint model :} 
 \vskip 0.2cm
 
-Let $\vh :\ ]0,T[\ \to \R^3$ continuously differentiable. 
+We still have  equation (5):
 
-\hskip 0.7cm
-$\uh$ may be continuously differentiable because of (4) under stronger assumptions on K 
+\vskip 0.5cm
+Knowing $\u(t)$ and $\uobs(t)\ \forall t\in [0,T]$, and if we take $\vh$ solution of the following adjoint model:
 
-\hskip 0.7cm
-(see 2), $ie$ K$=\varnothing$.
+$$
+\begin{equation} \label{eq:adjoint}
+\hskip 0.5cm
+\colbox{
+\left \{
+\begin{array}{l c l}
+    \mathring{\vh}&=&\g(\vh,t) + \h(t)\\
+    \vh(T)&=&\vec{0}
+\end{array}
+\right .
+}
+\textrm{ with }
+\left \{
+\begin{array}{l l l l l}
+\g(\vh,t)&=&-J_f^*(\u(t))\ \vh(t)&=&-J_f^T(\u(t))\ \vh(t)\\
+\h(t)&=&\u(t) - \uobs(t)
+\end{array}
+\right .
+\end{equation}
+$$
 
-Commodity notations : $\uh \cdot \vh = \langle \uh, \vh \rangle$ and $\uh' = \pd{\uh}{t}$.
+By (2), (3) and (5) we get directly $\colbox{\nabla \J(\uz) = - \vh(0)}$.
 
+
+
+
+
+\vskip 0.5cm
+\subsection{Question 2:} 
 \vskip 0.3cm
-By integrating by part :
+\noindent Let now $\J_x$ be the following cost function :
+\vskip 0.3cm
+
+$\colbox{\J_x(\u_0) = \dfrac{1}{2}\displaystyle \int_0^T\abs{x(t)-\xobs(t)}^2 \dt}$ where $x$ is the solution of (1) projected on the x-axis with initial condition $\u_0$.
+
+\vskip 0.5cm
+With the same notations and assumptions as before on $x$ :
 
 $$
-\left[ \vh(t) \cdot \uh(t) \right]_0^T
-=
-\displaystyle \int_0^T \left[ 
-\vh'(t) \cdot \uh(t)  
-+ \vh(t) \cdot \uh'(t)
-\right] \dt
+\begin{equation} \label{eq:grad}
+    \colbox{
+        d\left(\J_x(\u_0)\right)(\delta \u_0) 
+        =\nabla \J_x(\u_0) \cdot \delta\u_0
+        = \lim\limits_{\alpha \to 0}\dfrac{\J_x(\ut_0) - \J_x(\u_0)}{\alpha}\ 
+    }
+\end{equation}
 $$
 
+$
+\mathcal{J}_x^\alpha
+=\dfrac{\J(\utz) - \J(\uz)}{\alpha}
+= \dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \abs{\xt(t) - \xobs(t)}^2 - \abs{x(t)-\xobs(t)}^2 \right ] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \abs{x(t) - \xobs(t) + \alpha\ \xb(t)}^2 - \abs{x(t)-\xobs(t)}^2 \right ] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+=\dfrac{1}{2\alpha}\displaystyle \int_0^T \left[ \alpha^2 \xb(t)^2 + 2\alpha\ [x(t) - \xobs(t)]\ \xb(t) \right] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+=\dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha \xb(t)^2 + 2\ [x(t) - \xobs(t)]\ \xb(t) \right] \dt
+\vskip 0.2cm
+\hskip 3.75cm
+$
+
+$
+\Rightarrow
+d\left(\J_x(\u_0)\right)(\delta \u_0) 
+= \lim\limits_{\alpha \to 0} \mathcal{J}_x^\alpha
+= \lim \limits_{\alpha \to 0} \dfrac{1}{2}\displaystyle \int_0^T \left[ \alpha\ \xb(t)^2 + 2\ [x(t) - \xobs(t)]\ \xb(t) \right] \dt
+\vskip 0.2cm
+\hskip 3.2cm
+= \lim \limits_{\alpha \to 0} 
+\left [ \dfrac{1}{2}\displaystyle  \int_{]0,T[ \backslash K_x} \alpha\ \underbrace{\xb(t)^2}_{\leq M} \dt \right ]
++ \displaystyle \int_0^T [x(t) - \xobs(t)]\ \xh(t) \dt
+\vskip 0.2cm
+\hskip 3.2cm
+= 0 + \displaystyle \int_0^T [x(t) - \xobs(t)]\ \xh(t) \dt
+$
+
+\vskip 0.2cm
 $$
-\Leftrightarrow
-\underbrace{\vh(T)}_{\textrm{set to } \vec{0}} \cdot \uh(T)
--  \vh(0) \cdot \underbrace{\uh(0)}_{\delta\uz}
-=
-\displaystyle \int_0^T \left[ 
-\vh'(t) \cdot \uh(t)
-+ \underbrace{\vh(t) \cdot J_f(\u(t))\uh(t)}_{J_f^*(\u(t)) \vh(t) \cdot \uh(t)}
-\right] \dt
+\begin{equation} \label{eq:diff}
+\colbox{
+d\left(\J_x(\u_0)\right)(\delta \u_0) 
+= \displaystyle \int_0^T [x(t) - \xobs(t)]\ \xh(t) \dt
+}
+\end{equation}
 $$
 
+\noindent\textbf{Tangent model :} 
+
+\vskip 0.2cm
+We still have the same tangent model as before (4), and we can project the equations on $x$, $y$ and $z$ to obtain :
+
 $$
-\Leftrightarrow
+\begin{equation} \label{eq:tangent}
+    \colbox{
+        \left \{
+            \begin{array}{l c l}
+                \pd{\xh}{t} &=&\pd{f_x}{\u}(\u)\cdot \uh\\
+                \\
+                \pd{\yh}{t} &=&\pd{f_y}{\u}(\u)\cdot \uh\\
+                \\
+                \pd{\zh}{t} &=&\pd{f_z}{\u}(\u)\cdot \uh\\
+                \\
+                \uh(0)&=&\delta \u_0
+            \end{array}
+        \right .
+        \textrm{ with }
+        \left\{
+                \begin{array}{c c c c l c c c l}
+                    \pd{f_x}{\u}(\u)&=&\nabla f_x(\u)&=& [-10 & 10 & 0]^T\\
+                    \\
+                    \pd{f_y}{\u}(\u)&=&\nabla f_y(\u)&=& [28-z & -1 & -x]^T\\
+                    \\
+                    \pd{f_z}{\u}(\u)&=&\nabla f_z(\u)&=& [y & x & -\frac{8}{3}]^T\\
+                \end{array}
+        \right .
+    }
+\end{equation}
+$$
+
+\noindent\textbf{Adjoint model :} 
+\vskip 0.2cm
+
+If we take a new function $\wh$ and we integrate the scalar product by part, we still get (5) :
+
+$$
 \colbox{
 \displaystyle \int_0^T 
 \left[ 
-    \vh'(t) + J_f^*(\u(t)) \vh(t) 
+    \wh'(t) + J_f^*(\u(t)) \wh(t) 
 \right ]
 \cdot \uh(t)
 \right] \dt
 =
--  \vh(0) \cdot \delta\uz
+-  \wh(0) \cdot \delta\uz
 }
 $$
 
+\vskip 0.5cm
+Knowing $\u(t)$ and $\uobs(t)\ \forall t\in [0,T]$, and if we take $\wh$ solution of the following adjoint model:
+
+$$
+\begin{equation} \label{eq:adjoint}
+\hskip 0.5cm
+\colbox{
+\left \{
+\begin{array}{l c l}
+    \mathring{\wh}&=&\g(\wh,t) + \h^x(t)\\
+    \wh(T)&=&\vec{0}
+\end{array}
+\right .
+}
+\textrm{ with }
+\left \{
+\begin{array}{l l l l l}
+    \g(\wh,t)&=&-J_f^*(\u(t))\ \wh(t)&=&-J_f^T(\u(t))\ \wh(t)\\
+    \h^x(t)&=&\left[ x(t) - \xobs(t), 0, 0 \right]^T
+\end{array}
+\right .
+\end{equation}
+$$
+
+The only thing that changed in the adjoint model is the expression of $h(t)$, the new adjoint model does no more take into acount the distance between $y$ and $y^{obs}$ or $z$ and $z^{obs}$.
+With this new adjoint model, we still have the same expression for the gradient : $\colbox{\nabla \J_x(\uz) = - \wh(0)}$.
 
 \section{Discrete model}
 \section{Data assimilation experiments}
