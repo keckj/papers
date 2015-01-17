@@ -34,6 +34,7 @@
 \usepackage{tipa}
 \usepackage{stmaryrd}
 \usepackage{mathrsfs}
+\usepackage{ulem}
 
 %\usepackage{natbib}
 %\usepackage[pdftex]{graphicx}
@@ -160,6 +161,7 @@
 \renewcommand{\dx}{\ \mathrm{d}x}
 \renewcommand{\dt}{\ \mathrm{d}t}
 \renewcommand{\u} {\mathbf{u}}
+\renewcommand{\k} {\mathbf{k}}
 \renewcommand{\v} {\mathbf{v}}
 \renewcommand{\w} {\mathbf{w}}
 \renewcommand{\h} {\mathbf{h}}
@@ -615,7 +617,7 @@ With this new adjoint model, we still have the same expression for the gradient 
 \vskip 0.3cm
 
 $\colbox{\J_2(\u_0) = \J_b(\u_0) + \J_1(\u_0) 
-= \dfrac{1}{2}\norm{\uz - \u^b}
+= \dfrac{1}{2}\norm{\uz - \u^b}^2
 + \displaystyle \int_0^T\norm{\u(t)-\uobs(t)}^2 \dt}$
 
 where $\u$ is the solution of (1) with initial condition $\u_0$ and $\u^b \in \R^3$.
@@ -660,24 +662,182 @@ $$
 
 The adjoint model now takes into acount the distance between the initial conditions.
 
+\vskip 0.5cm
+\subsection{Question 4:} 
+\vskip 0.5cm
+
+Let $\Delta_t > 0,\ \ T = N\Delta_t$ and $\u_k = \left[x_k, y_k, z_k\right]^T$ be the state of the system at time $i\Delta_t\ \forall k \in \llbracket 0,N \rrbracket$. The same notations are used for $\u^{obs}$.
+
+As $(1)$ is an hyperbolic system, there is a need for high order algorithms like Runge-Kutta 4 (RK4).
+
+\vskip 0.5cm
+\noindent\textbf{Algorithm (RK4):}
+
+$\colbox{\u_0 = \u(0)}$\\
+\indent for k from $0$ to $N-1$:\\
+\vskip 0.1cm
+\hskip 0.5cm
+$
+\colbox{
+\left [
+\begin{array}{l l}
+    \u_k^0 = \u_k&
+    \k_1 = f(\u_k^0)& 
+    \u_k^1 = \u_k + \frac{\Delta_t}{2} \k_1&
+    \k_2 = f(\u_k^1)& 
+    \u_k^2 = \u_k + \frac{\Delta_t}{2} \k_2&
+    \k_3 = f(\u_k^2)&
+\u_k^3 = \u_k + \Delta_t \k_3&
+    \k_4 = f(\u_k^3)&
+    \multicolumn{2}{l}{\u_{k+1} = \u_k + \dfrac{\Delta_t}{6}\left[ \k_1 + 2\k_2 + 2\k_3 + \k_4 \right]}&
+\end{array}
+\right.
+}
+$
+
+\vskip 0.5cm
+\noindent Let $F(\u) : \R^3 \to \R^{3 \times 3}$ such that $\colbox{f(\u) = F(\u)\u}$ and we denote $\colbox{F_k^l = F(\u_k^l)}$.
+
+\vskip 0.3cm
+\noindent As $F$ is not unique, we fix it as 
+$
+\colbox{
+F(\u) = 
+\left [
+    \begin{array}{c c c}
+        -10 & 10 & 0 &
+        28-\frac{z}{2} & -1 & -\frac{x}{2}& 
+        \frac{y}{2} & \frac{x}{2} & -\frac{8}{3}
+    \end{array}
+\right ]
+}
+$
+
+\vskip 0.3cm
+\noindent With those notations, one step of (RK4) is equivalent to :
+
+\vskip 0.1cm
+\hskip 0.5cm
+$
+\left [
+\begin{array}{l l}
+    \u_k^0 = \u_k&
+    \k_1 = F_k^0 \u_k^0& 
+    \u_k^1 = \u_k + \frac{\Delta_t}{2} \k_1&
+    \k_2 = F_k^1 \u_k^1& 
+    \u_k^2 = \u_k + \frac{\Delta_t}{2} \k_2&
+    \k_3 = F_k^2 \u_k^2& 
+\u_k^3 = \u_k + \Delta_t} \k_3&
+    \k_4 = F_k^3 \u_k^3& 
+    \multicolumn{2}{l}{\u_{k+1} = \u_k + \dfrac{\Delta_t}{6}\left[ \k_1 + 2\k_2 + 2\k_3 + \k_4 \right] = [I + \Delta_tA_k]\u_k} = M_k \u_k&
+\end{array}
+\right.
+$
+
+\vskip 0.1cm
+\noindent As I failed to expand $A_k$ by hand, I used maple to get the following \sout{nice and compact} expression:
+\begin{multline}
+A_k = \dfrac{1}{24} \left[ 
+    \Delta_t^3\ F_k^3 F_k^2 F_k^1 F_k^0 
+    + 2 \Delta_t^2\left( F_k^3 F_k^2 F_k^1 + F_k^2 F_k^1 F_k^0 \right) 
+    + 4 \Delta_t^1\left( F_k^3 F_k^2 + F_k^2 F_k^1 + F_k^1 F_k^0 \right)\\
+    + 4 \left( F_k^3 + F_k^0 \right) 
+    + 8 \left( F_k^2 + F_k^1 \right) 
+\right]
+\end{multline}
+
+It can be generated with the maple script $model.mw$. Note that with this expression, computing $M_k$ is much more costly than to compute $u_{k+1}$ directly. The matrix coefficients can be computed analyticaly with maple but their expression is way to big to fit nicely in this report.
+
+\vskip 0.3cm
+We then have $\colbox{M_k = I + \Delta_t A_k}$ and $\colbox{\u_{k+1} = M_k\u_k}$. I checked this matrix form by comparing it to my initial RK4 code and it gave exactly the same results given the $\Delta_t$ powers are applied after all matrix multiplications.
+
+\vskip 0.5cm
+\noident At each step $k$ of this algorithm we take into acount 4 steps of local linearization on $f$ at intermediate points $x_k^l$, so model error should be taken in account. Let $\colbox{Q_k = Q \in \mathscr{S}_3^{++}}$ be some constant model error covariance matrix.
+
+\vskip 0.5cm
+\noident $\colbox{\u_k^{obs} = H_k\mathbf{u}^{t}_k + \mathbf{e}_k}$ are our observations, with $H_k$ the observation matrix. At each step we just directly observe the 3D position of the system in original coordinates so there is no additional transformations and $\colbox{H_k = I}$. We observe those positions with a constant observation error covariance matrix $\colbox{R_k = R \in \mathscr{S}_3^{++}}$.
+
+\vskip 0.5cm
+\noident Finally let $\colbox{\u^b = \u_0^t + \epsilon}$ be our approximate initial state with associated covariance matrix $\colbox{P^b \in \mathscr{S}_3^{++}}$. 
+
+\vskip 0.5cm
+\noindent \textbf{Kalman Filter Algorithm :}
+\vskip 0.5cm
+
+\textbf{Initialization}
+
+\colbox{
+$
+\begin{array}{l l l l}
+    & \u^a_0 & = & \u^b &
+    & P^a_0  & = & P^b  &
+\end{array}
+$
+}
+
+\vskip 0.5cm
+
+\textbf{Step k (Forecast - Correction)}
+
+\colbox{
+$
+\begin{array}{l l l l r}
+    & \u_{k+1}^f & = & M_k \u_k^a          & (KF1) &
+    & P_{k+1}^f  & = & M_k P_k^a M_k^T + Q & (KF2) &
+    &            &   &                     &       &
+    & K_{k+1}    & = & P_{k+1}^f \left[ P^f_{k+1} + R_{k+1} \right] ^{-1} & (KF3) &
+    & \u_{k+1}^a & = & \u_{k+1}^f - K_{k+1} \left[ \u_{k+1}^{obs} - \u_{k+1}^f \right]   & (KF4) &
+    & P_{k+1}^a & = & P_{k+1}^f - K_{k+1} P_{k+1}^f   & (KF4) &
+\end{array}
+$
+}
+
+\vskip 0.5cm
+\subsection{Question 5:} 
+\vskip 0.5cm
+
+The continuous cost function associated with our Kalman filter can be written as:
+
+\vskip 0.5cm
+$\colbox{
+    \begin{array}{l l l}
+        \J_c(\u_0) &=& \J_b(\u_0) + \J_c^1(\u_0)&
+                 &=& \dfrac{1}{2} (\uz - \u^b)^TP_b^{-1}(\uz - \u^b)
+    + \dfrac{1}{2} \displaystyle \int_0^T [\u(t)-\uobs(t)]^T R(t)^{-1} [\u(t) - \uobs(t)]  \dt&
+    \end{array}
+}$
+
+where $\u$ is the \textbf{exact continuous solution} of (1) with initial condition $\u_0$.
+
+\vskip 0.5cm
+
+This can be minimized with a gradient descent method, the gradient being computed with the adjoint model or more precisely with corresponding discrete RK4 adjoint code.
+
+\vskip 0.5cm
+We can also approximate this cost function by discretizing with our time step $\Delta_t$ to find the variational approach for this inverse problem:
+
+\vskip 0.5cm
+$\colbox{
+    \begin{array}{l l l}
+        \J_d(\u_0) &=& \J_b(\u_0) + \displaystyle \sum_{k=1}^{N}\J_d^k(\u_0)&
+        &=& \dfrac{1}{2} (\uz - \u^b)^T P_b^{-1} (\uz - \u^b)
+        + \dfrac{\Delta_t}{2} \displaystyle \sum_{k = 1}^N [\u_k-\uobs_k]^T R_k^{-1} [\u_k - \uobs_k]&
+    \end{array}
+}$
+
+where $\u$ is the \textbf{approximated discrete solution} of (1) using RK4 with initial condition $\u_0$.
+
+\vskip 0.5cm
+As $J_d$ is just the sum of strictly convex functions $\J_d^k$, it can be minimized globaly by computing local functional minimization of each $\J_d^k$ using previous obtained optimal value wich is exactly what is done in the Kalman Filter algorithm (each step is a BLUE) but in a time ordered maner for more convenience (discrete model run step by step). Intermediate optimal values have no reason to have something in common with the adjoint method but the \textbf{final value will be the same}.
+
+\vskip 0.5cm
+The only problem is that our discrete model is not perfect and introduces errors so this is \textbf{only true} for $\colbox{Q_k = 0\ \forall k}$ or $\colbox{Q = 0}$ in our case. 
+
+
+
 \section{Discrete model}
 \section{Data assimilation experiments}
 
 \end{document}
 
 
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
