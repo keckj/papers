@@ -7,7 +7,7 @@ function question8
     
     % Solver configuration
     dt   = 0.001; %s
-    Tmax = 30;  %s
+    Tmax = 3;  %s
     n = ceil(Tmax/dt);
 
     % Unknown true state
@@ -88,7 +88,7 @@ function Mk = ModelMatrix(k,x_a,dt)
 end
 
 function Qk = ModelErrorCovariance(k)
-    Qk = 0.5*eye(3);
+    Qk = 0.01*eye(3);
 end
 
 function Hk = ObservationOperator(k)
@@ -96,7 +96,7 @@ function Hk = ObservationOperator(k)
 end
 
 function Rk = ObservationErrorCovariance(k)
-    Rk = 1.0*eye(3);
+    Rk = 0.5*eye(3);
 end
 
 
@@ -104,7 +104,7 @@ function [Xa, Xf, Xobs] = KalmanFilter(x_b, P_b, Yobs, dt, Tmax, ...
     GetObservations, ...
     ModelMatrixes, ModelErrorCovarianceMatrixes, ...
     ObservationOperatorMatrixes, ObservationErrorCovarianceMatrixes)
-    
+
     % Initialization
     n = ceil(Tmax/dt);
     x_a = x_b;
@@ -114,7 +114,16 @@ function [Xa, Xf, Xobs] = KalmanFilter(x_b, P_b, Yobs, dt, Tmax, ...
     Xf = [];
     Xobs = [];
     t = 0;
- 
+    
+    % Parametric Variables
+    useOnlyX = false;    %Use only x-axis sensor data
+    dataAvailable = 0.01; %Proportion of available sensor measures in the whole simulation
+    dataNoiseSigma = 0.5; %sigma_e
+    
+    if(dataNoiseSigma > 0.0)
+        noiseSample = normrnd(0,dataNoiseSigma,n);
+    end
+    
     % Forecast - Correction
     for k=1:n+1
 
@@ -122,7 +131,13 @@ function [Xa, Xf, Xobs] = KalmanFilter(x_b, P_b, Yobs, dt, Tmax, ...
         Qk = ModelErrorCovarianceMatrixes(k);
         Hk = ObservationOperatorMatrixes(k);
         Rk = ObservationErrorCovarianceMatrixes(k);
+        
         Yk = GetObservations(k, Yobs);
+        
+        if(dataNoiseSigma > 0.0)
+            Yk = Yk + noiseSample(k);
+        end
+        
         
         % Forecast
         x_f = Mk*x_a;
@@ -130,13 +145,24 @@ function [Xa, Xf, Xobs] = KalmanFilter(x_b, P_b, Yobs, dt, Tmax, ...
                            
         % Analysis X_f
        
-        HRi = Hk'/ Rk;
-        Kk = (inv(P_f) + HRi * Hk) \ HRi;
-        %Kk = P_f * Hk' \ (Hk * P_f * Hk' + Rk);
-        %Kk = 0.0; (to check if Mk is really a RK4 step ...)
-        
-        x_a = x_f + Kk * (Yk - Hk * x_f);
-        P_a = P_f - Kk * Hk * P_f;
+        if(mod(k,ceil(1/dataAvailable)) == 0)
+            
+            HRi = Hk'/ Rk;
+            Kk = (inv(P_f) + HRi * Hk) \ HRi;
+            %Kk = P_f * Hk' \ (Hk * P_f * Hk' + Rk);
+            %Kk = 0.0; (to check if Mk is really a RK4 step ...)
+            
+            if(useOnlyX)
+                x_a = x_f + Kk * (Yk(1) - Hk * [x_f(1),0,0]');
+            else
+                x_a = x_f + Kk * (Yk - Hk * x_f);
+            end
+            
+            P_a = P_f - Kk * Hk * P_f;
+        else
+            x_a = x_f;
+            P_a = P_f;
+        end;
         
         % Keep values
         Xobs = [Xobs, [t; Hk*Yk]];

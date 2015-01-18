@@ -120,7 +120,7 @@
   \title{
       \bsc{TP Inverse Methods}
       \vskip 1cm
-      {\colorb\textbf{Lorenz Equations}}
+      {\colorb\textbf{Lorenz Attractor}}
       \vskip 1cm
       \colorb\textit{Report}
   }
@@ -202,7 +202,7 @@
 %\tableofcontents
 \clearpage
 
-\section{Theorical work on the continuous model}
+\section{Theoretical work on the continuous model}
 
 \textbf{Lorentz Equations :}
 \vskip 0.2cm
@@ -606,7 +606,7 @@ $$
 \end{equation}
 $$
 
-The only thing that changed in the adjoint model is the expression of $h(t)$, the new adjoint model does no more take into acount the distance between $y$ and $y^{obs}$ or $z$ and $z^{obs}$.
+The only thing that changed in the adjoint model is the expression of $h(t)$, the new adjoint model does no more take into account the distance between $y$ and $y^{obs}$ or $z$ and $z^{obs}$.
 With this new adjoint model, we still have the same expression for the gradient : $\colbox{\nabla \J_x(\uz) = - \wh(0)}$.
 
 
@@ -660,7 +660,7 @@ $$
 \end{equation}
 $$
 
-The adjoint model now takes into acount the distance between the initial conditions.
+The adjoint model now takes into account the distance between the initial conditions.
 
 \vskip 0.5cm
 \subsection{Question 4:} 
@@ -668,12 +668,14 @@ The adjoint model now takes into acount the distance between the initial conditi
 
 Let $\Delta_t > 0,\ \ T = N\Delta_t$ and $\u_k = \left[x_k, y_k, z_k\right]^T$ be the state of the system at time $i\Delta_t\ \forall k \in \llbracket 0,N \rrbracket$. The same notations are used for $\u^{obs}$.
 
-As $(1)$ is an hyperbolic system, there is a need for high order algorithms like Runge-Kutta 4 (RK4).
+\noindent As $(1)$ is an hyperbolic system, there is a need for high order algorithms like Runge-Kutta 4 (RK4): 
 
 \vskip 0.5cm
 \noindent\textbf{Algorithm (RK4):}
+\vskip 0.1cm
 
 $\colbox{\u_0 = \u(0)}$\\
+\vskip 0.1cm
 \indent for k from $0$ to $N-1$:\\
 \vskip 0.1cm
 \hskip 0.5cm
@@ -713,10 +715,10 @@ F(\u) =
 }
 $
 
-\vskip 0.3cm
+\vskip 0.5cm
 \noindent With those notations, one step of (RK4) is equivalent to :
 
-\vskip 0.1cm
+\vskip 0.4cm
 \hskip 0.5cm
 $
 \left [
@@ -734,7 +736,7 @@ $
 \right.
 $
 
-\vskip 0.1cm
+\vskip 0.3cm
 \noindent As I failed to expand $A_k$ by hand, I used maple to get the following \sout{nice and compact} expression:
 \begin{multline}
 A_k = \dfrac{1}{24} \left[ 
@@ -746,13 +748,13 @@ A_k = \dfrac{1}{24} \left[
 \right]
 \end{multline}
 
-It can be generated with the maple script $model.mw$. Note that with this expression, computing $M_k$ is much more costly than to compute $u_{k+1}$ directly. The matrix coefficients can be computed analyticaly with maple but their expression is way to big to fit nicely in this report.
+It can be generated with the maple script $model.mw$. Note that with this expression, computing $M_k$ is much more costly than to compute $u_{k+1}$ directly. The matrix coefficients can be computed analytically with maple but their expression is way to big to fit nicely in this report.
 
 \vskip 0.3cm
 We then have $\colbox{M_k = I + \Delta_t A_k}$ and $\colbox{\u_{k+1} = M_k\u_k}$. I checked this matrix form by comparing it to my initial RK4 code and it gave exactly the same results given the $\Delta_t$ powers are applied after all matrix multiplications.
 
 \vskip 0.5cm
-\noident At each step $k$ of this algorithm we take into acount 4 steps of local linearization on $f$ at intermediate points $x_k^l$, so model error should be taken in account. Let $\colbox{Q_k = Q \in \mathscr{S}_3^{++}}$ be some constant model error covariance matrix.
+\noident At each step $k$ of this algorithm we take into account 4 steps of local linearization on $f$ at intermediate points $x_k^l$, so model error should be taken in account. Let $\colbox{Q_k = Q \in \mathscr{S}_3^{++}}$ be some constant model error covariance matrix.
 
 \vskip 0.5cm
 \noident $\colbox{\u_k^{obs} = H_k\mathbf{u}^{t}_k + \mathbf{e}_k}$ are our observations, with $H_k$ the observation matrix. At each step we just directly observe the 3D position of the system in original coordinates so there is no additional transformations and $\colbox{H_k = I}$. We observe those positions with a constant observation error covariance matrix $\colbox{R_k = R \in \mathscr{S}_3^{++}}$.
@@ -813,7 +815,7 @@ where $\u$ is the \textbf{exact continuous solution} of (1) with initial conditi
 
 This can be minimized with a gradient descent method, the gradient being computed with the adjoint model or more precisely with corresponding discrete RK4 adjoint code.
 
-\vskip 0.5cm
+\clearpage
 We can also approximate this cost function by discretizing with our time step $\Delta_t$ to find the variational approach for this inverse problem:
 
 \vskip 0.5cm
@@ -828,16 +830,191 @@ $\colbox{
 where $\u$ is the \textbf{approximated discrete solution} of (1) using RK4 with initial condition $\u_0$.
 
 \vskip 0.5cm
-As $J_d$ is just the sum of strictly convex functions $\J_d^k$, it can be minimized globaly by computing local functional minimization of each $\J_d^k$ using previous obtained optimal value wich is exactly what is done in the Kalman Filter algorithm (each step is a BLUE) but in a time ordered maner for more convenience (discrete model run step by step). Intermediate optimal values have no reason to have something in common with the adjoint method but the \textbf{final value will be the same}.
+As $J_d$ is just the sum of strictly convex functions $\J_d^k$, it can be minimized globally by computing local functional minimization of each $\J_d^k$ using previous obtained optimal value which is exactly what is done in the Kalman Filter algorithm (each step is a BLUE) but in a time ordered manner for more convenience (discrete model run step by step). Intermediate optimal values have no reason to have something in common with the adjoint method but the \textbf{final value will be the same}.
 
 \vskip 0.5cm
 The only problem is that our discrete model is not perfect and introduces errors so this is \textbf{only true} for $\colbox{Q_k = 0\ \forall k}$ or $\colbox{Q = 0}$ in our case. 
 
-
+\clearpage
 
 \section{Discrete model}
+
+\vskip 0.5cm
+\subsection{Question 6:} 
+\vskip 0.5cm
+
+For the discretization I used a Runge-Kutta 4 scheme. The Lorenz attractor (1) is an hyperbolic system and thus very chaotic, simple Euler or RK2 scheme were not able to reproduce precisely the reference curves even for very small temporal step $\Delta_t$. The Runge-Kutta 4 scheme has been extensively described in question 4 and has been implemented in $RK4.m$.
+
+\vskip 0.5cm
+\subsection{Question 7:} 
+\vskip 0.5cm
+
+The last algorithm is called by $question6.m$ which call it with the reference initial condition and final time $30s$. Here are the results :
+
+\begin{figure}[H]
+   \includegraphics[width=16cm]{results.png}
+   \caption{Reference run with RK4 and $\Delta_t = 10^{-3}$.}
+\end{figure}
+
+The results are not exactly the same but we have no information on the method used so I tend to trust more my Runge-Kutta 4 which converges to a fixed solution with $\Delta_t \leq 10^{-3}$.
+
+\clearpage
+
 \section{Data assimilation experiments}
 
+In all this section I will use unless otherwise specified $\colbox{\Delta_t = 10^{-3}}$, $\colbox{P_b = diag(\sigma_b^2, \sigma_b^2, \sigma_b^2)}$, $\colbox{Q = diag(\sigma_q^2, \sigma_q^2, \sigma_q^2)}$ and $\colbox{R = diag(\sigma_r^2, \sigma_r^2, \sigma_r^2)}$. 
+Our initial guess seems not so bad (background) so I fix $\colbox{\sigma_b^2 = 1m^2}$.
+Model error variance is fixed at $\colbox{\sigma_q^2 = 0.01 m^2}$ because I trust my Runge-Kutta 4 discrete model and because the continuous model equations and parameters are exactly known. 
+Measurement error variance strongly depends on sensor type and is initially fixed at $\colbox{\sigma_r^2 = 0.1m^2}$. 
+
+\subsection{Question 8: All variables - All data - No noise}
+
+The Kalman Filter algorithm is initialized with our background $\u^b$, observations are perfect and obtained by a previous run of Runge-Kutta 4 with the true initial condition $\u_0$. Here $\sigma_r^2$ should be zero but it has no real impact as it converges in very few iterations on the reference trajectory even with high values. This has been implemented in matlab file $question8.m$.
+
+\vskip 0.3cm
+Here is what I obtain for $T = 0.05s$ and $T = 3s$ :
+
+\begin{figure}[H]
+   \includegraphics[width=16cm]{Q8a.png}
+   \caption{Run with $T = 0.05s$.}
+\end{figure}
+
+On the 4 top leftmost plots, the true trajectory is in blue, the background trajectory in green, the analysis in red and the observations are in black. The four other plots are here for distance and error comparison. On the Butterfly plot and the "True State vs Analysis" plot we clearly see that \textbf{only 3 iterations are needed so that analysis and true state are perfectly matching}.
+
+\begin{figure}[H]
+   \includegraphics[width=16cm]{Q8b.png}
+   \caption{Run with $T = 3s$.}
+\end{figure}
+
+With extended time view we can see that analysis and true state keep superimposed except at some critical regions around time $T = 1.3s$ and $T = 2.6s$ where the squared local error can go up to $0.1m^2$. This is nothing compared to what the background trajectory would give us at those points :  the "Background vs True State" graph gives us roughly a local squared error of respectively $200m^2$ and $180m^2$. \textbf{Thus the Kalman Filter implementation is stable and the twin experiment passes without any problem.}
+
+\clearpage
+\subsection{Question 9: Only one variable - All data - No noise}
+
+\vskip 0.5cm
+
+Now our sensor is broken and we can just observe one variable $x$. This can be simulated by configuring line $119$ of script $question8.m$ to true.
+Here is what I obtain :
+
+\vskip 0.5cm
+
+\begin{figure}[H]
+   \includegraphics[width=16cm]{Q9.png}
+   \caption{Only $x_{obs}$ is used and $T = 3s$.}
+\end{figure}
+
+\vskip 0.5cm
+
+A quick look to any of the plots tells us that it was \textbf{really a bad idea}. The system is so hyperbolic that readjusting only on one axe makes everything explode in few iterations on the other axes ($\norm{\u_b - \u_t}_{\infty}^2 \simeq 230 m^2$ vs $\norm{\u_a - \u_t}_{\infty}^2 \simeq 500000 m^2)$. This entails that even $x_a$ is not a good approximation of $x_t$ anymore, and in fact it is even worse than our original background trajectory $x_b$ when we look at the first graph. \textbf{Conclusion: Just buy new sensors.}
+
+\clearpage
+\subsection{Question 10: All variables - Some data - No noise}
+
+In real life applications, all sensors do have a response time and can not give any feedback over a certain frequency. Instead of dealing with a frequency we can just drop out some measures every $K$ temporal steps corresponding to a duration without data $K \Delta_t$ defining this frequency.
+This can be configured on line $120$ in the same matlab file as before as a ratio of available data $\xi \in\ ]0,1]$.
+
+\vskip 0.3cm
+\noindent Here are the results obtained for various values of $\xi$ :
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=12cm]{Q10a.png}
+   \caption{$\xi = 0.1$}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=12cm]{Q10b.png}
+   \caption{$\xi = 0.01$}
+\end{figure}
+
+Without noise this parameter is not interesting because it \textbf{just delays the rapid convergence of the Kalman Filter with perfect observations} (3 steps) that we have seen before in question 8.
+
+\clearpage
+\subsection{Question 10: All variables - All data - Gaussian noise}
+
+\vskip 0.3cm
+Data extracted from sensors are never perfect so let us try to corrupt them with some zero mean Gaussian noise with variance $\sigma_e$. This can be changed on line $121$ and the measurement error variance $\sigma_r$ can be changed on line $91$ as well.
+
+\subsubsection{Good sensor}
+
+\vskip 0.3cm
+In this section we have a very good and costly laser based position sensor with given worst $\sigma_r^2 = 10^{-2}m^2$ within estimated speed window. We generate noise with $\sigma_e = \sigma_q$ to mimic such a sensor.
+
+\vskip 0.5cm
+\begin{figure}[H]
+   \includegraphics[width=16cm]{Q11a.png}
+   \caption{$\sigma_e^2 = \sigma_r^2 = 0.01 m^2$}
+\end{figure}
+
+\vskip 0.5cm
+As we could have expected we can barely see noise in the results, the Kalman Filter is still doing its job with those quite perfect input data !
+
+\clearpage 
+\subsubsection{Cheap sensor}
+
+\vskip 0.3cm
+Now we take a cheap real time segmentation based position retrieval technique with estimated worst $\sigma_r^2 = 0.5m^2$ within estimated background speed range. As before we generate noise with $\sigma_e = \sigma_q$ to simulate such incoming sensor data.
+
+\vskip 0.5cm
+\begin{figure}[H]
+   \includegraphics[width=16cm]{Q11b.png}
+   \caption{$\sigma_e^2 = \sigma_r^2 = 0.5m^2$}
+\end{figure}
+\vskip 0.5cm
+
+We really see that even if the sensor data are really noisy we can still extract a much better trajectory when compared to the background trajectory. 
+\textbf{The Kalman Filter is really powerful for this application}, we can check it like before with $\norm{\u_b - \u_t}_{\infty}^2 \simeq 230 m^2$ vs $\norm{\u_a - \u_t}_{\infty}^2 \simeq 0.8 m^2$ if we exclude the initial background estimation.
+
+\clearpage
+\subsubsection{Badly calibrated sensor}
+
+\vskip 0.3cm
+Finally let us take some cheap sensor that is falsely advertised as very accurate with $\sigma_r^2 = 0.01 m^2$ like the first one but with real accuracy $\sigma_e^2 = 0.5m^2$.
+
+\vskip 0.5cm
+\begin{figure}[H]
+   \includegraphics[width=16cm]{Q11c.png}
+   \caption{$\sigma_e^2 = 0.5^2$ and $\sigma_r^2 = 0.01m^2$}
+\end{figure}
+\vskip 0.5cm
+
+The algorithm now trust very noisy data and tries to get as close as it can to sensor sampled positions which results in noisy trajectories, the \textbf{model prevision is not taken much into account}.
+
+\clearpage
+\subsection{All variables - Some data - Gaussian noise}
+
+For an overview of real life applications let us look at noisy sensor data that is not always available ($\xi < 1$) with our segmentation based sensor ($\sigma_r^2 = 0.5m^2$).
+
+\begin{figure}[H]
+   \includegraphics[width=14cm]{Q12a.png}
+   \caption{$\sigma_e^2 = \sigma_r^2 = 0.5m^2$ and $\xi = 0.1$}
+\end{figure}
+
+\begin{figure}[H]
+   \includegraphics[width=14cm]{Q12b.png}
+   \caption{$\sigma_e^2 = \sigma_r^2 = 0.5m^2$ and $\xi = 0.01$}
+\end{figure}
+
+\textbf{Even with only one percent of data we still have way better results than the original estimated background trajectory (by an order of 10)}. 
+
+\clearpage
+\section {Conclusion :}
+
+Implementing Kalman Filter is not so easy if the model is not linear. The model matrix $M_k$ was not easy to find. Even with local linearization and simple algorithms slightly more complicated than an Euler scheme, it rapidly becomes impossible to compute it by hand. I was often confronted to numerical instabilities (order of operations ...) or badly conditioned matrix and thus I lost much time in the code. But in the end all was working and I really discovered the power of data assimilation through the Kalman Filtering. I wanted to try the adjoint method by generating the adjoint RK4 code in C with tapenade but I gave up as time is too precious in this part of the year and this would have bring additional implementation considerations and bugs on the table.
+
+\section {Source code overview :}
+
+\begin{itemize}
+    \item $Question6.m$ : Question 6 and 7 matlab implementation
+    \item $Question8.m$ : Question 8 to 10 matlab implementation
+    \item $Lorenz.m$ : Matlab implementation of the Lorenz Attractor
+    \item $RK4.m$    : Matlab implementation of the Runge-Kutta 4 algorithm
+    \item $RK4.c$    : C implementation of the Runge-Kutta 4 algorithm
+    \item $RK4\_adjoint.c$    : C adjoint of the Runge-Kutta 4 algorithm generated by tapenade
+    \item $model.mw$ : Maple computation of the model matrix
+    \item $img/*.png$ : All the images used in this report
+
+\end{itemize}
+
 \end{document}
-
-

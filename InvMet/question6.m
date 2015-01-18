@@ -41,7 +41,7 @@ function custom_plot(u_t)
     ylabel('z');
     
     subplot(3,5,[3,4,5, 8,9,10, 13,14,15]);
-    plot(x,z,'cyan');
+    plot(x,z,'blue');
     title('Butterfly z(x)');
     xlabel('x');
     ylabel('z');

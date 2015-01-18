@@ -11,7 +11,7 @@ function Y_t = RK4(Y_0, f, dt, tmax)
     Y = Y_0;
     t = 0.0;
     
-    Y_t = [t;Y_0]; %do not keep the starting point
+    Y_t = [t;Y_0];
     n = ceil(tmax/dt);
     
      for k=1:n
