@@ -199,7 +199,8 @@
 
 \maketitle
 
-%\tableofcontents
+\clearpage
+\tableofcontents
 \clearpage
 
 \section{Theoretical work on the continuous model}
@@ -744,8 +745,7 @@ A_k = \dfrac{1}{24} \left[
     + 2 \Delta_t^2\left( F_k^3 F_k^2 F_k^1 + F_k^2 F_k^1 F_k^0 \right) 
     + 4 \Delta_t^1\left( F_k^3 F_k^2 + F_k^2 F_k^1 + F_k^1 F_k^0 \right)\\
     + 4 \left( F_k^3 + F_k^0 \right) 
-    + 8 \left( F_k^2 + F_k^1 \right) 
-\right]
++ 8 \left( F_k^2 + F_k^1 \right) ]
 \end{multline}
 
 It can be generated with the maple script $model.mw$. Note that with this expression, computing $M_k$ is much more costly than to compute $u_{k+1}$ directly. The matrix coefficients can be computed analytically with maple but their expression is way to big to fit nicely in this report.
@@ -879,7 +879,7 @@ Here is what I obtain for $T = 0.05s$ and $T = 3s$ :
    \caption{Run with $T = 0.05s$.}
 \end{figure}
 
-On the 4 top leftmost plots, the true trajectory is in blue, the background trajectory in green, the analysis in red and the observations are in black. The four other plots are here for distance and error comparison. On the Butterfly plot and the "True State vs Analysis" plot we clearly see that \textbf{only 3 iterations are needed so that analysis and true state are perfectly matching}.
+On the 4 top leftmost plots, the true trajectory is in blue, the background trajectory in green, the analysis in red and the observations are in black. The four other plots are here for distance and error comparison. On the Butterfly plot and the "True State vs Analysis" plot we clearly see that \textbf{only 3 iterations are needed so that analysis and true state are perfectly matching}. All images in this report are available in  original size in the subfolder $img/$.
 
 \begin{figure}[H]
    \includegraphics[width=16cm]{Q8b.png}
@@ -905,7 +905,7 @@ Here is what I obtain :
 
 \vskip 0.5cm
 
-A quick look to any of the plots tells us that it was \textbf{really a bad idea}. The system is so hyperbolic that readjusting only on one axe makes everything explode in few iterations on the other axes ($\norm{\u_b - \u_t}_{\infty}^2 \simeq 230 m^2$ vs $\norm{\u_a - \u_t}_{\infty}^2 \simeq 500000 m^2)$. This entails that even $x_a$ is not a good approximation of $x_t$ anymore, and in fact it is even worse than our original background trajectory $x_b$ when we look at the first graph. \textbf{Conclusion: Just buy new sensors.}
+The results are not surprising, by looking at less variables \textbf{the convergence is just slowed down}, and the maximum error after $T=1.5s$ is comparable to the trajectory with all variables ($\norm{\u_b - \u_t}_{\infty}^2 \simeq 230 m^2$ vs $\norm{\u_a - \u_t}_{\infty}^2 \simeq 0.1 m^2)$. This is true because $y_a$ and $z_a$ are greatly impacted by variations of $x_a$ in the model (all variables are coupled). 
 
 \clearpage
 \subsection{Question 10: All variables - Some data - No noise}
@@ -931,7 +931,7 @@ This can be configured on line $120$ in the same matlab file as before as a rati
 Without noise this parameter is not interesting because it \textbf{just delays the rapid convergence of the Kalman Filter with perfect observations} (3 steps) that we have seen before in question 8.
 
 \clearpage
-\subsection{Question 10: All variables - All data - Gaussian noise}
+\subsection{Question 11: All variables - All data - Gaussian noise}
 
 \vskip 0.3cm
 Data extracted from sensors are never perfect so let us try to corrupt them with some zero mean Gaussian noise with variance $\sigma_e$. This can be changed on line $121$ and the measurement error variance $\sigma_r$ can be changed on line $91$ as well.
@@ -987,23 +987,46 @@ The algorithm now trust very noisy data and tries to get as close as it can to s
 For an overview of real life applications let us look at noisy sensor data that is not always available ($\xi < 1$) with our segmentation based sensor ($\sigma_r^2 = 0.5m^2$).
 
 \begin{figure}[H]
+    \centering
    \includegraphics[width=14cm]{Q12a.png}
    \caption{$\sigma_e^2 = \sigma_r^2 = 0.5m^2$ and $\xi = 0.1$}
 \end{figure}
 
 \begin{figure}[H]
+    \centering
    \includegraphics[width=14cm]{Q12b.png}
    \caption{$\sigma_e^2 = \sigma_r^2 = 0.5m^2$ and $\xi = 0.01$}
 \end{figure}
 
-\textbf{Even with only one percent of data we still have way better results than the original estimated background trajectory (by an order of 10)}. 
+\textbf{Even with only one percent of data we still have way better results than the original estimated background trajectory (by an order of magnitude of 10 in most critical regions)}. 
 
 \clearpage
-\section {Conclusion :}
+\subsection{Only one variable - Some data - Gaussian noise}
 
-Implementing Kalman Filter is not so easy if the model is not linear. The model matrix $M_k$ was not easy to find. Even with local linearization and simple algorithms slightly more complicated than an Euler scheme, it rapidly becomes impossible to compute it by hand. I was often confronted to numerical instabilities (order of operations ...) or badly conditioned matrix and thus I lost much time in the code. But in the end all was working and I really discovered the power of data assimilation through the Kalman Filtering. I wanted to try the adjoint method by generating the adjoint RK4 code in C with tapenade but I gave up as time is too precious in this part of the year and this would have bring additional implementation considerations and bugs on the table.
+Finally let us observe just the system variable $x$ with exactly the two same set of parameters as before to see how the Kalman Filter will respond.
 
-\section {Source code overview :}
+\begin{figure}[H]
+    \centering
+   \includegraphics[height=7cm]{Q13a.png}
+   \caption{Only $x^{obs}$ is used, $\sigma_e^2 = \sigma_r^2 = 0.5m^2$ and $\xi = 0.1$}
+\end{figure}
+
+With $10\%$ of very noisy data of only one variable results are really interesting ! Mean error between analysis and true state \textbf{really exhibits the power of Kalman filtering}.
+
+\begin{figure}[H]
+    \centering
+   \includegraphics[height=8cm]{Q13b.png}
+   \caption{Only $x^{obs}$ is used, $\sigma_e^2 = \sigma_r^2 = 0.5m^2$ and $\xi = 0.01$}
+\end{figure}
+
+\textbf{Here we have finally reached the limit of our filter}, there is not enough sensor data samples to sufficiently correct erroneous trajectories. We clearly see it around the critical region $t = 2.6s$. Needless to say, it is still far better than the original background trajectory without any corrections !
+
+\clearpage
+\section {Conclusion}
+
+Implementing Kalman Filter is not so easy if the model is not linear. The model matrix $M_k$ was not easy to find. Even with local linearization and simple algorithms slightly more complicated than an Euler scheme, it rapidly becomes impossible to compute it by hand. I was often confronted to numerical instabilities (order of operations ...) or badly conditioned matrix and thus I lost much time in the code. But in the end all was working and I really experienced the power of data assimilation through Kalman filtering. I wanted to try the adjoint method by generating the adjoint RK4 code in C with tapenade but I gave up as time is too precious in this part of the year and this would have bring additional implementation considerations and bugs on the table.
+
+\section {Source code and other files overview}
 
 \begin{itemize}
     \item $Question6.m$ : Question 6 and 7 matlab implementation

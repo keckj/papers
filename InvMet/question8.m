@@ -96,7 +96,7 @@ function Hk = ObservationOperator(k)
 end
 
 function Rk = ObservationErrorCovariance(k)
-    Rk = 0.5*eye(3);
+    Rk = 0.1*eye(3);
 end
 
 
@@ -116,9 +116,9 @@ function [Xa, Xf, Xobs] = KalmanFilter(x_b, P_b, Yobs, dt, Tmax, ...
     t = 0;
     
     % Parametric Variables
-    useOnlyX = false;    %Use only x-axis sensor data
-    dataAvailable = 0.01; %Proportion of available sensor measures in the whole simulation
-    dataNoiseSigma = 0.5; %sigma_e
+    useOnlyX = true;    %Use only x-axis sensor data
+    dataAvailable = 1.0; %Proportion of available sensor measures in the whole simulation
+    dataNoiseSigma = 0.0; %sigma_e
     
     if(dataNoiseSigma > 0.0)
         noiseSample = normrnd(0,dataNoiseSigma,n);
@@ -153,7 +153,7 @@ function [Xa, Xf, Xobs] = KalmanFilter(x_b, P_b, Yobs, dt, Tmax, ...
             %Kk = 0.0; (to check if Mk is really a RK4 step ...)
             
             if(useOnlyX)
-                x_a = x_f + Kk * (Yk(1) - Hk * [x_f(1),0,0]');
+                x_a = x_f + Kk * ([Yk(1),0,0]' - Hk*[x_f(1),0,0]');
             else
                 x_a = x_f + Kk * (Yk - Hk * x_f);
             end
