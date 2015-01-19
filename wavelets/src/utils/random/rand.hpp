@@ -1,23 +1,15 @@
 
+#ifndef RAND_H
+#define RAND_H
+
 #include <cstdlib>
 #include <time.h>
 
 namespace Random {
-            
-                void init() {
-                    std::cout << "[Random] Seed init !" << std::endl;
-                    srand(time(NULL));
-                }
-
-                float randf() {
-                        return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-                }
-
-                float randf(float LO, float HI) {
-                        return LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
-                }
-                
-               int randi(int LO, int HI) {
-                        return LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
-                }
+    void init();
+    float randf();
+    float randf(float LO, float HI);
+    int randi(int LO, int HI);
 };
+
+#endif /* end of include guard: RAND_H */

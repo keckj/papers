@@ -10,8 +10,7 @@ class TreeNode {
         explicit TreeNode(int j, int k, T inf, T sup, unsigned int nChilds, bool isFillable);
         TreeNode(const TreeNode<T> &other);
         TreeNode<T> & operator= (const TreeNode<T> &other);
-        ~TreeNode();
-       
+        virtual ~TreeNode();
 
         int j() const;
         int level() const;

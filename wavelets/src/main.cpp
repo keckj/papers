@@ -6,24 +6,46 @@
 #include "interval.hpp"
 #include "integerGrid.hpp"
 #include "binaryTreeNode.hpp"
+#include "sample.hpp"
+#include "functionSample.hpp"
+#include "point.hpp"
+#include "interval.hpp"
+#include "gnuplot.hpp"
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
+#include <conio.h>   //for getch(), needed in wait_for_key()
+#include <windows.h> //for Sleep()
+void sleep(int i) { Sleep(i*1000); }
+#endif
+
+void wait_for_key();
 
 void header();
 void footer();
 
+float F(float t) {
+    return sin(10*t);
+}
+
 int main(int argc, char **argv) {
 
     header();
-    
+
     Random::init();
 
     Globals::init();
     Globals::check();
     
-    Interval<float> unitInterval(0.0f,1.0f);
-    
+    Gnuplot gp("tee plot.gp | gnuplot -persist");
+
+    Interval<float> unitInterval(-1.0f,1.0f);
+
     BinaryTreeNode<float> *node = new BinaryTreeNode<float>(0,0,0.0,1.0);
     std::cout << *node << std::endl;
-    
+
+    FunctionSample<100u, float> sample(unitInterval, F);
+    sample.plot(gp);
+
     footer();
 
     return EXIT_SUCCESS;
@@ -46,4 +68,21 @@ void header() {
 void footer() {
     std::cout << std::endl;
     std::cout << "All done, exiting !" << std::endl;
+}
+
+void wait_for_key ()
+{
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
+    std::cout << std::endl << "Press any key to continue..." << std::endl;
+
+    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+    _getch();
+#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
+    std::cout << std::endl << "Press ENTER to continue..." << std::endl;
+
+    std::cin.clear();
+    std::cin.ignore(std::cin.rdbuf()->in_avail());
+    std::cin.get();
+#endif
+    return;
 }

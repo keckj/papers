@@ -11,6 +11,9 @@ set(WAVELETS_MINOR_VERSION 1)
 set(WAVELETS_PATCH_VERSION 0)
 set(WAVELETS_VERSION "${WAVELETS_MAJOR_VERSION}.${WAVELETS_MINOR_VERSION}.${WAVELETS_PATCH_VERSION}")
 
+find_package(Boost COMPONENTS system filesystem iostreams REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 #Compiler options
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message("-- Compiling for ${CMAKE_SYSTEM_NAME} with Clang...")
@@ -90,10 +93,12 @@ list(REMOVE_DUPLICATES LOCAL_INCLUDE_DIRS)
 #Header directories
 include_directories(${LOCAL_INCLUDE_DIRS})
 include_directories(SYSTEM 
+    ${Boost_INCLUDEDIR} #Boost
     )
 
 #Library directories
 link_directories(
+    ${BOOST_LIBRARYDIR} #Boost
     )
 
 # Create static library (all code excluding mains and Cuda precompiled code)
@@ -113,7 +118,8 @@ foreach(main_source ${executable_sources})
     target_link_libraries(
         ${exec_name} 
         ${CORE_LIB}          #Core
-        )
+        ${Boost_LIBRARIES}   #Boost
+    )
 endforeach()
 
 #Tests
@@ -123,6 +129,7 @@ foreach(main_source ${test_sources})
     target_link_libraries(
         ${exec_name} 
         ${CORE_LIB}          #Core
+        ${Boost_LIBRARIES}   #Boost
         )
 endforeach()
 
