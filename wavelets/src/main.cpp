@@ -38,13 +38,16 @@ int main(int argc, char **argv) {
     
     Gnuplot gp("tee plot.gp | gnuplot -persist");
 
-    Interval<float> unitInterval(-1.0f,1.0f);
+    Interval<float> unitInterval(0.0f,1.0f);
+    Interval<float> halfInterval(0.25f,0.75f);
 
-    BinaryTreeNode<float> *node = new BinaryTreeNode<float>(0,0,0.0,1.0);
-    std::cout << *node << std::endl;
+    BinaryTreeNode<float> *tree = new BinaryTreeNode<float>(1,1,0.0,1.0);
 
-    FunctionSample<100u, float> sample(unitInterval, F);
-    sample.plot(gp);
+    FunctionSample<1000u, float> sample(halfInterval, F);
+    for (unsigned int i = 0; i < 1000; i++) {
+        tree->insert(sample[i],2);
+    }
+    //sample.plot(gp);
 
     footer();
 

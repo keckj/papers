@@ -3,6 +3,7 @@
 #define TREENODE_H
 
 #include <sstream>
+#include "point.hpp"
 
 template <typename T>
 class TreeNode {
@@ -22,7 +23,7 @@ class TreeNode {
         T sup() const;
         T center() const;
 
-        T value() const;
+        Point<T> point() const;
         bool isFilled() const;
         bool isFillable() const;
 
@@ -33,11 +34,13 @@ class TreeNode {
         
         TreeNode<T>*& operator[](unsigned int childId);
 
-        T setValue(T value);
-
+        Point<T> setPoint(const T &point);
         
         virtual std::string toString() const;
+
         virtual TreeNode<T>* clone() const = 0;
+        virtual void insert(const Point<T> &pt, unsigned int j = 0u) = 0;
+        virtual int computeOffset(const Point<T> &pt, unsigned int j) = 0;
 
     protected:
         unsigned int _level;
@@ -49,7 +52,7 @@ class TreeNode {
         TreeNode **_childs;
     
         bool _isFillable, _isFilled;
-        T _value;
+        Point<T> _point;
 };
 
 
@@ -64,7 +67,7 @@ TreeNode<T>::TreeNode(int j, int k, T inf, T sup, unsigned int nChilds, bool isF
     _level(j), _offset(k),
     _inf(inf), _sup(sup), _center((_inf+_sup)/T(2)),
     _nChilds(nChilds), _childs(nullptr),
-    _isFillable(isFillable), _isFilled(false), _value(0)
+    _isFillable(isFillable), _isFilled(false), _point()
 {
     assert(inf <= sup);
 
@@ -79,7 +82,7 @@ TreeNode<T>::TreeNode(const TreeNode<T> &other) :
     _level(other.level()), _offset(other.offset()),
     _inf(other.inf()), _sup(other.sup()), _center((_inf+_sup)/T(2)),
     _nChilds(other.nChilds()), _childs(nullptr),
-    _isFillable(other.isFillable()), _isFilled(other.isFilled()), _value(other.value())
+    _isFillable(other.isFillable()), _isFilled(other.isFilled()), _point(other.point())
 {
     _childs = new TreeNode<T>*[_nChilds];
     for (unsigned int i = 0; i < this->nChilds(); i++) {
@@ -97,7 +100,7 @@ TreeNode<T>& TreeNode<T>::operator= (const TreeNode<T> &other) {
     _nChilds = other.nChilds();
     _isFillable = other.isFillable();
     _isFilled = other.isFilled();
-    _value = other.value();
+    _point = other.point();
 
     delete [] _childs;
     _childs = nullptr;
@@ -147,8 +150,8 @@ template <typename T>
 	 return _center;
 }
 template <typename T>
- T TreeNode<T>::value() const {
-	 return _value;
+ Point<T> TreeNode<T>::point() const {
+	 return _point;
 }
 template <typename T>
  bool TreeNode<T>::isFilled() const {
@@ -187,9 +190,9 @@ TreeNode<T>* TreeNode<T>::operator()(T position) const {
 }
 
 template <typename T>
-T TreeNode<T>::setValue(T value) {
-    T buffer = _value;
-    _value = value;
+Point<T> TreeNode<T>::setPoint(const T &point) {
+    T buffer = _point;
+    _point = point;
     return buffer;
 }
 
@@ -199,7 +202,7 @@ std::string TreeNode<T>::toString() const {
     ss << "TreeNode (" << this->level() << "," << this->offset() << ")" << std::endl;
     ss << "\tInterval [" << this->inf() << "," << this->sup() << "]" << std::endl;
     ss << "\tCenter x = " << this->center() << std::endl;
-    ss << "\tFillable = " << this->isFillable() << "\t Filled = " << this->isFilled() << "\t Value = " << this->value() << std::endl;
+    ss << "\tFillable = " << this->isFillable() << "\t Filled = " << this->isFilled() << "\t Point = " << this->point() << std::endl;
     ss << "\t" << "Childs count : " << this->nChilds() << std::endl;
     return ss.str();
 }
