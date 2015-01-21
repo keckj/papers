@@ -519,8 +519,6 @@ unsigned int TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b,
     unsigned int newColumn = column;
     unsigned int N = validPositions.size();
 
-    std::cout << "column " << column << std::endl;
-
     if(this->isValid()) {
         for (unsigned int i = 0; i < N; i++) {
             A(i,column) = (waveletMapper(this->level(), this->offset()))(this->level(), this->offset(), validPositions[i]);

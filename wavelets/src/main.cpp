@@ -15,6 +15,7 @@
 #include "gnuplot.hpp"
 #include "deslaurierDubuc.hpp"
 #include "waveletMapper.hpp"
+#include "waveletTree.hpp"
     
 void header();
 void footer();
@@ -43,7 +44,7 @@ int main(int argc, char **argv) {
     //sample.plot(gp);
     
     BinaryTreeNode<float> *tree = new BinaryTreeNode<float>(1,1,unitInterval,nullptr);
-    for (unsigned int i = 0; i < 30; i++) {
+    for (unsigned int i = 0; i < 100; i++) {
         tree->insert(sample[i],1);
     } 
     tree->plot(gp);
@@ -58,22 +59,25 @@ int main(int argc, char **argv) {
     //db.plot(gp,100,1,1);
     
     unsigned int n = tree->countValidNodes();
-    std::cout << n << std::endl;
     
     using Eigen::VectorXf;
     using Eigen::MatrixXf;
     MatrixXf A = MatrixXf::Random(n,n);
     VectorXf b = VectorXf::Random(n);
+
     tree->fillSystem(A,b,simpleDDTreeMapper);
+    VectorXf coefficients = A.partialPivLu().solve(b);
 
-
-    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
-    std::cout << A.format(CleanFmt) << std::endl;
+    WaveletTree<float> *waveletTree = WaveletTree<float>::makeTree(tree, simpleDDTreeMapper, coefficients);
 
     footer();
 
     return EXIT_SUCCESS;
 }
+    
+//Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+//std::cout << x.format(CleanFmt) << std::endl;
+    
 
 void header() {
     std::cout << std::endl;
