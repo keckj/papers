@@ -8,7 +8,7 @@ template <typename T>
 class BinaryTreeNode : public TreeNode<T> {
 
     public:
-        explicit BinaryTreeNode(int j, int k, T inf, T sup);
+        explicit BinaryTreeNode(int j, int k, Interval<T> interval, const TreeNode<T> *father);
         BinaryTreeNode(const BinaryTreeNode<T> &other);
         BinaryTreeNode<T> & operator= (const BinaryTreeNode<T> &other);
         ~BinaryTreeNode();
@@ -17,12 +17,14 @@ class BinaryTreeNode : public TreeNode<T> {
         
         virtual TreeNode<T>* clone() const override;
         virtual void insert(const Point<T> &pt, unsigned int j = 0u) override;
+        virtual void makeChilds() override;
         virtual int computeOffset(const Point<T> &pt, unsigned int j) override;
+        virtual unsigned int computeChildId(T position) override;
 };
        
 template <typename T>
-BinaryTreeNode<T>::BinaryTreeNode(int j, int k, T inf, T sup) :
-    TreeNode<T>(j,k,inf,sup,2u,true) {
+BinaryTreeNode<T>::BinaryTreeNode(int j, int k, Interval<T> interval, const TreeNode<T>* father) :
+    TreeNode<T>(j,k,interval,father,2u,true) {
 }
 
 template <typename T>
@@ -44,10 +46,10 @@ TreeNode<T>* BinaryTreeNode<T>::clone() const {
         
 template <typename T>
 bool BinaryTreeNode<T>::canBeFather(const Point<T> &pt, unsigned int j, int k) {
-    assert(pt.x >= this->inf() && pt.x <= this->sup());
+    assert(this->_interval.contains(pt.x));
 
-    std::cout << "Tree node :  j:" << this->level() << "\tk:" << this->offset() << std::endl;
-    std::cout << "Point :  j:" << j << "\tk:" << k << "\tk/2**(j-l): " << (k/static_cast<int>(std::pow(2,j - this->level())))  << std::endl;
+    //std::cout << "Tree node :  j:" << this->level() << "\tk:" << this->offset() << std::endl;
+    //std::cout << "Point :  j:" << j << "\tk:" << k << "\tk/2**(j-l): " << (k/static_cast<int>(std::pow(2,j - this->level())))  << std::endl;
 
     return ( ((this->level() <= j) && (this->offset() == k))
         || ((this->level() < j) && 
@@ -57,16 +59,76 @@ bool BinaryTreeNode<T>::canBeFather(const Point<T> &pt, unsigned int j, int k) {
 template <typename T>
 void BinaryTreeNode<T>::insert(const Point<T> &pt, unsigned int j) {
 
-    std::cout << "inserting in node centered in " << this->center() << std::endl;
-    std::cout << "with point " << pt.x << std::endl;
     int k = computeOffset(pt, j);
-
     assert(this->canBeFather(pt,j,k));
+    
+    //std::cout << "inserting in (" << j << "," << k <<  ") point " << pt.x << std::endl;
+    //std::cout << "current node is (" << this->level() << "," << this->offset() << ") centered at " << this->center() << std::endl;
+    
+    T position = pt.x;
+    TreeNode<T> *child;
 
     //tree descent
     if(this->level() < j) {
-         
+        this->makeChilds();
+        child = this->getChild(computeChildId(position));
+        child->insert(pt, j);
     }
+    //insertion
+    else if(this->level() == j) {
+        this->makeChilds();
+
+        //competition
+        if(this->isFilled()) {
+            T d = this->distanceFromCenter(this->position());
+            T dnew = this->distanceFromCenter(position);
+
+            //new point is better
+            if(dnew < d) {
+                Point<T> old = this->setPoint(pt);
+                child = this->getChild(computeChildId(old.x));
+                child->insert(old, j+1); // reinsert old point
+            }
+            // already affected point is better
+            else {
+                child = this->getChild(computeChildId(position));
+                child->insert(pt, j+1);
+            }
+        }
+        //affectation
+        else {
+            this->setPoint(pt);
+        }
+    }
+    else {
+        assert(false);
+    }
+}
+        
+template <typename T>
+void BinaryTreeNode<T>::makeChilds() {
+    
+    if (this->_childs[0] == nullptr) {
+        Interval<T> I1( this->inf(),    this->center() );
+        Interval<T> I2( this->center(), this->sup()    );
+        int J = this->level() + 1u;
+        int K = this->offset();
+
+        this->_childs[0] = new BinaryTreeNode<T>(J, 2*K-1, I1, this);
+        this->_childs[1] = new BinaryTreeNode<T>(J, 2*K+1, I2, this);
+    }
+}
+        
+template <typename T>
+unsigned int BinaryTreeNode<T>::computeChildId(T position) {
+    unsigned int childId;
+
+    if(position < this->center())     
+        childId = 0u;
+    else
+        childId = 1u;
+
+    return childId;
 }
 
 template <typename T>

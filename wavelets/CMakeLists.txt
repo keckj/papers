@@ -93,7 +93,8 @@ list(REMOVE_DUPLICATES LOCAL_INCLUDE_DIRS)
 #Header directories
 include_directories(${LOCAL_INCLUDE_DIRS})
 include_directories(SYSTEM 
-    ${Boost_INCLUDEDIR} #Boost
+    ${Boost_INCLUDEDIR}   #Boost
+    ${EIGEN3_INCLUDE_DIR} #Eigen
     )
 
 #Library directories

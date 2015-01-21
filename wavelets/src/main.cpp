@@ -1,8 +1,10 @@
 
 #include "headers.hpp"
-#include <iostream>
-#include "rand.hpp"
 
+#include <iostream>
+#include <Eigen/Dense>
+
+#include "rand.hpp"
 #include "interval.hpp"
 #include "integerGrid.hpp"
 #include "binaryTreeNode.hpp"
@@ -11,22 +13,16 @@
 #include "point.hpp"
 #include "interval.hpp"
 #include "gnuplot.hpp"
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
-#include <conio.h>   //for getch(), needed in wait_for_key()
-#include <windows.h> //for Sleep()
-void sleep(int i) { Sleep(i*1000); }
-#endif
-
-void wait_for_key();
-
+#include "deslaurierDubuc.hpp"
+#include "waveletMapper.hpp"
+    
 void header();
 void footer();
 
 float F(float t) {
     return sin(10*t);
 }
-
+    
 int main(int argc, char **argv) {
 
     header();
@@ -37,17 +33,42 @@ int main(int argc, char **argv) {
     Globals::check();
     
     Gnuplot gp("tee plot.gp | gnuplot -persist");
+    gp << "set multiplot\n";
 
     Interval<float> unitInterval(0.0f,1.0f);
     Interval<float> halfInterval(0.25f,0.75f);
 
-    BinaryTreeNode<float> *tree = new BinaryTreeNode<float>(1,1,0.0,1.0);
 
-    FunctionSample<1000u, float> sample(halfInterval, F);
-    for (unsigned int i = 0; i < 1000; i++) {
-        tree->insert(sample[i],2);
-    }
+    FunctionSample<1000u, float> sample(unitInterval, F);
     //sample.plot(gp);
+    
+    BinaryTreeNode<float> *tree = new BinaryTreeNode<float>(1,1,unitInterval,nullptr);
+    for (unsigned int i = 0; i < 30; i++) {
+        tree->insert(sample[i],1);
+    } 
+    tree->plot(gp);
+
+    tree->computePlacementCondition(1u,0.5);
+    tree->plotValid(gp);
+
+
+    DeslaurierDubuc<float> db(1);
+    WaveletMapper<float> simpleDDTreeMapper = [&db](unsigned int j, int k)->Wavelet<float>& { return db; };
+    //gp << "clear\n";
+    //db.plot(gp,100,1,1);
+    
+    unsigned int n = tree->countValidNodes();
+    std::cout << n << std::endl;
+    
+    using Eigen::VectorXf;
+    using Eigen::MatrixXf;
+    MatrixXf A = MatrixXf::Random(n,n);
+    VectorXf b = VectorXf::Random(n);
+    tree->fillSystem(A,b,simpleDDTreeMapper);
+
+
+    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+    std::cout << A.format(CleanFmt) << std::endl;
 
     footer();
 
@@ -71,21 +92,4 @@ void header() {
 void footer() {
     std::cout << std::endl;
     std::cout << "All done, exiting !" << std::endl;
-}
-
-void wait_for_key ()
-{
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
-    std::cout << std::endl << "Press any key to continue..." << std::endl;
-
-    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-    _getch();
-#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-    std::cout << std::endl << "Press ENTER to continue..." << std::endl;
-
-    std::cin.clear();
-    std::cin.ignore(std::cin.rdbuf()->in_avail());
-    std::cin.get();
-#endif
-    return;
 }

@@ -16,8 +16,12 @@ struct Interval {
     template <typename S>
     explicit Interval(const Interval<S> &other) : inf(static_cast<T>(other.inf)), sup(static_cast<T>(other.sup)) {}
 
+    T center() const { return (inf + sup)/T(2); }
+    T length() const { return sup - inf; }
     int upperInteger() const { return ceil(sup); }
     int lowerInteger() const { return floor(inf); }
+
+    bool contains(T point) { return ((point >= inf) && (point <= sup)); }
 };
 
 template <typename T>
