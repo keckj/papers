@@ -7,6 +7,9 @@
 #include "point.hpp"
 #include "gnuplot.hpp"
 #include "waveletMapper.hpp"
+#include "plotBox.hpp"
+#include "affineTransformation.hpp"
+#include "plotUtils.hpp"
 
 template <typename T>
 class TreeNode {
@@ -53,16 +56,17 @@ class TreeNode {
         void getValidPositions(std::vector<T> &positions) const;
         void fillSystem(Eigen::MatrixXf &A, Eigen::VectorXf &b, const WaveletMapper<T> &waveletMapper) const;
 
-        void plot(Gnuplot &gp) const;
-        void plotValid(Gnuplot &gp) const;
+        void plot(Gnuplot &gp, const PlotBox<T> &box, bool plotLabelX = false, bool plotLabelY = false) const;
+        void plotValid(Gnuplot &gp, const PlotBox<T> &box) const;
+        void plotValidPoints(Gnuplot &gp, const PlotBox<T> &box) const;
         
         virtual std::string toString() const;
 
         virtual TreeNode<T>* clone() const = 0;
         virtual void makeChilds() = 0;
         virtual void insert(const Point<T> &pt, unsigned int j = 0u) = 0;
-        virtual int computeOffset(const Point<T> &pt, unsigned int j) = 0;
-        virtual unsigned int computeChildId(T position) = 0;
+        virtual int computeOffset(const Point<T> &pt, unsigned int j) const = 0;
+        virtual unsigned int computeChildId(T position) const = 0;
         
         void computePlacementCondition(unsigned int p, T rho);
 
@@ -82,14 +86,17 @@ class TreeNode {
         
         void setValidity(bool valid);
 
-        void plotRec(std::vector<std::tuple<T,T>> &pts, unsigned int jmax) const;
-        void plotValidRec(std::vector<std::tuple<T,T>> &pts, unsigned int jmax) const;
-        
+        void plotRec(Gnuplot &gp, std::vector<std::tuple<T,T>> &pts, 
+                unsigned int maxLevel, const AffineTransformation<T> &transfo, 
+                bool plotLabelX, bool plotLabelY) const;
+        void plotValidRec(std::vector<std::tuple<T,T>> &pts, unsigned int maxLevel, const AffineTransformation<T> &transfo) const;
+        void plotValidPointsRec(std::vector<std::tuple<T,T>> &pts) const;
+
         unsigned int fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b, 
                 const WaveletMapper<T> &waveletMapper, 
                 const std::vector<T> &validPositions, 
-                unsigned int column) const;
-        
+                unsigned int &column) const;
+
         bool placementConditionUp(unsigned int p, T rho, const TreeNode<T> *checkedNode) const;
         bool placementConditionDown(unsigned int p, T rho, const TreeNode<T> *checkedNode);
 
@@ -278,7 +285,7 @@ unsigned int TreeNode<T>::maxLevel() const {
 
     for (unsigned int i = 0; i < _nChilds; i++) {
         node = _childs[i];
-        if(node != nullptr)
+        if(node != nullptr && node->isFilled())
             newlevel = std::max(newlevel, 1u + node->maxLevel());
     }
     
@@ -297,24 +304,34 @@ std::string TreeNode<T>::toString() const {
 }
         
 template <typename T>
-void TreeNode<T>::plot(Gnuplot &gp) const {
+void TreeNode<T>::plot(Gnuplot &gp, const PlotBox<T> &box, bool plotLabelX, bool plotLabelY) const {
     unsigned int jmax = this->maxLevel();
 
-    gp << "set xr [" << this->inf() << ":" << this->sup() <<  "]\n";
-    gp << "set yr [0:" << jmax + 2 << "]\n";
-    gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
-
-    std::vector<std::tuple<T,T>> pts;
-    this->plotRec(pts, jmax);
+    //gp << "set xr [" << this->inf() << ":" << this->sup() <<  "]\n";
+    //std::cout << this->inf() << "  " << this->sup() << std::endl;
+    //gp << "set yr [0:" << jmax + 2 << "]\n";
+       
+    Point<T> xmin(this->inf(), 0);
+    Point<T> xmax(this->sup(), jmax+2);
+    PlotBox<T> realBox(xmin, xmax);
+    AffineTransformation<T> transfo(realBox, box);
     
-    gp << "plot '-' with linespoints ls 1 title 'allocation'\n";
+    std::vector<std::tuple<T,T>> pts;
+    this->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
+    
+    gp << box;
+    gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
+    gp << "plot '-' with linespoints ls 1 notitle\n";
     gp.send1d(pts);
 }
 
 template <typename T>
-void TreeNode<T>::plotRec(std::vector<std::tuple<T,T>> &pts, unsigned int jmax) const {
+void TreeNode<T>::plotRec(Gnuplot &gp, std::vector<std::tuple<T,T>> &pts, 
+        unsigned int jmax, const AffineTransformation<T> &transfo,
+        bool plotLabelX, bool plotLabelY) const {
    
-    std::tuple<T,T> c = std::make_tuple<T,T>(this->position(), jmax + 1u - this->level());
+    Point<T> pt(this->position(), (jmax + 2u - this->level()));
+    std::tuple<T,T> c = transfo(pt).toTupple();
 
     //insert child points
     TreeNode<T> *node; 
@@ -322,40 +339,104 @@ void TreeNode<T>::plotRec(std::vector<std::tuple<T,T>> &pts, unsigned int jmax) 
         node = _childs[i];
         if(node != nullptr && node->isFilled()) {
             pts.push_back(c); 
-            node->plotRec(pts, jmax);
+            node->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
         }
     }
-    
+  
+    if(this->level() <= 4) {
+        Point<T> labelPos(pt);
+        pt.y += T(0.3);
+        if(this->father() != nullptr) {
+            T baseOffset = T(0.05);
+            T offset = baseOffset/4;
+            pt.x += (this->father()->computeChildId(this->position()) == 0 ? -offset : offset);
+        }
+        Point<T> realLabelPos = transfo(pt);
+        gp << "set label '";
+        if(plotLabelX && plotLabelY)
+            gp << "(";
+        if(plotLabelX)
+            gp << PlotUtils::prettyValue<T,2>(this->position());
+        if(plotLabelX && plotLabelY)
+            gp << ";";
+        if(plotLabelY)
+            gp << PlotUtils::prettyValue<T,2>(this->value());
+        if(plotLabelX && plotLabelY)
+            gp << ")";
+        gp <<"' at " << realLabelPos.x << "," << realLabelPos.y << " center font 'Verdana,5'\n";
+    }
+
     pts.push_back(c); 
 }
 
 template <typename T>
-void TreeNode<T>::plotValid(Gnuplot &gp) const {
+void TreeNode<T>::plotValid(Gnuplot &gp, const PlotBox<T> &box) const {
+    
     unsigned int jmax = this->maxLevel();
 
     std::vector<std::tuple<T,T>> pts;
-    this->plotValidRec(pts, jmax);
     
-    gp << "plot '-' with point pt 7\n";
+    Point<T> xmin(this->inf(), 0);
+    Point<T> xmax(this->sup(), jmax+2);
+    PlotBox<T> realBox(xmin, xmax);
+    AffineTransformation<T> transfo(realBox, box);
+
+    this->plotValidRec(pts, jmax, transfo);
+   
+    gp << box;
+    gp << "plot '-' with point pt 7 notitle\n";
     gp.send1d(pts);
 }
 
 template <typename T>
-void TreeNode<T>::plotValidRec(std::vector<std::tuple<T,T>> &pts, unsigned int jmax) const {
-   
-    std::tuple<T,T> c = std::make_tuple<T,T>(this->position(), jmax + 1u - this->level());
+void TreeNode<T>::plotValidRec(std::vector<std::tuple<T,T>> &pts, 
+        unsigned int jmax, const AffineTransformation<T> &transfo) const {
+  
+    if(this->isValid()) {
+        Point<T> pt(this->position(), (jmax + 2u - this->level()));
+        pts.push_back(transfo(pt).toTupple()); 
+    }
 
     //insert child points
     TreeNode<T> *node; 
     for (unsigned int i = 0; i < this->nChilds(); i++) {
         node = _childs[i];
         if(node != nullptr && node->isFilled()) {
-            node->plotValidRec(pts, jmax);
+            node->plotValidRec(pts, jmax, transfo);
         }
     }
    
-    if(this->isValid())
-        pts.push_back(c); 
+}
+
+        
+template <typename T>
+void TreeNode<T>::plotValidPoints(Gnuplot &gp, const PlotBox<T> &box) const {
+
+    std::vector<std::tuple<T,T>> pts;
+    
+    this->plotValidPointsRec(pts);
+    
+    gp << box;
+    gp << "plot '-' with point lc rgb '#ffd700' pt 7 ps 0.5 notitle\n";
+    gp.send1d(pts);
+}
+
+template <typename T>
+void TreeNode<T>::plotValidPointsRec(std::vector<std::tuple<T,T>> &pts) const {
+    
+    if(this->isValid()) {
+        Point<T> pt(this->position(), this->value());
+        pts.push_back(pt.toTupple());
+    }
+
+    //insert child points
+    TreeNode<T> *node; 
+    for (unsigned int i = 0; i < this->nChilds(); i++) {
+        node = _childs[i];
+        if(node != nullptr && node->isFilled()) {
+            node->plotValidPointsRec(pts);
+        }
+    }
 }
 
 template <typename T>
@@ -374,7 +455,7 @@ void TreeNode<T>::computePlacementCondition(unsigned int p, T rho) {
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
         child = this->getChild(i);
-        if(child != nullptr)
+        if(child != nullptr && child->isFilled())
             child->computePlacementCondition(p,rho);
     }
 }
@@ -476,7 +557,7 @@ unsigned int TreeNode<T>::countValidNodes() const {
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
         child = _childs[i];
-        if(child != nullptr)
+        if(child != nullptr && child->isFilled())
             validNodes +=  child->countValidNodes();
     }
     
@@ -492,7 +573,7 @@ void TreeNode<T>::getValidPositions(std::vector<T> &positions) const {
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
         child = _childs[i];
-        if(child != nullptr)
+        if(child != nullptr && child->isFilled())
             child->getValidPositions(positions);
     }
 }
@@ -505,7 +586,8 @@ void TreeNode<T>::fillSystem(Eigen::MatrixXf &A, Eigen::VectorXf &b,
 
     this->getValidPositions(validPositions);
 
-    unsigned int count = this->fillSystemRec(A,b,waveletMapper,validPositions,0u);
+    unsigned int count = 0u;
+    this->fillSystemRec(A,b,waveletMapper,validPositions,count);
 
     assert(count == validPositions.size());
 }
@@ -514,25 +596,25 @@ template <typename T>
 unsigned int TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b, 
         const WaveletMapper<T> &waveletMapper, 
         const std::vector<T> &validPositions, 
-        unsigned int column) const {
+        unsigned int &column) const {
    
     unsigned int newColumn = column;
     unsigned int N = validPositions.size();
 
     if(this->isValid()) {
         for (unsigned int i = 0; i < N; i++) {
-            A(i,column) = (waveletMapper(this->level(), this->offset()))(this->level(), this->offset(), validPositions[i]);
+            A(i, column) = (waveletMapper(this->level(), this->offset()))(this->level(), this->offset(), validPositions[i]);
         }
 
         b(column) = this->value();
-        newColumn ++;
+        column++;
     }
     
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
         child = _childs[i];
-        if(child != nullptr) {
-            newColumn = child->fillSystemRec(A,b,waveletMapper,validPositions, newColumn);
+        if(child != nullptr && child->isFilled()) {
+            child->fillSystemRec(A,b,waveletMapper,validPositions, column);
         }
     }
 

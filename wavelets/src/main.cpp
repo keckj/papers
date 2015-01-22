@@ -16,50 +16,66 @@
 #include "deslaurierDubuc.hpp"
 #include "waveletMapper.hpp"
 #include "waveletTree.hpp"
-    
+#include "plotBox.hpp"
+
+void init();
 void header();
 void footer();
 
+//interpolated function
 float F(float t) {
-    return sin(10*t);
+    return exp(t);
 }
-    
+
 int main(int argc, char **argv) {
 
+    init();
     header();
-
-    Random::init();
-
-    Globals::init();
-    Globals::check();
+  
     
+    // configuration
+    constexpr unsigned int nData = 100u;
+    constexpr unsigned int nDataSample = 1000u;
+    Interval<float> interval(0.0f,1.0f);
+
+    
+    //generate and plot samples
+    FunctionSample<nDataSample, float> samplePlot(interval, F);
+    FunctionSample<nData, float> sample(interval, F);
+
+    const PlotBox<float>& box = PlotBox<float>(interval.inf,interval.sup,samplePlot.min(),samplePlot.max());
     Gnuplot gp("tee plot.gp | gnuplot -persist");
     gp << "set multiplot\n";
 
-    Interval<float> unitInterval(0.0f,1.0f);
-    Interval<float> halfInterval(0.25f,0.75f);
+    samplePlot.plotLine(gp, box);
+    sample.plotPoints(gp, box);
 
-
-    FunctionSample<1000u, float> sample(unitInterval, F);
-    //sample.plot(gp);
     
-    BinaryTreeNode<float> *tree = new BinaryTreeNode<float>(1,1,unitInterval,nullptr);
-    for (unsigned int i = 0; i < 100; i++) {
+    //build tree with samples (ALLOCATION)
+    TreeNode<float> *tree = new BinaryTreeNode<float>(1,1,interval,nullptr);
+    for (unsigned int i = 0; i < nData; i++) {
         tree->insert(sample[i],1);
     } 
-    tree->plot(gp);
+    tree->plot(gp, box, true, true);
 
+    return EXIT_SUCCESS;
+
+    //remove bad nodes (check GRP criterion)
     tree->computePlacementCondition(1u,0.5);
-    tree->plotValid(gp);
 
+    tree->plotValidPoints(gp, box);
+    tree->plotValid(gp, box);
 
+    
+    //map wavelets to tree nodes
     DeslaurierDubuc<float> db(1);
     WaveletMapper<float> simpleDDTreeMapper = [&db](unsigned int j, int k)->Wavelet<float>& { return db; };
-    //gp << "clear\n";
-    //db.plot(gp,100,1,1);
-    
     unsigned int n = tree->countValidNodes();
     
+    std::cout << n << " samples out of " << nData << " met the GRP criterion !";
+   
+
+    //compute wavelet coefficients
     using Eigen::VectorXf;
     using Eigen::MatrixXf;
     MatrixXf A = MatrixXf::Random(n,n);
@@ -67,8 +83,19 @@ int main(int argc, char **argv) {
 
     tree->fillSystem(A,b,simpleDDTreeMapper);
     VectorXf coefficients = A.partialPivLu().solve(b);
+    
+    float epsilon = (A*coefficients -b).maxCoeff();
+    std::cout << "Maximum sample error : " << epsilon << std::endl;
 
+
+    //build wavelet tree with the coefficients
     WaveletTree<float> *waveletTree = WaveletTree<float>::makeTree(tree, simpleDDTreeMapper, coefficients);
+
+    gp << "unset multiplot\n";
+    gp << "set term wxt 1\n";
+    gp << "unset label\n";
+    waveletTree->plot(gp, box, nDataSample);
+
 
     footer();
 
@@ -97,3 +124,12 @@ void footer() {
     std::cout << std::endl;
     std::cout << "All done, exiting !" << std::endl;
 }
+
+void init() {
+    Random::init();
+
+    Globals::init();
+    Globals::check();
+}
+    
+   

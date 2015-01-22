@@ -18,8 +18,8 @@ class BinaryTreeNode : public TreeNode<T> {
         virtual TreeNode<T>* clone() const override;
         virtual void insert(const Point<T> &pt, unsigned int j = 0u) override;
         virtual void makeChilds() override;
-        virtual int computeOffset(const Point<T> &pt, unsigned int j) override;
-        virtual unsigned int computeChildId(T position) override;
+        virtual int computeOffset(const Point<T> &pt, unsigned int j) const override;
+        virtual unsigned int computeChildId(T position) const override;
 };
        
 template <typename T>
@@ -120,7 +120,7 @@ void BinaryTreeNode<T>::makeChilds() {
 }
         
 template <typename T>
-unsigned int BinaryTreeNode<T>::computeChildId(T position) {
+unsigned int BinaryTreeNode<T>::computeChildId(T position) const {
     unsigned int childId;
 
     if(position < this->center())     
@@ -132,7 +132,7 @@ unsigned int BinaryTreeNode<T>::computeChildId(T position) {
 }
 
 template <typename T>
-int BinaryTreeNode<T>::computeOffset(const Point<T> &pt, unsigned int j) {
+int BinaryTreeNode<T>::computeOffset(const Point<T> &pt, unsigned int j) const {
 
     assert(j > 0);
     int k = floor(pt.x*std::pow(2, j-1));

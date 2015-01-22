@@ -13,6 +13,10 @@ struct Point {
     Point(T x, T y) : x(x), y(y) {};
     Point(const Point<T> &other) : x(other.x), y(other.y) {};
     ~Point() {};
+
+    std::tuple<T,T> toTupple() const {
+        return std::make_tuple(x,y);
+    }
 };
 
 template <typename T>

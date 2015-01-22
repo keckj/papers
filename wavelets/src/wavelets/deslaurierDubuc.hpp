@@ -19,9 +19,7 @@ class DeslaurierDubuc : public Wavelet<T> {
 
         unsigned int order() const;
 
-        static constexpr Interval<T> computeSupport(unsigned int order) {
-            return Interval<T>(-T(2)*order + 1/T(2) ,T(2)*order - 1/T(2));
-        }
+        static constexpr Interval<T> computeSupport(unsigned int order);
 
     protected:
         unsigned int _order;
@@ -48,7 +46,7 @@ unsigned int DeslaurierDubuc<T>::order() const {
 
 template <typename T>
 T DeslaurierDubuc<T>::operator()(T x) const {
-    if(this->support().contains(x)) {
+    if(this->support(0,0).contains(x)) {
         return T(1) - sqrt(x*x);
     }
     else {
@@ -59,6 +57,16 @@ T DeslaurierDubuc<T>::operator()(T x) const {
 template <typename T>
 T DeslaurierDubuc<T>::operator()(unsigned int j, int k, T x) const {
     return this->operator()(T(std::pow(2,j))*x - T(k));
+}
+        
+template <typename T>
+constexpr Interval<T> DeslaurierDubuc<T>::computeSupport(unsigned int order) {
+    switch(order) {
+        case(1u): 
+            return Interval<T>(-1,1);
+        default:
+            return Interval<T>(-T(2)*order + 1/T(2) ,T(2)*order - 1/T(2));
+    }
 }
 
 #endif /* end of include guard: DESLAURIERDUBUC_H */

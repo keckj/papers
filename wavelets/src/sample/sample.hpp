@@ -5,6 +5,7 @@
 #include "interval.hpp"
 #include "point.hpp"
 #include "gnuplot.hpp"
+#include "plotBox.hpp"
 #include <vector>
 
 template <unsigned int N, typename T>
@@ -27,7 +28,8 @@ struct Sample {
 
     Point<T> operator[](unsigned int k);
 
-    void plot(Gnuplot &gp) const;
+    void plotPoints(Gnuplot &gp, const PlotBox<T> &box) const;
+    void plotLine(Gnuplot &gp, const PlotBox<T> &box) const;
 };
     
 template <unsigned int N, typename T>
@@ -133,7 +135,7 @@ Point<T> Sample<N,T>::operator[](unsigned int k) {
 }
 
 template <unsigned int N, typename T>
-void Sample<N,T>::plot(Gnuplot &gp) const {
+void Sample<N,T>::plotLine(Gnuplot &gp, const PlotBox<T> &box ) const {
 
     std::vector<std::tuple<float, float>> pts;
 
@@ -147,11 +149,30 @@ void Sample<N,T>::plot(Gnuplot &gp) const {
         pts.push_back(std::make_tuple(X.x,X.y));
     }
 
-    gp << "set xrange [" << interval.inf << ":" << interval.sup << "]\n";
-    gp << "set yrange [" << Xmin.y << ":" << Xmax.y << "]\n";
-    gp << "plot '-' title 'samples'\n";
+    std::sort(pts.begin(), pts.end());
+
+    gp << box;
+    gp << "set style line 1 lt rgb 'red' lw 1 pt 7\n";
+    gp << "plot '-' with lines ls 1 notitle\n";
     gp.send1d(pts);
 }
+
+template <unsigned int N, typename T>
+void Sample<N,T>::plotPoints(Gnuplot &gp, const PlotBox<T> &box) const {
+
+    std::vector<std::tuple<float, float>> pts;
+
+    for (unsigned int i = 0; i < N; i++) {
+        Point<T> X = this->data[i];
+        pts.push_back(std::make_tuple(X.x,X.y));
+    }
+
+    gp << box;
+    gp << "set style line 1 lt rgb '#0000FF' lw 1 pt 7\n";
+    gp << "plot '-' with points ls 1 notitle\n";
+    gp.send1d(pts);
+}
+
 
 
 #endif /* end of include guard: SAMPLE_H */

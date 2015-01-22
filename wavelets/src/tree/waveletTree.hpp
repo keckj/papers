@@ -4,6 +4,7 @@
 
 #include <Eigen/Dense>
 #include "treeNode.hpp"
+#include "plotBox.hpp"
 #include "waveletMapper.hpp"
 
 template <typename T>
@@ -13,10 +14,18 @@ class WaveletTree {
         explicit WaveletTree(const TreeNode<T> *tree, const Wavelet<T> &wavelet, T coef);
         virtual ~WaveletTree();
 
+        const Wavelet<T>& wavelet() const;
+
         int level() const;
         int offset() const;
         
         bool isValid() const;
+
+        Interval<T> support() const;
+        T inf() const;
+        T sup() const;
+
+        T coefficient() const;
 
         unsigned int nChilds() const; 
         WaveletTree<T>* getChild(unsigned int childId) const;
@@ -24,7 +33,7 @@ class WaveletTree {
 
         T operator()(T x) const;
         
-        void plot(Gnuplot &gp) const;
+        void plot(Gnuplot &gp, const PlotBox<T> &box, unsigned int nPoints) const;
         
         static  WaveletTree<T>* makeTree(const TreeNode<T> *node, 
                 const WaveletMapper<T> &mapper, 
@@ -55,8 +64,13 @@ template <typename T>
 WaveletTree<T>::WaveletTree(const TreeNode<T> *tree, const Wavelet<T> &wavelet, T coef) :
     _level(tree->level()), _offset(tree->offset()),
     _nChilds(tree->nChilds()), _childs(nullptr),
-    _isValid(tree->isValid()), _coefficient(coef), 
+    _isValid(tree->isValid()&&tree->isFilled()), _coefficient(coef), 
     _wavelet(wavelet) {
+
+    _childs = new WaveletTree*[_nChilds]; 
+    for (unsigned int i = 0; i < _nChilds; i++) {
+        _childs[i] = nullptr;
+    }
 }
        
 template <typename T>
@@ -73,7 +87,7 @@ WaveletTree<T>* WaveletTree<T>::makeTreeRec(const TreeNode<T> *node,
         const WaveletMapper<T> &mapper, 
         const Eigen::VectorXf &coefficents,
         unsigned int &count) {
-    
+   
     WaveletTree<T>* waveNode;
 
     if(node->isValid()) {
@@ -87,7 +101,7 @@ WaveletTree<T>* WaveletTree<T>::makeTreeRec(const TreeNode<T> *node,
     const TreeNode<T> *child;
     for (unsigned int i = 0; i < node->nChilds(); i++) {
         child = node->getChild(i);
-        if(child != nullptr)
+        if(child != nullptr && child->isFilled())
             waveNode->child(i) = makeTreeRec(child, mapper, coefficents, count);
     }
 
@@ -133,40 +147,72 @@ WaveletTree<T>*& WaveletTree<T>::child(unsigned int childId) {
 }
 
 template <typename T>
-void WaveletTree<T>::plot(Gnuplot &gp) const {
-    unsigned int jmax = this->maxLevel();
-
-    gp << "set xr [" << this->inf() << ":" << this->sup() <<  "]\n";
-    gp << "set yr [0:" << jmax + 2 << "]\n";
-    gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
+void WaveletTree<T>::plot(Gnuplot &gp, const PlotBox<T> &box, unsigned int nPoints) const {
 
     std::vector<std::tuple<T,T>> pts;
-    this->plotRec(pts, jmax);
+   
+    T dx = this->support().length()/(nPoints - 1u);
+    for (unsigned int i = 0; i < nPoints; i++) {
+        T x = this->support().inf + i*dx;
+        T y = this->operator()(x);
+        pts.push_back(std::make_tuple(x, y));
+    }
     
-    gp << "plot '-' with linespoints ls 1 title 'allocation'\n";
+    gp << box;
+    gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
+    gp << "plot '-' with lines ls 1 title 'wavelet'\n";
     gp.send1d(pts);
 }
 
 template <typename T>
-void WaveletTree<T>::plotRec(std::vector<std::tuple<T,T>> &pts, unsigned int jmax) const {
-   
-    std::tuple<T,T> c = std::make_tuple<T,T>(this->position(), jmax + 1u - this->level());
+T WaveletTree<T>::operator()(T x) const {
+  
+   //std::cout << "level " << this->level() << "\toffset " << this->offset() << " is valid !" << std::endl;
+   if(! this->support().contains(x))
+           return T(0);
 
-    //insert child points
-    WaveletTree<T> *node; 
+   T res;
+   if(this->isValid()) {
+       res = this->coefficient()*this->wavelet()(this->level(), this->offset(), x);
+    }
+   else 
+       res = T(0); 
+    
+   //compute child values
+    WaveletTree<T> *child; 
     for (unsigned int i = 0; i < this->nChilds(); i++) {
-        node = _childs[i];
-        if(node != nullptr && node->isFilled()) {
-            pts.push_back(c); 
-            node->plotRec(pts, jmax);
+        child = _childs[i];
+        if(child != nullptr) {
+            res += child->operator()(x);
         }
     }
-    
-    pts.push_back(c); 
+
+    return res;
 }
         
 template <typename T>
-T WaveletTree<T>::operator()(T x) const {
+Interval<T> WaveletTree<T>::support() const {
+    return this->wavelet().support(this->level(), this->offset());
+}
+
+template <typename T>
+T WaveletTree<T>::inf() const {
+    return this->support().inf;
+}
+
+template <typename T>
+T WaveletTree<T>::sup() const {
+    return this->support().sup;
+}
+        
+template <typename T>
+const Wavelet<T>& WaveletTree<T>::wavelet() const {
+    return _wavelet;
+}
+        
+template <typename T>
+T WaveletTree<T>::coefficient() const {
+    return _coefficient;
 }
 
 #endif /* end of include guard: WAVELETTREE_H */
