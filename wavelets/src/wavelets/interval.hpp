@@ -21,6 +21,9 @@ struct Interval {
     int upperInteger() const { return ceil(sup); }
     int lowerInteger() const { return floor(inf); }
 
+    Interval<T> dilateToInteger() const { return Interval<T>(this->lowerInteger(), this->upperInteger()); }
+    unsigned int integerCount() const { return 1u + static_cast<unsigned int>(this->dilateToInteger().length()); }
+
     bool contains(T point) { return ((point >= inf) && (point <= sup)); }
 };
 

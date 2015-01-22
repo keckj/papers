@@ -105,7 +105,7 @@ def generateWavelet(j,k,pmax,maxLevels,interval,boundaryMode='truncate'):
 
 plt.title("Centered scaling functions")
 
-jmax = 4; 
+jmax = 3; 
 pmax = 5;
 
 maxLevels = 10;
