@@ -27,7 +27,7 @@ template <typename T>
 IntegerGrid<T>::IntegerGrid(const Interval<T> &interval) :
     TreeNode<T>(-1,-1, interval.dilateToInteger(), nullptr, interval.integerCount(), false)
 {
-    makeChilds();
+    this->makeChilds();
 }
 
 template <typename T>
@@ -47,17 +47,19 @@ template <typename T>
 void IntegerGrid<T>::makeChilds() {
 
     //allocate even nodes
-    for (unsigned int i = 0; i < this->nChilds(); i++) {
-        this->child(i) = new BinaryTreeNode<T>(0, this->infInteger()+i, Interval<T>(this->infInteger()+i-1u, this->infInteger()+i+1u), this);
-        if(i % 2 == 1)
-            this->childs(i)->makeChilds();
+    for (int i = 0; i < this->nChilds(); i++) {
+        this->child(i) = new BinaryTreeNode<T>(0, this->infInteger()+i, Interval<T>(this->infInteger()+i-1, this->infInteger()+i+1), this);
+        if(i % 2 == 1) {
+            this->child(i)->makeChilds();
+            std::cout << i << std::endl;
+        }
     }
 
     //allocate centered odd nodes
     for (unsigned int i = 1; i < this->nChilds() - 1u; i++) {
         if(i % 2 == 0) {
-            this->childs(i)->child(0) = this->childs(i-1)->child(1);
-            this->childs(i)->child(1) = this->childs(i+1)->child(0);
+            this->child(i)->child(0) = this->child(i-1)->child(1);
+            this->child(i)->child(1) = this->child(i+1)->child(0);
         }
     }
 
@@ -65,7 +67,9 @@ void IntegerGrid<T>::makeChilds() {
     this->child(0)->child(0) = nullptr;
     this->child(0)->child(1) = this->child(1)->child(0);
 
-    delete this->child(this->nChilds() - 1)->child(1);
+    if(this->nChilds() % 2 == 1)
+        delete this->child(this->nChilds() - 1)->child(1);
+
     this->child(this->nChilds() - 1)->child(1) = nullptr;
 
     if(this->nChilds() % 2 == 1)
@@ -82,22 +86,23 @@ int IntegerGrid<T>::computeOffset(const Point<T> &pt, unsigned int j) const {
     T x = pt.x;
     assert(this->interval().contains(x));
     int id = static_cast<int>(x);
+    //std::cout << x << " offset " << id << std::endl;
     return id;
 }
 
 template <typename T>
 unsigned int IntegerGrid<T>::computeChildId(T position) const {
-    return static_cast<unsigned int>(position - this->inf()); 
+    return static_cast<unsigned int>(2*(position - this->inf())); 
 }
         
 template <typename T>
 int IntegerGrid<T>::infInteger() const {
-    return static_cast<int>(this->inf());
+    return this->interval().lowerInteger();
 }
 
 template <typename T>
 int IntegerGrid<T>::supInteger() const {
-    return static_cast<int>(this->sup());
+    return this->interval().upperInteger();
 }
 
 #endif

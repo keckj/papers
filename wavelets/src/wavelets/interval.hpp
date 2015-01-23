@@ -18,8 +18,8 @@ struct Interval {
 
     T center() const { return (inf + sup)/T(2); }
     T length() const { return sup - inf; }
-    int upperInteger() const { return ceil(sup); }
-    int lowerInteger() const { return floor(inf); }
+    int upperInteger() const { return static_cast<int>(ceil(sup)); }
+    int lowerInteger() const { return static_cast<int>(floor(inf)); }
 
     Interval<T> dilateToInteger() const { return Interval<T>(this->lowerInteger(), this->upperInteger()); }
     unsigned int integerCount() const { return 1u + static_cast<unsigned int>(this->dilateToInteger().length()); }

@@ -42,6 +42,7 @@ class TreeNode {
         unsigned int nChilds() const;
         TreeNode<T>** childs();
         TreeNode<T>* getChild(unsigned int childId) const;
+        TreeNode<T>*& child(unsigned int childId);
         TreeNode<T>* operator[](unsigned int childId) const;
         TreeNode<T>*& operator[](unsigned int childId);
 
@@ -317,12 +318,15 @@ void TreeNode<T>::plot(Gnuplot &gp, const PlotBox<T> &box, bool plotLabelX, bool
     AffineTransformation<T> transfo(realBox, box);
     
     std::vector<std::tuple<T,T>> pts;
-    this->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
-    
-    gp << box;
-    gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
-    gp << "plot '-' with linespoints ls 1 notitle\n";
-    gp.send1d(pts);
+
+    for (unsigned int i = 0; i < _nChilds; i++) {
+        pts.empty();
+        this->getChild(i)->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
+        gp << box;
+        gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
+        gp << "plot '-' with linespoints ls 1 notitle\n";
+        gp.send1d(pts);
+    }
 }
 
 template <typename T>
@@ -619,6 +623,11 @@ unsigned int TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b,
     }
 
     return newColumn;
+}
+        
+template <typename T>
+TreeNode<T>*& TreeNode<T>::child(unsigned int childId) {
+    return _childs[childId];
 }
 
 #endif /* end of include guard: TREENODE_H */

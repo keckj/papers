@@ -25,14 +25,11 @@ class BinaryTreeNode : public TreeNode<T> {
 template <typename T>
 BinaryTreeNode<T>::BinaryTreeNode(int j, int k, Interval<T> interval, const TreeNode<T>* father) :
     TreeNode<T>(j,k,interval,father,2u,true) {
+        assert(j >= 0);
 }
 
 template <typename T>
 BinaryTreeNode<T>::BinaryTreeNode(const BinaryTreeNode<T> &other) : TreeNode<T>(other) {
-}
-
-template <typename T>
-BinaryTreeNode<T>& BinaryTreeNode<T>::operator= (const BinaryTreeNode<T> &other) {
 }
 
 template <typename T>
@@ -48,6 +45,7 @@ template <typename T>
 bool BinaryTreeNode<T>::canBeFather(const Point<T> &pt, unsigned int j, int k) {
     assert(this->_interval.contains(pt.x));
 
+    //std::cout << pt << std::endl;
     //std::cout << "Tree node :  j:" << this->level() << "\tk:" << this->offset() << std::endl;
     //std::cout << "Point :  j:" << j << "\tk:" << k << "\tk/2**(j-l): " << (k/static_cast<int>(std::pow(2,j - this->level())))  << std::endl;
 
@@ -134,9 +132,15 @@ unsigned int BinaryTreeNode<T>::computeChildId(T position) const {
 template <typename T>
 int BinaryTreeNode<T>::computeOffset(const Point<T> &pt, unsigned int j) const {
 
-    assert(j > 0);
-    int k = floor(pt.x*std::pow(2, j-1));
-    return 2*k+1;
+    assert(j>=0);
+
+    if(j >= 1) {
+        int k = floor(pt.x*std::pow(2, j-1));
+        return 2*k+1;
+    }
+    else {
+        return static_cast<int>(2*pt.x); 
+    }
 
     //T offset = T(1)/std::pow(T(2), T(j));
     //T x = pt.x;

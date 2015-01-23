@@ -24,7 +24,7 @@ void footer();
 
 //interpolated function
 float F(float t) {
-    return exp(t);
+    return cos(75*t)*exp(t)*cos(10*t);
 }
 
 int main(int argc, char **argv) {
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     // configuration
     constexpr unsigned int nData = 100u;
     constexpr unsigned int nDataSample = 1000u;
-    Interval<float> interval(0.0f,1.0f);
+    Interval<float> interval(-2.0f,1.0f);
 
     
     //generate and plot samples
@@ -47,25 +47,31 @@ int main(int argc, char **argv) {
     Gnuplot gp("tee plot.gp | gnuplot -persist");
     gp << "set multiplot\n";
 
-    samplePlot.plotLine(gp, box);
-    sample.plotPoints(gp, box);
-
+    //samplePlot.plotLine(gp, box);
+    //sample.plotPoints(gp, box);
     
     //build tree with samples (ALLOCATION)
-    TreeNode<float> *tree = new BinaryTreeNode<float>(1,1,interval,nullptr);
+    TreeNode<float> *tree = new IntegerGrid<float>(interval);
+
+
     for (unsigned int i = 0; i < nData; i++) {
-        tree->insert(sample[i],1);
+        tree->insert(sample[i]);
     } 
+    
     tree->plot(gp, box, true, true);
 
-    return EXIT_SUCCESS;
-
     //remove bad nodes (check GRP criterion)
-    tree->computePlacementCondition(1u,0.5);
+    // tree->computePlacementCondition(1u,0.5);
+    // tree->plotValidPoints(gp, box);
 
-    tree->plotValidPoints(gp, box);
+    
+    return EXIT_SUCCESS;
+    gp << "unset multiplot\n";
+    gp << "set term wxt 1\n";
+    gp << "set multiplot\n";
+    gp << "unset label\n";
+    
     tree->plotValid(gp, box);
-
     
     //map wavelets to tree nodes
     DeslaurierDubuc<float> db(1);
@@ -73,7 +79,6 @@ int main(int argc, char **argv) {
     unsigned int n = tree->countValidNodes();
     
     std::cout << n << " samples out of " << nData << " met the GRP criterion !";
-   
 
     //compute wavelet coefficients
     using Eigen::VectorXf;
@@ -92,7 +97,8 @@ int main(int argc, char **argv) {
     WaveletTree<float> *waveletTree = WaveletTree<float>::makeTree(tree, simpleDDTreeMapper, coefficients);
 
     gp << "unset multiplot\n";
-    gp << "set term wxt 1\n";
+    gp << "set term wxt 2\n";
+    gp << "set multiplot\n";
     gp << "unset label\n";
     waveletTree->plot(gp, box, nDataSample);
 
