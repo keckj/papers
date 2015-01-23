@@ -17,7 +17,7 @@ struct Interval {
     explicit Interval(const Interval<S> &other) : inf(static_cast<T>(other.inf)), sup(static_cast<T>(other.sup)) {}
 
     T center() const { return (inf + sup)/T(2); }
-    T length() const { return sup - inf; }
+    constexpr T length() const { return sup - inf; }
     int upperInteger() const { return static_cast<int>(ceil(sup)); }
     int lowerInteger() const { return static_cast<int>(floor(inf)); }
 

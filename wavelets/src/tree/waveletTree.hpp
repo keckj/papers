@@ -78,8 +78,9 @@ WaveletTree<T>* WaveletTree<T>::makeTree(const TreeNode<T> *node,
         const WaveletMapper<T> &mapper, 
         const Eigen::VectorXf &coefficents) {
     
-    unsigned int count = 0u;
-    return WaveletTree<T>::makeTreeRec(node, mapper, coefficents, count);
+        unsigned int count = 0u;
+        std::cout << node->interval() << std::endl;
+        return WaveletTree<T>::makeTreeRec(node, mapper, coefficents, count);
 }
 
 template <typename T>
@@ -97,6 +98,9 @@ WaveletTree<T>* WaveletTree<T>::makeTreeRec(const TreeNode<T> *node,
     else {
         waveNode = new WaveletTree<T>(node, mapper(node->level(), node->offset()),T(0));
     }
+
+    if(node->isWeakLinked())
+        return waveNode;
     
     const TreeNode<T> *child;
     for (unsigned int i = 0; i < node->nChilds(); i++) {
@@ -150,10 +154,12 @@ template <typename T>
 void WaveletTree<T>::plot(Gnuplot &gp, const PlotBox<T> &box, unsigned int nPoints) const {
 
     std::vector<std::tuple<T,T>> pts;
-   
-    T dx = this->support().length()/(nPoints - 1u);
+
+    Interval<T> interval(box.xmin(), box.xmax());
+
+    T dx = interval.length()/(nPoints - 1u);
     for (unsigned int i = 0; i < nPoints; i++) {
-        T x = this->support().inf + i*dx;
+        T x = box.xmin() + i*dx;
         T y = this->operator()(x);
         pts.push_back(std::make_tuple(x, y));
     }
@@ -166,17 +172,19 @@ void WaveletTree<T>::plot(Gnuplot &gp, const PlotBox<T> &box, unsigned int nPoin
 
 template <typename T>
 T WaveletTree<T>::operator()(T x) const {
-  
-   //std::cout << "level " << this->level() << "\toffset " << this->offset() << " is valid !" << std::endl;
-   if(! this->support().contains(x))
+
+   //std::cout << "level " << this->level() << "\toffset " << this->offset() << " support " << this->support() << std::endl;
+
+   if(!this->support().contains(x) && this->level() >= 0)
            return T(0);
 
    T res;
    if(this->isValid()) {
        res = this->coefficient()*this->wavelet()(this->level(), this->offset(), x);
     }
-   else 
+   else { 
        res = T(0); 
+    }
     
    //compute child values
     WaveletTree<T> *child; 

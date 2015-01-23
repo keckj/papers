@@ -17,6 +17,7 @@ struct Point {
     std::tuple<T,T> toTupple() const {
         return std::make_tuple(x,y);
     }
+
 };
 
 template <typename T>
@@ -25,6 +26,11 @@ std::ostream & operator<< (std::ostream &os, const Point<T> &point) {
     return os;
 }
 
+
+template <typename T>
+Point<T> operator*(const Point<T> &pt, T alpha) {
+    return Point<T>(pt.x*alpha, pt.y*alpha);
+}
 
 
 #endif /* end of include guard: POINT_H */

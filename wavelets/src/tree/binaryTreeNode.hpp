@@ -43,13 +43,15 @@ TreeNode<T>* BinaryTreeNode<T>::clone() const {
         
 template <typename T>
 bool BinaryTreeNode<T>::canBeFather(const Point<T> &pt, unsigned int j, int k) {
-    assert(this->_interval.contains(pt.x));
+
+    assert(this->interval().contains(pt.x));
 
     //std::cout << pt << std::endl;
     //std::cout << "Tree node :  j:" << this->level() << "\tk:" << this->offset() << std::endl;
     //std::cout << "Point :  j:" << j << "\tk:" << k << "\tk/2**(j-l): " << (k/static_cast<int>(std::pow(2,j - this->level())))  << std::endl;
 
-    return ( ((this->level() <= j) && (this->offset() == k))
+    return ( (this->level() == 0 && this->interval().contains(pt.x)) 
+        || ((this->level() <= j) && (this->offset() == k))
         || ((this->level() < j) && 
              (k/static_cast<int>(std::pow(2,j - this->level()))) == this->offset()) );
 }
@@ -106,7 +108,7 @@ void BinaryTreeNode<T>::insert(const Point<T> &pt, unsigned int j) {
 template <typename T>
 void BinaryTreeNode<T>::makeChilds() {
     
-    if (this->_childs[0] == nullptr) {
+    if (this->_childs[0] == nullptr && this->_childs[1] == nullptr) {
         Interval<T> I1( this->inf(),    this->center() );
         Interval<T> I2( this->center(), this->sup()    );
         int J = this->level() + 1u;

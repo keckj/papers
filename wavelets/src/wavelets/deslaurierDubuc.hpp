@@ -5,47 +5,71 @@
 #include <cassert>
 #include "wavelet.hpp"
 #include "gnuplot.hpp"
+//#include <unsupported/Eigen/FFT>
+#include "deslaurierDubucUtils.hpp"
 
-template <typename T>
+template <typename T, unsigned int N>
 class DeslaurierDubuc : public Wavelet<T> {
 
     public:
-        explicit DeslaurierDubuc(unsigned int order);
-        DeslaurierDubuc(const DeslaurierDubuc<T> &other);
+        DeslaurierDubuc();
+        DeslaurierDubuc(const DeslaurierDubuc<T,N> &other);
         ~DeslaurierDubuc();
 
         T operator()(T x) const override;
         T operator()(unsigned int j, int k, T x) const override;
 
-        unsigned int order() const;
+        static constexpr unsigned int sampleCount();
 
-        static constexpr Interval<T> computeSupport(unsigned int order);
+        static std::vector<T> getSamples();
 
     protected:
-        unsigned int _order;
-};
+        static constexpr unsigned int _unitSamplesCount = 100u;
+        static std::vector<T> _samples;
+        static bool _init;
         
-template <typename T>
-DeslaurierDubuc<T>::DeslaurierDubuc(unsigned int order) : 
-    Wavelet<T>(DeslaurierDubuc<T>::computeSupport(order)), _order(order) {
-        assert(order >= 1);
+        static constexpr Interval<T> computeSupport();
+
+        static void init();
+        static unsigned int toSampleId(T x);
+};
+
+        
+template <typename T, unsigned int N>
+bool DeslaurierDubuc<T,N>::_init = false;
+
+template <typename T, unsigned int N>
+std::vector<T> DeslaurierDubuc<T,N>::_samples;
+
+template <typename T, unsigned int N>
+void DeslaurierDubuc<T,N>::init() {
+    if(_init)
+        return;
+}
+        
+template <typename T, unsigned int N>
+unsigned int DeslaurierDubuc<T,N>::toSampleId(T x) {
+    Interval<T> sup = computeSupport();
+    assert(sup.contains(x));
+    return static_cast<unsigned int>((x-sup.inf)/sup.length() * (sampleCount() - 1u));
+}
+        
+template <typename T, unsigned int N>
+DeslaurierDubuc<T,N>::DeslaurierDubuc() : 
+    Wavelet<T>(DeslaurierDubuc<T,N>::computeSupport()) {
+        init();
 }
 
-template <typename T>
-DeslaurierDubuc<T>::DeslaurierDubuc(const DeslaurierDubuc<T> &other) : Wavelet<T>(other), _order(other.order()) {
+template <typename T, unsigned int N>
+DeslaurierDubuc<T,N>::DeslaurierDubuc(const DeslaurierDubuc<T,N> &other) : Wavelet<T>(other) {
 }
 
-template <typename T>
-DeslaurierDubuc<T>::~DeslaurierDubuc() {
+template <typename T, unsigned int N>
+DeslaurierDubuc<T,N>::~DeslaurierDubuc() {
 }
 
-template <typename T>
-unsigned int DeslaurierDubuc<T>::order() const {
-    return _order;
-}
-
-template <typename T>
-T DeslaurierDubuc<T>::operator()(T x) const {
+template <typename T, unsigned int N>
+T DeslaurierDubuc<T,N>::operator()(T x) const {
     if(this->support(0,0).contains(x)) {
         return T(1) - sqrt(x*x);
     }
@@ -54,19 +78,32 @@ T DeslaurierDubuc<T>::operator()(T x) const {
     }
 }
 
-template <typename T>
-T DeslaurierDubuc<T>::operator()(unsigned int j, int k, T x) const {
-    return this->operator()(T(std::pow(2,j))*x - T(k));
+template <typename T, unsigned int N>
+T DeslaurierDubuc<T,N>::operator()(unsigned int j, int k, T x) const {
+    if(N == 0)
+        return this->operator()(T(std::pow(2,j))*x - T(k));
+    else 
+        return 0;
 }
         
-template <typename T>
-constexpr Interval<T> DeslaurierDubuc<T>::computeSupport(unsigned int order) {
-    switch(order) {
-        case(1u): 
+template <typename T, unsigned int N>
+constexpr Interval<T> DeslaurierDubuc<T,N>::computeSupport() {
+    switch(N) {
+        case(0u): 
             return Interval<T>(-1,1);
         default:
-            return Interval<T>(-T(2)*order + 1/T(2) ,T(2)*order - 1/T(2));
+            return Interval<T>(-T(2)*N + 1/T(2) ,T(2)*N - 1/T(2));
     }
+}
+        
+template <typename T, unsigned int N>
+std::vector<T> DeslaurierDubuc<T,N>::getSamples() {
+    return _samples;
+}
+
+template <typename T, unsigned int N>
+constexpr unsigned int DeslaurierDubuc<T,N>::sampleCount() {
+    return static_cast<unsigned int>(computeSupport().length()*_unitSamplesCount);
 }
 
 #endif /* end of include guard: DESLAURIERDUBUC_H */

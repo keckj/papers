@@ -36,49 +36,33 @@ int main(int argc, char **argv) {
     // configuration
     constexpr unsigned int nData = 100u;
     constexpr unsigned int nDataSample = 1000u;
-    Interval<float> interval(-2.0f,1.0f);
+    Interval<float> interval(0.0f,1.0f);
 
+    DeslaurierDubuc<float,0> olol;
+
+    return EXIT_SUCCESS;
     
     //generate and plot samples
     FunctionSample<nDataSample, float> samplePlot(interval, F);
     FunctionSample<nData, float> sample(interval, F);
 
-    const PlotBox<float>& box = PlotBox<float>(interval.inf,interval.sup,samplePlot.min(),samplePlot.max());
-    Gnuplot gp("tee plot.gp | gnuplot -persist");
-    gp << "set multiplot\n";
-
-    //samplePlot.plotLine(gp, box);
-    //sample.plotPoints(gp, box);
-    
+    const PlotBox<float>& box = PlotBox<float>(interval.inf,interval.sup,samplePlot.min(),samplePlot.max()).dilate(1.0);
     //build tree with samples (ALLOCATION)
     TreeNode<float> *tree = new IntegerGrid<float>(interval);
-
 
     for (unsigned int i = 0; i < nData; i++) {
         tree->insert(sample[i]);
     } 
     
-    tree->plot(gp, box, true, true);
-
     //remove bad nodes (check GRP criterion)
-    // tree->computePlacementCondition(1u,0.5);
-    // tree->plotValidPoints(gp, box);
-
-    
-    return EXIT_SUCCESS;
-    gp << "unset multiplot\n";
-    gp << "set term wxt 1\n";
-    gp << "set multiplot\n";
-    gp << "unset label\n";
-    
-    tree->plotValid(gp, box);
+    tree->computePlacementCondition(1,0.5);
     
     //map wavelets to tree nodes
-    DeslaurierDubuc<float> db(1);
+    DeslaurierDubuc<float,0> db;
     WaveletMapper<float> simpleDDTreeMapper = [&db](unsigned int j, int k)->Wavelet<float>& { return db; };
     unsigned int n = tree->countValidNodes();
     
-    std::cout << n << " samples out of " << nData << " met the GRP criterion !";
+    std::cout << n << " samples out of " << nData << " met the GRP criterion !" << std::endl;
 
     //compute wavelet coefficients
     using Eigen::VectorXf;
@@ -92,16 +76,29 @@ int main(int argc, char **argv) {
     float epsilon = (A*coefficients -b).maxCoeff();
     std::cout << "Maximum sample error : " << epsilon << std::endl;
 
-
     //build wavelet tree with the coefficients
     WaveletTree<float> *waveletTree = WaveletTree<float>::makeTree(tree, simpleDDTreeMapper, coefficients);
+
+    //plot everything
+    Gnuplot gp("tee plot.gp | gnuplot -persist");
+    gp << "set term wxt dashed\n";
+    gp << "set multiplot\n";
+    samplePlot.plotLine(gp, box);
+    sample.plotPoints(gp, box);
+    tree->plotValidPoints(gp, box);
+
+    gp << "unset multiplot\n";
+    gp << "set term wxt 1 dashed\n";
+    gp << "set multiplot\n";
+    gp << "unset label\n";
+    tree->plot(gp, box, true, true);
+    tree->plotValid(gp, box);
 
     gp << "unset multiplot\n";
     gp << "set term wxt 2\n";
     gp << "set multiplot\n";
     gp << "unset label\n";
     waveletTree->plot(gp, box, nDataSample);
-
 
     footer();
 

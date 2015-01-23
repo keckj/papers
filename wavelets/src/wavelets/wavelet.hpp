@@ -13,7 +13,7 @@ class Wavelet {
         virtual T operator()(T x) const = 0;
         virtual T operator()(unsigned int j, int k, T x) const = 0;
 
-        Interval<T> support(unsigned int j, int k) const;
+        Interval<T> support(int j, int k) const;
         
         void plot(Gnuplot &gp, unsigned int nPoints, unsigned int j, int k) const;
 
@@ -37,11 +37,15 @@ Wavelet<T>::~Wavelet() {
 }
 
 template <typename T>
-Interval<T> Wavelet<T>::support(unsigned int j, int k) const {
+Interval<T> Wavelet<T>::support(int j, int k) const {
 
     T offset = T(1)/std::pow(2,j);
     T center = k*offset;
     T midsupport = _support.length()/T(2);
+
+    //std::cout << "level " << j << "\toffset" << k << std::endl;
+    //std::cout << _support << std::endl;
+    //std::cout << center - midsupport*offset << "  " << center + midsupport*offset << " loulz" << std::endl;
 
     return Interval<T>(center - midsupport*offset, center + midsupport*offset);
 }

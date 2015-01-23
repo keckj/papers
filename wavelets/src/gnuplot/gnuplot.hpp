@@ -241,9 +241,11 @@ struct is_boost_tuple {
 //	typedef boost::mpl::bool_<false> type;
 //};
 
-// }}}1
+// o}}}1
+//
+//
 
-// {{{1 Tmpfile helper class
+// {o{{1 Tmpfile helper class
 #ifdef GNUPLOT_USE_TMPFILE
 // RAII temporary file.  File is removed when this object goes out of scope.
 class GnuplotTmpfile {
@@ -1162,6 +1164,7 @@ get_columns_range(const T &arg) {
 // }}}2
 
 // }}}1
+//
 
 // {{{1 Array printing functions
 //

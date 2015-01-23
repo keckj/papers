@@ -28,6 +28,10 @@ struct PlotBox {
 
     T width() const { return _xmax.x - _xmin.x; }
     T height() const { return _xmax.y - _xmin.y; }
+
+    PlotBox<T> dilate(float alpha) const {
+        return PlotBox<T>(_xmin*alpha, _xmax*alpha);
+    }
 };
 
 template <typename T>
@@ -36,5 +40,5 @@ Gnuplot& operator<< (Gnuplot& gp, const PlotBox<T> &box) {
     gp << "set yrange [" << box.ymin() << ":" << box.ymax() << "]\n";
     return gp;
 }
-
+    
 #endif /* end of include guard: PLOTBOX_H */

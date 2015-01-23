@@ -22,6 +22,8 @@ struct FunctionSample : public Sample<N,T> {
 template <unsigned int N, typename T>
 FunctionSample<N,T>::FunctionSample(const Interval<T> &interval, std::function<T(T)> lambda) :
     Sample<N,T>(interval) {
+        _min = lambda(interval.inf);
+        _max = lambda(interval.inf);
         for (unsigned int i = 0; i < N; i++) {
             T x = interval.inf + Random::randf()*(interval.sup - interval.inf);
             T y = lambda(x);

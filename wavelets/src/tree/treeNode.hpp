@@ -34,8 +34,12 @@ class TreeNode {
         T position() const;
         T value() const;
         bool isFilled() const;
-        bool isFillable() const;
         bool isValid() const;
+       
+        //special nodes
+        bool isRoot() const;
+        bool isFillable() const;
+        bool isWeakLinked() const;
 
         const TreeNode<T>* father() const;
 
@@ -69,10 +73,10 @@ class TreeNode {
         virtual int computeOffset(const Point<T> &pt, unsigned int j) const = 0;
         virtual unsigned int computeChildId(T position) const = 0;
         
-        void computePlacementCondition(unsigned int p, T rho);
+        void computePlacementCondition(T p, T rho);
 
     protected:
-        unsigned int _level;
+        int _level;
         int _offset;
 
         Interval<T> _interval;
@@ -93,15 +97,15 @@ class TreeNode {
         void plotValidRec(std::vector<std::tuple<T,T>> &pts, unsigned int maxLevel, const AffineTransformation<T> &transfo) const;
         void plotValidPointsRec(std::vector<std::tuple<T,T>> &pts) const;
 
-        unsigned int fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b, 
+        void fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b, 
                 const WaveletMapper<T> &waveletMapper, 
                 const std::vector<T> &validPositions, 
                 unsigned int &column) const;
 
-        bool placementConditionUp(unsigned int p, T rho, const TreeNode<T> *checkedNode) const;
-        bool placementConditionDown(unsigned int p, T rho, const TreeNode<T> *checkedNode);
+        bool placementConditionUp(T p, T rho, const TreeNode<T> *checkedNode) const;
+        bool placementConditionDown(T p, T rho, const TreeNode<T> *checkedNode);
 
-        static bool checkFirstPlacementCondition(unsigned int p, T rho, const TreeNode<T> *node, const TreeNode<T> *checkedNode);
+        static bool checkFirstPlacementCondition(T p, T rho, const TreeNode<T> *node, const TreeNode<T> *checkedNode);
         static bool checkSecondPlacementCondition(T rho, const TreeNode<T> *checkedNode);
 };
 
@@ -120,6 +124,7 @@ TreeNode<T>::TreeNode(int j, int k, Interval<T> interval, const TreeNode<T> *fat
     _nChilds(nChilds), _childs(nullptr),
     _isFillable(isFillable), _isFilled(false), _isValid(false), _point()
 {
+    //std::cout << "Node(" << _level << "," << _offset << "," << isFillable << "," << _interval << " )" << std::endl;
     _childs = new TreeNode<T>*[_nChilds];
     for (unsigned int i = 0; i < _nChilds; i++) {
         _childs[i] = nullptr;
@@ -318,15 +323,65 @@ void TreeNode<T>::plot(Gnuplot &gp, const PlotBox<T> &box, bool plotLabelX, bool
     AffineTransformation<T> transfo(realBox, box);
     
     std::vector<std::tuple<T,T>> pts;
+    gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
+    gp << "set style line 2 lc rgb '#0060ad' lt 3 lw 2 pt 7 ps 1.5\n";
+    gp << "set style line 3 lc rgb '#008000' lt 1 lw 2 pt 7 ps 1.5\n";
+    gp << "set style line 4 lc rgb '#000000' lt 3 lw 2 pt 7 ps 1.5\n";
+    gp << box;
+    
+    Point<T> pt(this->center(), jmax+1);
+    Point<T> realPt = transfo(pt);
 
+    assert(this->isRoot());
+    TreeNode<T> *child;
+    
+    gp << "set label 'root' at " << realPt.x << "," << realPt.y + 0.5 << " center font 'Verdana,8'\n";
+            
     for (unsigned int i = 0; i < _nChilds; i++) {
-        pts.empty();
-        this->getChild(i)->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
-        gp << box;
-        gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
+        child = this->getChild(i);
+        if(!child->isWeakLinked())
+            continue;
+        
+        pts.clear(); 
+        pts.push_back(realPt.toTupple());
+        child->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
+        pts.push_back(realPt.toTupple());
+        
+        gp << "plot '-' with linespoints ls 2 notitle\n";
+        gp.send1d(pts);
+    }
+    
+    
+    for (unsigned int i = 0; i < _nChilds; i++) {
+        child = this->getChild(i);
+        if(child->isWeakLinked())
+            continue;
+        
+        pts.clear(); 
+        pts.push_back(realPt.toTupple());
+        child->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
+        pts.push_back(realPt.toTupple());
+        
         gp << "plot '-' with linespoints ls 1 notitle\n";
         gp.send1d(pts);
     }
+    
+    pts.clear();
+    for (unsigned int i = 0; i < _nChilds; i++) {
+        child = this->getChild(i);
+        Point<T> childPt(child->position(), (jmax - child->level()));
+        std::tuple<T,T> childPos = transfo(childPt).toTupple();
+        pts.push_back(realPt.toTupple());
+        pts.push_back(childPos);
+    }
+    pts.push_back(realPt.toTupple());
+    gp << "plot '-' with linespoints ls 3 notitle\n";
+    gp.send1d(pts);
+    
+    pts.clear();
+    pts.push_back(realPt.toTupple());
+    gp << "plot '-' with points ls 4 notitle\n";
+    gp.send1d(pts);
 }
 
 template <typename T>
@@ -334,20 +389,27 @@ void TreeNode<T>::plotRec(Gnuplot &gp, std::vector<std::tuple<T,T>> &pts,
         unsigned int jmax, const AffineTransformation<T> &transfo,
         bool plotLabelX, bool plotLabelY) const {
    
-    Point<T> pt(this->position(), (jmax + 2u - this->level()));
+    Point<T> pt(this->position(), (jmax - this->level()));
     std::tuple<T,T> c = transfo(pt).toTupple();
 
     //insert child points
-    TreeNode<T> *node; 
+    TreeNode<T> *child; 
     for (unsigned int i = 0; i < this->nChilds(); i++) {
-        node = _childs[i];
-        if(node != nullptr && node->isFilled()) {
+        child = _childs[i];
+        if(child != nullptr && child->isFilled()) {
             pts.push_back(c); 
-            node->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
+            if(this->isWeakLinked()) {
+                Point<T> childPt(child->position(), (jmax - child->level()));
+                std::tuple<T,T> childPos = transfo(childPt).toTupple();
+                pts.push_back(childPos);
+            }
+            else {
+                child->plotRec(gp, pts, jmax, transfo, plotLabelX, plotLabelY);
+            }
         }
     }
   
-    if(this->level() <= 4) {
+    if(this->level() <= 2) {
         Point<T> labelPos(pt);
         pt.y += T(0.3);
         if(this->father() != nullptr) {
@@ -385,9 +447,16 @@ void TreeNode<T>::plotValid(Gnuplot &gp, const PlotBox<T> &box) const {
     PlotBox<T> realBox(xmin, xmax);
     AffineTransformation<T> transfo(realBox, box);
 
-    this->plotValidRec(pts, jmax, transfo);
-   
+    assert(this->isRoot());
+    
     gp << box;
+
+    TreeNode<T> *child; 
+    for (unsigned int i = 0; i < _nChilds; i++) {
+        child = this->getChild(i);
+        child->plotValidRec(pts, jmax, transfo);
+    }
+        
     gp << "plot '-' with point pt 7 notitle\n";
     gp.send1d(pts);
 }
@@ -397,9 +466,12 @@ void TreeNode<T>::plotValidRec(std::vector<std::tuple<T,T>> &pts,
         unsigned int jmax, const AffineTransformation<T> &transfo) const {
   
     if(this->isValid()) {
-        Point<T> pt(this->position(), (jmax + 2u - this->level()));
+        Point<T> pt(this->position(), (jmax - this->level()));
         pts.push_back(transfo(pt).toTupple()); 
     }
+
+    if(this->isWeakLinked())
+        return;
 
     //insert child points
     TreeNode<T> *node; 
@@ -445,11 +517,14 @@ void TreeNode<T>::plotValidPointsRec(std::vector<std::tuple<T,T>> &pts) const {
 
 template <typename T>
 void TreeNode<T>::setValidity(bool valid) {
-    this->_isValid = valid;
+    if(this->isRoot())
+        this->_isValid = false;
+    else
+        this->_isValid = valid;
 }
 
 template <typename T>
-void TreeNode<T>::computePlacementCondition(unsigned int p, T rho) {
+void TreeNode<T>::computePlacementCondition(T p, T rho) {
     
     bool isValid = TreeNode<T>::checkSecondPlacementCondition(rho, this);
     isValid = isValid && this->placementConditionUp(p,rho,this);
@@ -465,12 +540,12 @@ void TreeNode<T>::computePlacementCondition(unsigned int p, T rho) {
 }
 
 template <typename T>
-bool TreeNode<T>::placementConditionUp(unsigned int p, T rho, const TreeNode<T> *checkedNode) const {
+bool TreeNode<T>::placementConditionUp(T p, T rho, const TreeNode<T> *checkedNode) const {
     
     bool isValid = true;
     const TreeNode<T> *father = this->father();
 
-    if(father == nullptr)
+    if(father == nullptr || father->father() == nullptr || father->father()->isRoot())
         return isValid;
 
     //check current node's father
@@ -497,7 +572,7 @@ bool TreeNode<T>::placementConditionUp(unsigned int p, T rho, const TreeNode<T> 
 }
 
 template <typename T>
-bool TreeNode<T>::placementConditionDown(unsigned int p, T rho, const TreeNode<T> *checkedNode) {
+bool TreeNode<T>::placementConditionDown(T p, T rho, const TreeNode<T> *checkedNode) {
 
     bool isValid;
 
@@ -511,6 +586,9 @@ bool TreeNode<T>::placementConditionDown(unsigned int p, T rho, const TreeNode<T
     isValid = TreeNode<T>::checkFirstPlacementCondition(p, rho, checkedNode, this);
     if(!isValid)
         return false;
+
+    if(this->isWeakLinked())
+        return true;
     
     //check current node's childs
     TreeNode<T> *child;
@@ -529,7 +607,7 @@ bool TreeNode<T>::placementConditionDown(unsigned int p, T rho, const TreeNode<T
 }
         
 template <typename T>
-bool TreeNode<T>::checkFirstPlacementCondition(unsigned int p, T rho, const TreeNode<T> *node, const TreeNode<T> *checkedNode) {
+bool TreeNode<T>::checkFirstPlacementCondition(T p, T rho, const TreeNode<T> *node, const TreeNode<T> *checkedNode) {
     if(TreeNode<T>::distance(node->center(), checkedNode->center()) <= T(p)/std::pow(2,checkedNode->level())) {
         return (TreeNode<T>::distance(node->center(), node->position()) <= rho/std::pow(2,checkedNode->level())); 
     }
@@ -557,6 +635,9 @@ unsigned int TreeNode<T>::countValidNodes() const {
         validNodes = 1;
     else
         validNodes = 0;
+
+    if(this->isWeakLinked())
+        return validNodes;
     
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
@@ -573,6 +654,9 @@ void TreeNode<T>::getValidPositions(std::vector<T> &positions) const {
 
     if(this->isValid())
         positions.push_back(this->position());
+    
+    if(this->isWeakLinked())
+        return;
     
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
@@ -597,12 +681,11 @@ void TreeNode<T>::fillSystem(Eigen::MatrixXf &A, Eigen::VectorXf &b,
 }
         
 template <typename T>
-unsigned int TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b, 
+void TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b, 
         const WaveletMapper<T> &waveletMapper, 
         const std::vector<T> &validPositions, 
         unsigned int &column) const {
    
-    unsigned int newColumn = column;
     unsigned int N = validPositions.size();
 
     if(this->isValid()) {
@@ -614,6 +697,9 @@ unsigned int TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b,
         column++;
     }
     
+    if(this->isWeakLinked())
+        return;
+    
     TreeNode<T> *child;
     for (unsigned int i = 0; i < _nChilds; i++) {
         child = _childs[i];
@@ -621,13 +707,21 @@ unsigned int TreeNode<T>::fillSystemRec(Eigen::MatrixXf &A, Eigen::VectorXf &b,
             child->fillSystemRec(A,b,waveletMapper,validPositions, column);
         }
     }
-
-    return newColumn;
 }
         
 template <typename T>
 TreeNode<T>*& TreeNode<T>::child(unsigned int childId) {
     return _childs[childId];
+}
+        
+template <typename T>
+bool TreeNode<T>::isWeakLinked() const {
+    return (this->level() == 0) && (this->offset() % 2 == 0);
+}
+
+template <typename T>
+bool TreeNode<T>::isRoot() const {
+    return (this->level() == -1);
 }
 
 #endif /* end of include guard: TREENODE_H */
