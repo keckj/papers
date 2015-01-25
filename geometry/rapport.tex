@@ -1,0 +1,380 @@
+\documentclass[11pt,a4paper]{article} 
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[french,english]{babel}
+
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{lmodern}%pour un meilleur rendu des polices
+\usepackage{verbatim}%du texte non interprt
+\usepackage[cmex10]{amsmath}
+\usepackage{amssymb}%maths
+\usepackage{xspace}
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{etoolbox}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{lastpage}
+\usepackage[bookmarks=true,bookmarksnumbered=true]{hyperref}
+\usepackage{ctable} % for \specialrule command
+\usepackage{cite}
+\usepackage{algorithm2e}
+\usepackage{alltt}
+\usepackage{array}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{dblfloatfix}
+\usepackage{url}
+\usepackage{tipa}
+\usepackage{stmaryrd}
+\usepackage{multirow}
+\usepackage{adjustbox}
+\usepackage{subcaption}
+\usepackage{subfig}
+\usepackage{dsfont}
+
+%\usepackage{natbib}
+%\usepackage[pdftex]{graphicx}
+%\usepackage{framed}
+%\usepackage[usenames]{color}
+
+\graphicspath{{img/}}
+\DeclareGraphicsExtensions{.pdf,.jpeg,.jpg,.png}
+
+%% taille du papier
+\textwidth 16 true cm
+\textheight 24 true cm
+\addtolength{\hoffset}{-1.5cm}
+\addtolength{\voffset}{-1.5cm}
+
+%-------- couleurs
+\definecolor{grisf}{rgb}{.47,.47,.47} % barre de droite gris fonce
+\newcommand{\colorc}{\color{MidnightBlue}}
+\newcommand{\colorb}{\color{NavyBlue}}
+\newcommand{\colora}{\color{Cerulean}}
+
+%----------- sections et TOC
+% chapitres
+\titleformat{\chapter}[display]
+  {\normalfont\sffamily\bfseries\huge\colora\centering}{\thechapter}{1ex}
+  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{{\titlerule[1pt]}}]
+  
+% chapitres etoiles  
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\sffamily\bfseries\LARGE\colora\centering}{}{1ex}
+  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{\titlerule[1pt]}\vspace{2ex}]
+  
+% sections  
+\titleformat{\section}[hang]{\Large\normalfont\sffamily\bfseries\colora}{{\thesection\, }}{0 em}
+  {}[{\titlerule[1pt]}\vspace{1ex}]
+
+  
+% sous section, sous sous sec, paragraphes  
+\titleformat{\subsection}[hang]{\Large\normalfont\sffamily\bfseries\colorc}{{\thesubsection\, }}{0 em}
+  {}[{\titlerule}\vspace{.7ex}]
+\titleformat{\subsubsection}[hang]{\normalfont\sffamily\bfseries\large}{{\thesubsubsection\, }}{0 em}
+  {}[{\color{grisf}\titlerule}\vspace{3pt}]
+\titleformat{\paragraph}[runin]{\normalfont\sffamily\bfseries\colorb}{}{0 em}
+  {\indent}
+
+
+
+%----------------- fancy headers -------------%
+
+\makeatletter
+\patchcmd{\@fancyhead}{\rlap}{\color{grisf}\rlap}{}{}
+\patchcmd{\headrule}{\hrule}{\color{grisf}\hrule}{}{}
+\patchcmd{\@fancyfoot}{\rlap}{\color{grisf}\rlap}{}{}
+\patchcmd{\footrule}{\hrule}{\color{grisf}\hrule}{}{}
+\makeatother
+
+                                                                    
+\fancyhf{}
+\fancyhead[R]{\sffamily Article summary }
+\fancyfoot[R]{\sffamily\small{\thepage/\pageref{LastPage}}}
+\fancyhead[L]{\sffamily\small{Jean-Baptiste Keck}}
+\fancyfoot[L]{\sffamily\small{M2 MSIAM -- Optimal Transport - Levelset  -- 2014-2015}}
+\renewcommand{\headrulewidth}{0.2pt} %0.4
+\renewcommand{\footrulewidth}{0.2pt} %0
+\addtolength{\headheight}{0.pt}
+
+\fancypagestyle{plain}{
+  \fancyhead{}
+  \renewcommand{\headrulewidth}{0pt}
+  }
+     
+  %-- macros --%   
+  \def\hlinewd#1{%
+      \noalign{\ifnum0=`}\fi\hrule \@height #1 %
+  \futurelet\reserved@a\@xhline} 
+
+  %------------------- front page ------------------%
+  \title{
+      \bsc{Paper Review}
+      \vskip 1cm
+      {\colorb\textbf{Texture Mapping via Optimal Mass Transport}}
+      \vskip 1cm
+      {\colorc\textit{Ayelet Dominitz and Allen Tannenbaum}}
+      \vskip 1cm
+      {IEEE Visualization and Computer Graphics 2010}
+  }
+\author{%
+    Jean-Baptiste \bsc{Keck}
+    \vskip 0.5cm
+    \bsc{M2 Msiam}
+}
+%\date{27 janvier 2014}
+\makeatletter
+
+\def\maketitle{%
+    %\thispagestyle{empty}%
+    \begin{flushleft}
+        \normalfont\LARGE\par
+    \end{flushleft}
+    \vskip 2cm
+    \begin{center}%
+        {\colora\specialrule{.2em}{0em}{0em}}
+        \vskip 1cm
+        {\Huge \@title}%
+        \vskip 1cm
+        {\colora\specialrule{.2em}{0em}{0em}}
+        \vskip 4cm
+        {\Huge \@author\par}%
+        \vskip 2cm
+        {\Huge \@date\par}%
+        \vskip 1cm
+
+    \end{center}%
+    \clearpage
+}
+
+\newcommand{\ccite}[1]{\textbf{\cite{#1}}}
+\newcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
+\definecolor{lightgray}{gray}{0.9}
+
+\DeclareMathOperator{\e}{e}
+\renewcommand{\f}{\overrightarrow{F}}
+\renewcommand{\fv}{\overrightarrow{F_{\nu}}}
+\renewcommand{\F}{\widehat{\f}}
+\renewcommand{\Fv}{\widehat{\f}_{\nu}}
+\renewcommand{\x}{\overrightarrow{\textrm{x}}}
+\renewcommand{\v}{\overrightarrow{\nu}}
+\renewcommand{\xk}{\overrightarrow{\textrm{x}_k}}
+\renewcommand{\n}{\overrightarrow{n}}
+\renewcommand{\nk}{\overrightarrow{n_k}}
+\renewcommand{\N}{\overrightarrow{N}}
+\renewcommand{\Nh}{\widehat{\N}}
+\renewcommand{\dx}{\ \textrm{dx}}
+\renewcommand{\dv}{\ \textrm{d}\nu}
+\renewcommand{\dS}{\ \textrm{d}S}
+\renewcommand{\R}{\mathbb{R}}
+\renewcommand{\X}{\scalebox{1.5}{$\chi$}_M}
+\renewcommand{\Xh}{\widehat{\X}}
+\renewcommand{\I}{\scalebox{1.5}{$\mathds{1}$}}
+\renewcommand{\root}{\displaystyle \e^{-i\ \left( \x \cdot \v \right)}}
+\renewcommand{\rroot}{\displaystyle \e^{+i\ \left( \x \cdot \v \right)}}
+\renewcommand{\rootk}{\displaystyle \e^{-i\ \left( \xk \cdot \v \right)}}
+\renewcommand{\rrootk}{\displaystyle \e^{+i\ \left( \xk \cdot \v \right)}}
+\renewcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}
+%%%%%%%
+
+\begin{document}
+\pagestyle{fancy}
+
+\maketitle
+
+%\tableofcontents
+%\clearpage
+
+\section{Introduction}
+
+$$
+\displaystyle \int_{M \subset \R^3} div(\f(\x)) \dx
+\ \
+= 
+\ \
+\displaystyle \int_{\partial M} \f(\x) \cdot \n \dS
+\ \
+\simeq
+\ \
+\dfrac{|\partial M|}{N}\displaystyle \sum_{k=1}^{N} \f(\xk) \cdot \nk 
+$$
+
+\vskip 1cm
+
+$$
+\X_M(\x) = \I_M(\x) = 
+\left\{
+\begin{array}{l}
+    1 \textrm{ if } \x \in M \\
+    0 \textrm{ else} \\
+\end{array}
+\right.
+$$
+
+\vskip 1cm
+
+$$
+    \Xh \left( \v \right) 
+    = 
+    \displaystyle \int_{\R^3} \X \left( \x \right) \ \root  \dx
+    =
+    \displaystyle \int_{M} \root  \dx
+    = 
+    \displaystyle \int_{\partial M} \fv(\x) \cdot \n  \dS
+    \simeq
+    \dfrac{|\partial M|}{N}\displaystyle \sum_{k=1}^{N} \fv(\xk) \cdot \nk 
+$$
+
+\vskip 1cm
+$$
+    div \left[ \fv(\x) \right] = \root \ \ \forall (\x, \v) \in \R^3 \times \R^3
+$$
+
+\vskip 1cm
+$$
+\left( \xk, \nk \right)
+$$
+
+\vskip 1cm
+
+$$
+\fv(\x) = \dfrac{i\v}{\norm{\v}^2} \root \ \ \forall\ \v \neq \vec{0}
+$$
+
+\vskip 1cm
+   
+$$
+\begin{array}{l c l c l}
+    \Xh ( \vec{0} ) & = &
+    \displaystyle \int_{M} 1 \dx & = &
+    \ ? \\
+    \\    
+    |\partial M| & = &
+    \displaystyle \int_{\partial M} 1 \dS & = &
+    \ ? \\
+\end{array}
+$$
+
+\vskip 1cm
+
+$$
+    \x = \left[ x, y, z \right]^T
+
+    \v = \left[ m, l, p \right]^T
+$$
+
+\vskip 1cm
+
+
+\clearpage
+$div \left[ \fv(\x) \right] = \root \ \ \forall (\x, \v) \in \R^3 \times \R^3\ $
+ with $\ \fv(\x) = \dfrac{i\v}{\norm{\v}^2} \root \ \ \forall\ \v \neq \vec{0}$
+
+$$
+\left\{
+    \begin{array}{l c l}
+        \pd{F_{\nu}^1}{x}(\x) & = & \dfrac{i m}{m^2 + l^2 + p^2} \left[ -i m \right] \root \\
+        \\
+        \pd{F_{\nu}^2}{y}(\x) & = & \dfrac{i l}{m^2 + l^2 + p^2} \left[ -i l \right] \root \\
+        \\
+        \pd{F_{\nu}^3}{z}(\x) & = & \dfrac{i p}{m^2 + l^2 + p^2} \left[ -i p \right] \root \\
+\end{array}
+\right.
+\Rightarrow
+\left[
+\begin{array}{l c l}
+    div \left[ \fv(\x) \right] &=& \pd{F_{\nu}^1}{x}(\x) + \pd{F_{\nu}^2}{y}(\x) + \pd{F_{\nu}^3}{z}(\x)\\
+    \\
+    &=& \dfrac{m^2 + l^2 + p^2}{m^2 + l^2 + p^2}\ \root \\
+    \\
+    &=&\root
+\end{array}
+\right.
+$$
+
+\vskip 1cm
+$$
+    \N(\x) = \dfrac{1}{N} \displaystyle
+    \sum_{k=1}^N \delta_{\xk}(\x)\ \nk
+$$
+
+\vskip 1cm
+$$
+\Nh(\v) = \dfrac{1}{N} \displaystyle
+    \sum_{k=1}^N \rootk \ \nk
+$$
+
+\vskip 1cm
+$$
+    \Xh \left( \v \right) 
+\ \
+    \simeq
+\ \
+    \dfrac{|\partial M|}{N}\displaystyle \sum_{k=1}^{N} \fv(\xk) \cdot \nk 
+\ \
+    \propto 
+\ \
+    \dfrac{1}{N}\displaystyle \sum_{k=1}^{N} \dfrac{i \left( \v \cdot \nk \right) }{\norm{\v}^2} \rootk
+\ \
+$$
+
+\vskip 1cm
+$$
+    \Xh \left( \v \right) 
+    \simeq
+\ \
+    \dfrac{i}{N \ \norm{\v}^2}\displaystyle \sum_{k=1}^{N} \left( \v \cdot \nk \right) \rootk
+\ \
+    = 
+\ \
+    \dfrac{i}{N \ \norm{\v}^2} \left[ \v \cdot \Nh(\nu) \right ]
+$$
+
+\vskip 1cm
+$$
+    \X \left( \x \right) 
+    = 
+    \displaystyle \int_{\R^3} \Xh \left( \v \right) \ \rroot  \dv
+    \simeq
+    \displaystyle \sum_{m,l,p < d} \widehat{\X^{m,l,p}}\ \e^{+i \frac{ \left( mx + ly + pz \right)}{d} }
+$$
+
+\vskip 1cm
+$$
+\X' \left( \x \right)  = \dfrac{1}{|\partial M|} \left[\ \X \left( \x \right ) - |M|\ \right]
+$$
+
+\vskip 1cm
+$$
+\mu  = \displaystyle \dfrac{1}{N} \sum_{k=1}^N \X' \left( \xk \right )
+$$
+
+\vskip 1cm
+$$
+\X' \left( \x \right) = \mu
+$$
+
+\vskip 1cm
+$$
+    \N(\x) = \dfrac{1}{N} \displaystyle
+    \dfrac{
+    \sum_{k=1}^N \delta_{\xk}(\x)\ \omega_k \nk
+    }{
+    \sum_{k=1}^N \omega_k
+    }
+$$
+
+\vskip 1cm
+$$
+\omega_k = \rfrac{1}{\rho(\xk)}
+$$
+
+    \end{document}
