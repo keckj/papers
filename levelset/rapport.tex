@@ -1,4 +1,4 @@
-capabilities.\documentclass[11pt,a4paper]{article} 
+\documentclass[11pt,a4paper]{article} 
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -283,34 +283,34 @@ Conformal mapping, angle-preserving mapping or biholomorphic mapping constitutes
 
 \section{Proposed method}
 
-The proposed method allows to find an optimal mapping from a general simply connected compact surface $\Omega$ to the usual sphere $S^2$. We can then use the inverse mapping $F^-1$ to paint the surface with any texture defined on the sphere.
+The proposed method allows to find an optimal area preserving mapping $F$ from a general simply connected compact surface $\Omega$ to the usual sphere $S^2$. We can then use the inverse mapping $F^{-1}$ to paint the surface with any texture defined on the sphere.
 
 \vskip 0.3cm
 
-For the sake of simplicity we assume that the total surface area of $\Omega$ has been normalized, $ie.\ \mathcal{A}(\Omega) = \mathcal{A}(S^2) = 4\pi$. 
+For the sake of simplicity we assume that the total surface area of $\Omega$ has been normalized, $ie.\ \colbox{\mathcal{A}(\Omega) = \mathcal{A}(S^2) = 4\pi}$. 
 If not we have to consider non conservative mass transport like we have seen in the course extensions.
 
 \vskip 0.3cm
-Here are the steps to extract optimal mapping $F : \Omega \to S^2$ :
+\textbf{Here are the steps to extract optimal mapping $\colbox{F : \Omega \to S^2}$ :}
 \vskip 0.3cm
 
 \begin{itemize}
 
-    \item \textbf{Step 1:} Construct a conformal mapping $f : \Omega \to S^2$ with any existing algorithm. As we have seen, this is unique up to a Möbius transformation $ie. $ if $f'$ is another conformal mapping $\exists \chi : S^2 \to S^2 $ diffeomorphism such that $f' = f \circ \chi$.
+    \item \textbf{Step 1:} Construct a conformal mapping $\colbox{f : \Omega \to S^2}$ with any existing algorithm. As we have seen, this is unique up to a Möbius transformation $ie. $ if $f'$ is another conformal mapping there exists some diffeomorphism $\colbox{\chi : S^2 \to S^2}$ such that $\colbox{f' = f \circ \chi}$.
     
-    \item \textbf{Step 2:} From the conformal mapping f, define a density function $\mu = \det{\nabla f^{-1}}$ which represents area distorsions caused by $f$ (determinant of the Jacobian of $f^{-1}$). 
-        We aim for a area preserving mapping so we want to optimally transport our density $\mu : S^2 \to \Omega$ to the uniform density $1$ everywhere on $S^2$. The penalty function used is the geodesic distance $\Phi(\vec{x},\vec{y}) = arccos(\vec{x} \cdot \vec{y})$. 
+    \item \textbf{Step 2:} From the conformal mapping f, define a density function $\colbox{\mu = \det{\nabla f^{-1}}}$ which represents area distorsions caused by $f$ (determinant of the Jacobian of $f^{-1}$). 
+        We aim for a area preserving mapping so we want to optimally transport our density $\colbox{\mu : S^2 \to \Omega}$ to the uniform density $1$ everywhere on $S^2$. The penalty function used is the geodesic distance $\colbox{\Phi(\vec{x},\vec{y}) = arccos(\vec{x} \cdot \vec{y})}$. 
 
         \vskip 0.3cm
-        We want to minimize $M(g) = \displaystyle \int_{S^2} \Phi(x, g(x))\ \mu(x) \mathrm{d}x$ with mappings $g^t: (S^2,\mu) \to (S^2, 1)$.
-        $dx$ is the area form of the standard metric on the sphere $r^2 \sin(\theta) \mathrm{d}\theta \mathrm{d}\phi$.
+        We want to minimize $\colbox{M(g) = \displaystyle \int_{S^2} \Phi(x, g(x))\ \mu(x) \mathrm{d}x}$ with mappings $\colbox{g^t: (S^2,\mu) \to (S^2, 1)}$.
+        $dx$ is the area form of the standard metric on the sphere $\colbox{r^2 \sin(\theta) \mathrm{d}\theta \mathrm{d}\phi}$.
         
-        The gradient flow used to move $g^t$ is a bit complex : $R_{+\pi/2}\ \vec{\nabla} \left( div \left[ R_{+\pi/2}\Phi_x(x, g^t(x)) \right] \right)$
-        with $\Phi_x(\vec{x}, \vec{g}(\vec{x})) = \dfrac{ \vec{x} \times \vec{g}(\vec{x}) }{\norm{\vec{x} \times \vec{g}(\vec{x})}  } $.
+        The gradient flow used to move $g^t$ is a bit complex : $\colbox{R_{+\pi/2}\ \vec{\nabla} \left( div \left[ R_{+\pi/2}\Phi_x(x, g^t(x)) \right] \right)}$
+        with $\colbox{\Phi_x(\vec{x}, \vec{g}(\vec{x})) = \dfrac{ \vec{x} \times \vec{g}(\vec{x}) }{\norm{\vec{x} \times \vec{g}(\vec{x})}  }}$.
 
         In addition they incorporate a multiresolution scheme with spherical wavelets into the flow to compute solutions faster.
     
-    \item \textbf{Step 3:} $F = g^{+\infty} \circ f : \Omega \to S^2$ gives an area preserving mapping from $\Omega$ to the sphere. We can use the inverse mapping $F^{-1} = \left( g^{\infty} \circ f \right)^{-1}$ to paint from the sphere to original surface. 
+    \item \textbf{Step 3:} $\colbox{F = g^{+\infty} \circ f : \Omega \to S^2}$ gives an area preserving mapping from $\Omega$ to the sphere. We can use the inverse mapping $\colbox{F^{-1} = \left( g^{\infty} \circ f \right)^{-1}}$ to paint from the sphere to original surface. 
 \end{itemize}
 
 \begin{figure}[H]
@@ -399,7 +399,7 @@ This new algorithm has been compared to results of other texture mappings derive
 \vskip 0.5cm
 Personally I was convinced that their new method works as expected because the paper is really detailed with lots of examples and illustrations, everything is clear.
 It is well structured and each part is clearly identified. Finally - and it is rare enough to deserve a mention - they included implementation considerations.
-The thing I would have changed in this paper is to shorten the Related Work part 1.2 because it is really long with lots of references and it just adds little. The other little thing would be to better distribute the images and arrays within the paper instead of putting all these things on the 10 last pages (and reduce their sizes because it is really long to load) !
+The thing I would have changed in this paper is to shorten the Related Work part 1.2 because it is really long with lots of references and it just adds little. The other little thing would be to better distribute the images and arrays within the paper instead of putting all these things on the 10 last pages !
 
 \bibliographystyle{plain}
 \bibliography{master}
