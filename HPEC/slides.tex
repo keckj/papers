@@ -33,7 +33,7 @@
 
 \begin{frame}{Contribution}
        
-    Two years later in 1985, Jacques Moergenstern publish this paper \textit{How to compute fast a function and all its derivatives}.
+    Two years later in 1985, Jacques Moergenstern publish this paper $\ccite{0}$ \textit{How to compute fast a function and all its derivatives}.
 
     \vskip 0.5cm
 
@@ -97,7 +97,7 @@
         \left\{
         \begin{array}{l}
         g_k \in \left\{x_1,x_2,...,x_n\right\} \cup \mathbb{K}\\
-        \textrm{\textbf{\alert{or} }} g_k = g_{k_1} \textrm{ \textbullseye\, } g_{k_2}\textrm{ with }k_1,k_2 < k \textrm{, \textbullseye }\in \{ +,-,\times, \div \}
+        \textrm{\textbf{\alert{or} }} g_k = g_{k_1} \textrm{ \textbullseye\, } g_{k_2}\textrm{ with }k_1,k_2 < k \textrm{, \textbullseye }\in \{ +,\times, \div \}
         \end{array}
         \right.
         $
@@ -195,14 +195,16 @@ From each algorithm $\A$ computing $F$ one can derive and algorithm $\Ar$ comput
 \begin{frame}{Example of induced algorithm}
 
     \begin{block}{Example : $F(x) = \frac{1+x_1^2}{x_2^4}\ \ \Rightarrow\ \ \widetilde{F}(x,g_3) = \frac{1+g_3}{x_2^4}$}
+        
 
 {\centering% !
+    
     $
     \Au
     \hskip 0.5cm
     \Leftrightarrow
     \hskip 0.5cm
-    \left [
+    \left[
     \begin{array}{l c l}
         g_1 & = & 1 \\   
         g_2 & = & x_1 \\   
@@ -210,7 +212,9 @@ From each algorithm $\A$ computing $F$ one can derive and algorithm $\Ar$ comput
         g_4 & = & g_1 + g_3 \\
     \end{array}
     \right.
+    $
     \hskip 2cm
+    $
     \left[
     \begin{array}{l c l}
         g_5 & = & x_2 \\   
@@ -223,9 +227,9 @@ From each algorithm $\A$ computing $F$ one can derive and algorithm $\Ar$ comput
 }
 
     $\Downarrow$
-    
+   
 {\centering% !
-    $ 
+    $
     \Auu
     \hskip 0.15cm
     \Leftrightarrow
@@ -255,7 +259,9 @@ From each algorithm $\A$ computing $F$ one can derive and algorithm $\Ar$ comput
 
 \begin{frame}{Proof overview}
     We have 
-    $\colbox{\forall h \in \llbracket 1,n \rrbracket \,\,\, \pd{F}{x_h} = \pd{\widetilde{F}}{x_h} + \pd{\widetilde{F}}{y}\cdot\pd{g_k}{x_h}\ \ (1).
+    $
+    \colbox{
+        \forall h \in \llbracket 1,n \rrbracket \,\,\, \pd{F}{x_h} = \pd{\widetilde{F}}{x_h} + \pd{\widetilde{F}}{y}\cdot\pd{g_k}{x_h}\ \ (1).
     }
     $
 
@@ -278,14 +284,124 @@ From each algorithm $\A$ computing $F$ one can derive and algorithm $\Ar$ comput
 \end{frame}
 
 \begin{frame}{Example case $g_k = c \times x_i$}
+
+\textbf{First case :} $g_k = \alert{c \times x_i}$ where $c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
+\vskip 0.5cm
+\small
+$
+   (1) \Rightarrow~\left \{
+   \begin{array}{l r}
+   \pd{F}{x_h}(x_1,...,x_n) = \textcolor{purple}{\pd{\widetilde{F}}{x_h}(x_1,...,x_n) \,\mathbf{+}}\, \textcolor{blue}{c \cdot \pd{\widetilde{F}}{y}(x_1,...,x_n)} & \textrm{ if }h = i\\
+        \\
+       \pd{F}{x_h}(x_1,...,x_n) = \pd{\widetilde{F}}{x_h}(x_1,...,x_n) & \textrm{ if } h \neq i
+   \end{array}
+   \right .
+$
+
+\vskip 0.5cm
+In this case we have :
+\vskip 0.3cm
+
+$
+   \left\{
+   \begin{array}{l c l l l l l l l}
+       s(F,F') & = & s(\widetilde{F},\widetilde{F}') \\
+       m(F,F') &\leq & m(\widetilde{F},\widetilde{F}')&+&\textcolor{blue}{1}&+&\textcolor{red}{1}\\
+       T(F,F') &\leq & T(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{1}\\
+       \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{1}&+&\textcolor{blue}{1}&+&\textcolor{red}{1}\\
+   \end{array}
+   \right .
+$
+
+\end{frame}
+
+\begin{frame}{Example case $g_k = x_i \times x_j$}
+
+\textbf{Second case :} $g_k = \alert{x_i \times x_j}$ where $i,j \in \llbracket 1,n \rrbracket$ :
+\vskip 0.5cm
+
+\footnotesize
+$
+    (1) \Rightarrow~\left \{
+   \begin{array}{l r}
+   \pd{F}{x_h}(x_1,...,x_n) = \textcolor{purple}{\pd{\widetilde{F}}{x_h}(x_1,...,x_n) \,\mathbf{+}}\, \textcolor{blue}{x_j \cdot \pd{\widetilde{F}}{y}(x_1,...,x_n)} & \textrm{ if }h = i\\ \\
+   \pd{F}{x_h}(x_1,...,x_n) = \textcolor{purple}{\pd{\widetilde{F}}{x_h}(x_1,...,x_n) \,\mathbf{+}}\, \textcolor{blue}{x_i \cdot \pd{\widetilde{F}}{y}(x_1,...,x_n)} & \textrm{ if }h = j\\ \\
+       \pd{F}{x_h}(x_1,...,x_n) = \pd{\widetilde{F}}{x_h}(x_1,...,x_n) & \textrm{ if } h \notin \{i,j\}
+   \end{array}
+   \right .
+$
+
+\small
+\vskip 0.3cm
+In this case we have :
+\vskip 0.3cm
+$
+   \left\{
+   \begin{array}{l c l l l l l l l}
+   s(F,F') &\leq & s(\widetilde{F},\widetilde{F}')&+&\textcolor{blue}{2}&+&\textcolor{red}{1}\\
+   m(F,F') &\leq & m(\widetilde{F},\widetilde{F}')&+&\textcolor{blue}{2}&+&\textcolor{red}{1}\\
+       T(F,F') &\leq & T(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{2}&+&\textcolor{blue}{2}&+&\textcolor{red}{1}&
+       \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&\textcolor{purple}{2}&+&\textcolor{blue}{2}&+&\textcolor{red}{1}
+   \end{array}
+   \right.
+$
+
+\end{frame}
+
+
+\begin{frame}{Putting everything together}
+
+\textbf{We do exactly the same for the 4 other cases :} 
+
+$g_k = c \div x_i\ \ \ \ g_k = x_i \div x_j\ \ \ \ g_k = x_i+c\ \ \ \ g_k = x_i+x_j$
+
+\vskip 0.3cm
+Putting everything together and using (P) for $\widetilde{F}$, we get \alert{at most} the inequalities:
+\vskip 0.3cm
+$
+\footnotesize
+\left \{
+    \begin{array}{l c l l l c l l l c l}
+        s(F,F') &\leq & s(\widetilde{F},\widetilde{F}')&+&\alert{3}&\leq&3\,s(\widetilde{F})&+&3&\alert{=}&3\,s(F)\\
+        m(F,F') &\leq & m(\widetilde{F},\widetilde{F}')&+&\alert{3}&\leq&3\,m(\widetilde{F})&+&3&\alert{=}&3\,m(F)\\
+        T(F,F') &\leq & T(\widetilde{F},\widetilde{F}')&+&\alert{5}&\leq&5\,T(\widetilde{F})&+&5&\alert{=}&5\,T(F)\\
+        \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&\alert{5}&\leq&5\,\Theta(\widetilde{F})&+&5&\alert{=}&5\,\Theta(F)
+    \end{array}
+    \right .
+\vskip 0.3cm
+    \Rightarrow$~$(P)$ for $F$, which proves the theorem since the beginning of the induction is trivial.
+
+\vskip 0.3cm
+
+\small
+Those inequalities are \alert{independent of the number of variables n} since we just added a bounded number of new operations.
+
+\end{frame}
+
+\begin{frame}{Conclusion}
+
+\begin{itemize}
+    \item New \alert{constructive} proof for the Baur-Strassen Theorem.
+    \item Exhibits a \alert{constructive recursive backward way} to generate partial derivatives algorithm.
+    \item Establish the basis of automatic differentiation (\alert{algorithmic differentiation}).
+\end{itemize}
+
+\textbf{Extension :}
+\begin{itemize}
+    \item Add elementaty functions $(exp,log,sin,cos,...)$ to elementary arithmetic operations $(+,-,\times,\div)$.
+    \item Every computer program, no matter how complicated, executes a sequence of elementary arithmetic operations. 
+\end{itemize}
+$\Rightarrow$ Derivatives of arbitrary order can be computed \alert{automatically},
+using at most a \alert{small constant factor} more arithmetic operations than the original program.
+
 \end{frame}
 
 
 \begin{frame}{References}
-    %\raggedright
-    %\nocite{*}
-    %\bibliographystyle{plain}
-    %\bibliography{master}
+    \raggedright
+    \nocite{*}
+    \bibliographystyle{plain}
+    \bibliography{master}
 \end{frame}
 
 \end{document}

@@ -52,7 +52,7 @@ $$
 \end{equation}
 $$
 
-The domain boundary $\partial \Omega = \Gamma$ is split into four boundaries $\gq \cup \gz \cup \gt \cup \gw$ which correspond to open boundaries for the 3 first ones and walls for the last.
+The domain boundary $\partial \Omega = \Gamma$ is split into four boundaries $\gq \cup \gz \cup \gt \cup \gw$ which correspond to open boundaries for the 3 first ones and walls for the last one.
 $\gz = \{ y \in \R\ |\ \u(x_{max},y) \cdot \nv > 0 \}$ is the downstream boundary where a water elevation $\zs$ should be specified for subcritical flows $\norm{\u} < c$.
 Here $\Omega$ is a box $\left[0,x_{max}=100m \right] \times \left[ 0,y_{max}=16m \right] \times \left[ 0, z_{max} = 1.2m \right]$ with features a 0.4\% slope on the $x$-axis with an additional bump which can be seen in figure~\ref{domain} page~\pageref{domain}.
 
@@ -157,7 +157,7 @@ Here there is no need for trajectory filtering because the model already do this
 
 
 \vskip 0.3cm
-Twin data assimilation experiments are carried out for a simulation time $T = 100s$ and constant time step $\Delta T = 0.1s$. It is not clear whether they take into account inevitable transient flow or not because they only generate particle trajectories up to $t = 40s$ and that is pretty incoherent with what they claim (no reason to stop generation before the end, unless they only want full trajectories which would impose a maximal particle mean velocity of $100m/min$).
+Twin data assimilation experiments are carried out for a simulation time $T = 100s$ and constant time step $\Delta T = 0.1s$. It is not clear whether they take into account inevitable transient flow or not because they only generate particle trajectories up to $t = 40s$ and that is pretty incoherent with what they claim (no reason to stop the generation before the end of the simulation, unless they only want full trajectories which would impose a maximal particle mean velocity of $100m/min$).
 Reference initial conditions $\k^{ref}$ are taken as steady state of a simulation where the slope $\zb$ features the bump.
 We seek to identify the reference bed elevation $\zb$ and reference initial conditions $\uz$ and $\qz$ with following initial guess :
 initial conditions $\k_0$ are taken as steady state of the same simulation where the slope $\zb$ is linear ($ie.$ without the bump).
@@ -169,7 +169,7 @@ Height observations are perfect and continuously recorded during time using the 
 
 \vskip 0.3cm
 A set of $N_{obs} = 640$ trajectories $\X_i^{obs}$ are perfectly observed by uniformly dropping $32$ particles every $p\Delta T = 2s$ at $x = 10m$ in a turbulent velocity flow $\mathbf{v}^{tr} = \v + \mathbf{\tilde{v}}$ where $\mathbf{\tilde{v}}$ is a Gauss-Markov zero-mean stochastic process which act as turbulences. 
-Those particles are then filtered using $(\ref{filter})$. A total of $N_m = 200$ filtered trajectories $\Xj$ are obtained by taking the same initial space and time conditions as the reference ones $\X_j$. Here they took the following integration support centered on the filtered particle $\W_c(t) = [0,T] \times [0,1m] \times [0,1m]$ because it has been found as a being good compromise.
+Those particles are then filtered using $(\ref{filter})$. A total of $N_m = 200$ filtered trajectories $\Xj$ are obtained by taking the same initial space and time conditions as the reference ones $\X_j$. Here they took the following integration support centered on the filtered particle $\W_c(t) = [0,T] \times [0,1m] \times [0,1m]$ because it has been found as being a good compromise.
 
 
 \clearpage
@@ -180,7 +180,7 @@ Those particles are then filtered using $(\ref{filter})$. A total of $N_m = 200$
 Here we only look for bed elevation $\zb$ and $\uz$ and $\qz$ are fixed.
 They show through their twin experiments that bed identification is not possible when using only height informations. 
 Trying to use particle data without filtering it shows little improvements but the bed features many small scale variations of large amplitude.
-When using the filtered particles as observations, they expose substantial improvement in the quality of identification even if this is not perfect.
+When using the filtered particles as observations, they expose substantial improvement in the quality of identification.
 
 \subsection{Joint identification}
     
@@ -189,14 +189,13 @@ With filtered particles as observations the results are still satisfactory for t
 
 \section{Conclusion}
 
-In this paper was presented a novel theoretical method to include Lagrangian data observation into a variational framework to improve the identification of control variables like the bed elevation of a river. The link between Eulerian and Lagrangian observations is made via a weakly coupled transport model. A spatio-temporal filter has been introduced to extract meaningful data with respect the Shallow Water model from the observed particles which are subject to small-scale perturbations, improving the identification. To further restrict the dimensions of the control space, a regularization term was introduced keep the bed elevation with a smooth profile and penalize large variations. 
+In this paper was presented a novel theoretical method to include Lagrangian data observation into a variational framework to improve the identification of control variables like the bed elevation of a river. The link between Eulerian and Lagrangian observations is made via a weakly coupled transport model. A spatio-temporal filter has been introduced to extract meaningful data with respect the Shallow Water model from the observed particles which are subject to small-scale perturbations, improving the identification. To further restrict the dimensions of the control space, a regularization term was introduced to keep the bed elevation with a smooth profile and penalize large variations. 
 
 \end{document}
 
 
 
 
- 
  
  
  
