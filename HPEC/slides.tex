@@ -5,6 +5,8 @@
 \usetheme{Frankfurt}
 \setbeamercovered{transparent}
 \setbeamertemplate{bibliography item}[triangle]
+%\addtobeamertemplate{footline}{\insertframenumber/\inserttotalframenumber
+\addtobeamertemplate{footline}{\hfill\insertframenumber/\inserttotalframenumber\hspace{2em}\null}
 
 \begin{document}
 
@@ -20,10 +22,10 @@
 \begin{frame}{Introduction}
 
     \begin{itemize} 
-        \item In 1983, Walter Baur and Volker Strassen expose a lower bound for derivatives computations $\ccite{1}$.
+        \item In 1983, Walter Baur and Volker Strassen expose a lower bound for derivative computation $\ccite{1}$.
         \item Proof is given but quite complex.
-        \item No was algorithm exposed.
-        \item Show that we can decuce interesting bounds.
+        \item No constructive algorithm was exposed.
+        \item Show that we can deduce interesting bounds.
     \end{itemize}
 
     \begin{block}{Theorem : Bauer-Strassen}
@@ -33,14 +35,14 @@
 
 \begin{frame}{Contribution}
        
-    Two years later in 1985, Jacques Moergenstern publish this paper $\ccite{0}$ \textit{How to compute fast a function and all its derivatives}.
+    Two years later in 1985, Jacques Morgenstern publish this paper $\ccite{0}$ \textit{How to compute fast a function and all its derivatives}.
 
     \vskip 0.5cm
 
     \begin{itemize} 
-        \item Shows alternative proof which is much simpler
-        \item Which is \alert{constructive} 
-        \item Allows autodifferenciation techniques
+        \item Shows an alternative proof which is much simpler.
+        \item And in a \alert{constructive} manner.
+        \item Allows \alert{autodifferenciation} techniques.
     \end{itemize}
 \end{frame}
 
@@ -388,7 +390,7 @@ Those inequalities are \alert{independent of the number of variables n} since we
 
 \textbf{Extension :}
 \begin{itemize}
-    \item Add elementaty functions $(exp,log,sin,cos,...)$ to elementary arithmetic operations $(+,-,\times,\div)$.
+    \item Add elementary functions $(exp,log,sin,cos,...)$ to elementary arithmetic operations $(+,-,\times,\div)$.
     \item Every computer program, no matter how complicated, executes a sequence of elementary arithmetic operations. 
 \end{itemize}
 $\Rightarrow$ Derivatives of arbitrary order can be computed \alert{automatically},
@@ -402,6 +404,11 @@ using at most a \alert{small constant factor} more arithmetic operations than th
     \nocite{*}
     \bibliographystyle{plain}
     \bibliography{master}
+    \vfill
+    \begin{center}
+        \Large
+        Any questions ?
+    \end{center} 
 \end{frame}
 
 \end{document}

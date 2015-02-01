@@ -46,7 +46,7 @@ $$
 \begin{equation}
 \colbox{
 \label{algo}
-\exists\,\, u \in \mathbb{N} \,\,\, \A = \left\{ g_1,g_2,...,g_u \right\}
+\exists\,\, u \in \mathbb{N} \,\,\, \A = \left\{ g_k,g_2,...,g_u \right\}
 \textrm{ with }
    \left \{
    \begin{array}{l}
@@ -96,19 +96,19 @@ $$
 \textbf{Foreword:} \textit{Many errors have been corrected from the original paper and I tried to make some parts clearer so that it appears less confusing. However, new errors might as well have been introduced too.}
 
 \vskip 0.2cm
-The proof is made by \textbf{induction on the length of the algorithm}. Let $\Au$ be an algorithm of length u computing a rational function $F$ and $g_1$ be the result of the first operation of $\Au$.
+The proof is made by \textbf{induction on the length of the algorithm}. Let $\Au$ be an algorithm of length u computing a rational function $F$ and $g_k$ be the result of the first operation of $\Au$.
 \vskip 0.2cm
-Define $\widetilde{F}$ a function of $n+1$ variables such that $F(x_1,x_2,...,x_n)=\widetilde{F}(x_1,x_2,...,x_n,\mathbf{y})$ with $y = g_1(x_1,x_2,...,x_n)$.
+Define $\widetilde{F}$ a function of $n+1$ variables such that $F(x_1,x_2,...,x_n)=\widetilde{F}(x_1,x_2,...,x_n,\mathbf{y})$ with $y = g_k(x_1,x_2,...,x_n)$.
 \vskip 0.2cm
-$\Au}$ induces an algorithm $\A_{u-1}$ which computes $\widetilde{F}$ from $x_1,x_2,...,x_n,g_1$ and $\mathbb{K}$ in one less operation ($\A_{u-1}$ is of length $u-1$). \textbf{By induction hypothesis, $\widetilde{F}$ satisfies (P).}
+$\Au}$ induces an algorithm $\A_{u-1}$ which computes $\widetilde{F}$ from $x_1,x_2,...,x_n,g_k$ and $\mathbb{K}$ in one less operation ($\A_{u-1}$ is of length $u-1$). \textbf{By induction hypothesis, $\widetilde{F}$ satisfies (P).}
 \vskip 0.5cm
-We have $\forall h \in \llbracket 1,n \rrbracket \,\,\, \pd{F}{x_h} = \pd{\widetilde{F}}{x_h} + \pd{\widetilde{F}}{y}\cdot\pd{g_1}{x_h}\ \ (1).$
+We have $\forall h \in \llbracket 1,n \rrbracket \,\,\, \pd{F}{x_h} = \pd{\widetilde{F}}{x_h} + \pd{\widetilde{F}}{y}\cdot\pd{g_k}{x_h}\ \ (1).$
 
 \vskip 0.5cm
 \textbf{The idea is then to examine all six possible cases :}
 \vskip 0.3cm
 
-1. Example case $\mathbf{g_1 = \textcolor{red}{c \cdot x_i}}$ where $c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$ : 
+1. Example case $\mathbf{g_k = \textcolor{red}{c \cdot x_i}}$ where $c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$ : 
 $$
     (1) \Rightarrow 
     \[
@@ -137,7 +137,7 @@ $
 $
 
 \vskip 0.5cm
-2. Case $\mathbf{g_1 = \textcolor{red}{x_i \cdot x_j}}$ where $i,j \in \llbracket 1,n \rrbracket$.
+2. Case $\mathbf{g_k = \textcolor{red}{x_i \cdot x_j}}$ where $i,j \in \llbracket 1,n \rrbracket$.
 
 
 $$
@@ -171,13 +171,13 @@ $
 \clearpage
 \textbf{We do exactly the same for the 4 other cases :}
 \vskip 0.5cm
-    3. Case $\mathbf{g_1 = c/x_i}$ where c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
+    3. Case $\mathbf{g_k = c/x_i}$ where c \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
 \vskip 0.1cm
-    4. Case $\mathbf{g_1 = x_i/x_j}$ where $i,j \in \llbracket 1,n \rrbracket$.
+    4. Case $\mathbf{g_k = x_i/x_j}$ where $i,j \in \llbracket 1,n \rrbracket$.
 \vskip 0.1cm
-    5. Case $\mathbf{g_1 = x_i+d}$ where $d \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
+    5. Case $\mathbf{g_k = x_i+d}$ where $d \in \mathbb{K}$ and $i \in \llbracket 1,n \rrbracket$.
 \vskip 0.1cm
-    6. Case $\mathbf{g_1 = x_i+x_j}$ where $i,j \in \llbracket 1,n \rrbracket$.
+    6. Case $\mathbf{g_k = x_i+x_j}$ where $i,j \in \llbracket 1,n \rrbracket$.
 
 \vskip 0.5cm
 Putting everything together and using (P) for $\widetilde{F}$, we get at most the inequalities:
@@ -220,26 +220,14 @@ etc.).
 By applying exactly the same chain rule repeatedly to these operations,
 derivatives of arbitrary order can be computed automatically,
 using at most a small constant factor more arithmetic operations than the original program.
-Tools like Tapenade (developped at Inria) can return the forward tangent or reverse adjoint differentiated programs. 
+
+
+\vskip 0.3cm
+In fact I found out that Jacques Morgenstern, the author of this paper, was initiator of the SAPHIR (Systèmes Algébriques Formels pour l'Industrie et la Recherche) research project with André Galligo. 
+This project leaded to the creation of autodifferentiation tool Odyssée which targeted \verb!Fortran! industrial code.
+Today this tool has been renamed to Tapenade and is developed and maintained by Inria. It can generate forward (tangent) or reverse (adjoint) differentiated programs for \verb!C!, \verb!C++! or \verb!Fortran!. 
 
 \bibliographystyle{plain}
 \bibliography{master}
 
 \end{document}
-
-
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
