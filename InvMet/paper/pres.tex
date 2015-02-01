@@ -20,7 +20,6 @@ $\zb(x,y)$
 \vskip 0.3cm
 $$
 \begin{equation}
-\colbox{
 \label{shallow}
 \left\{
 \begin{array}{l l l c r l l}
@@ -38,7 +37,6 @@ $$
     \multicolumn{7}{l}{c = \sqrt{2\g\h} \equationrm{\ \ \ \ (local\ wave\ celerity)}}
 \end{array}
 \right.
-}
 \end{equation}
 $$
 \vskip 0.3cm
@@ -57,17 +55,18 @@ $\zs \simeq 0.4m$
 $\k = (\hz, \qz, \zb)$.
 
 \clearpage
-\section{Lagrangian Data Assimilation}
 
-The proposed method is described in figure~\ref{domain} page~\pageref{domain}.
-In order to use such Lagrangian data,
-a link must be made between the Shallow Water model and a model describing particle movement advected by the flow.
-For each particle $P_i$ entering the domain at $t=t_i^0$ and leaving at $t=t_i^f$,
-a simple transport model can describe its trajectory $\Xi(t)$ with depth averaged velocity $\u$ :
-
+\vskip 0.3cm
+$P_i$ 
+\vskip 0.3cm
+$t=t_i^0$ 
+\vskip 0.3cm
+$t=t_i^f$,
+\vskip 0.3cm
+$\Xi(t)$
+\vskip 0.3cm
 $$
 \begin{equation}
-\colbox{
 \label{transport}
 \left\{
 \begin{array}{l c l}
@@ -76,52 +75,45 @@ $$
     \v &=& \gamma \u\ \ \gamma \in\ ]0,1]
 \end{array}
 \right.
-}
 \end{equation}
 $$
-
-This model is weakly coupled with equations ($\ref{shallow}$).
-Because the Shallow Water model does not take into account physical perturbations of the water surface,
-a low pass filter should be applied to remove small scale perturbations of the Lagrangian dataset.
-This is based on the \textit{a priori} information that the flow is in a steady state.
-Instead of considering the $N_{obs}$ trajectories $\Xi(t)$ extracted from video,
-we seek to create a set of $N_m$ filtered trajectories $\Xj(t)$,  
-with synchronised starting time and uniformly sampled initial positions $(t^j_0, \mathbf{x}^j_0) \in p\Delta T\ \mathbb{Z} \cap [0,T] \times \{x=10m\} \times [0,y_{max}]$. 
-
 \vskip 0.3cm
-Those filtered trajectories $\Xj$ satisfy $\eqref{transport}$ with a mean velocity $\vb_j(t) = \v(\Xj(t), t)$ defined by a local spacial and temporal average on a time-space window $\W_j(t) = \Wt \times \Wx \subset [0,T] \times \Omega$ of the observed trajectories $\Xi$. More precisely we define $\vb_j$ as :
-
+$N_{obs} = 640$
+\vskip 0.3cm
+$\Xi(t)$
+\vskip 0.3cm
+$N_m = 200$
+\vskip 0.3cm
+$\Xj(t)$,  
+\vskip 0.3cm
+$(t^j_0, \mathbf{x}^j_0) \in p\Delta T\ \mathbb{Z} \cap [0,T] \times \{x=10m\} \times [0,y_{max}]$. 
+\vskip 0.3cm
+$\vb_j(t) = \v(\Xj(t), t)$ 
+\vskip 0.3cm
+$\W_j(t) = \Wt \times \Wx \subset [0,T] \times \Omega$ 
+\vskip 0.3cm
 $$
 \begin{equation}
 \label{filter}
-\colbox{
 \left\{
 \begin{array}{l c l}
     \vb_j(t) &=& \dfrac{1}{\sw_j(t)} \displaystyle \sum_{i = 1}^{N_{obs}} \int_0^T \fd{\Xi(s)}{s} \I_{\Wt(t)}(s) \I_{\Wx}(\Xi(s)) \ds \\
     \sw_j(t) &=& \displaystyle \sum_{i = 1}^{N_{obs}} \int_0^T \I_{\Wt(t)}(s) \I_{\Wx}(\Xi(s)) \ds \\
 \end{array}
 \right.
-}
 \end{equation}
 $$
-
-Now that the link between Lagrangian data and Eulerian data has been made, the data assimilation framework is a classical one. We want to minimize the following cost function :
-
+\vskip 0.3cm
 $$
-\colbox{
 \J(\k) =  
 \J(\hz, \qz, \zb)
-}
 $$
+\vskip 0.3cm
 $$
-\colbox{
 = \underbrace{\displaystyle \dfrac{1}{2} \sum_{i=1}^{2}\int_0^T \int_0^{y_{max}} \left[ h(x_i,y) - h_i^{obs}(y) \right]^2 \dy \dt}_{\mathrm{water\ depth\ discrepancy}}
 + \underbrace{\displaystyle \dfrac{\alpha_t}{2} \sum_{j=0}^{N_m} \int_0^T \norm{\X_j(t) - \Xj(t) }^2 \dt}_{\mathrm{filtered\ trajectories\ discrepancy}}
 + \underbrace{\displaystyle \dfrac{\alpha_p}{2} \iint_{\Omega_{xy}} \norm{\grad \zb(x,y)}^2 \dx \dy}_{\mathrm{topography\ regularization\ term}}
-}
 $$
-
-A bed regularization term is included to prevent topography explosions (we want to penalize abrupt variations of the bed).
 
 \clearpage
 \section{Twin experiments}

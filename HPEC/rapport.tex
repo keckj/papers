@@ -1,157 +1,6 @@
-\documentclass[11pt,a4paper]{article} 
 
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage[french,english]{babel}
-
-\usepackage{amsthm}
-\usepackage{float}
-\usepackage{lmodern}%pour un meilleur rendu des polices
-\usepackage{verbatim}%du texte non interprt
-\usepackage[cmex10]{amsmath}
-\usepackage{amssymb}%maths
-\usepackage{xspace}
-\usepackage[dvipsnames,svgnames,table]{xcolor}
-\usepackage{listings}
-\usepackage{fancyhdr}
-\usepackage{etoolbox}
-\usepackage{titlesec}
-\usepackage{titletoc}
-\usepackage{lastpage}
-\usepackage[bookmarks=true,bookmarksnumbered=true]{hyperref}
-\usepackage{ctable} % for \specialrule command
-\usepackage{cite}
-\usepackage{algorithm2e}
-\usepackage{alltt}
-\usepackage{array}
-\usepackage{mdwmath}
-\usepackage{mdwtab}
-\usepackage{eqparbox}
-\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
-\usepackage{dblfloatfix}
-\usepackage{url}
-\usepackage{tipa}
-\usepackage{stmaryrd}
-
-%\usepackage{natbib}
-%\usepackage[pdftex]{graphicx}
-%\usepackage{framed}
-%\usepackage[usenames]{color}
-
-\graphicspath{{img/}}
-\DeclareGraphicsExtensions{.pdf,.jpeg,.jpg,.png}
-
-%% taille du papier
-\textwidth 16 true cm
-\textheight 24 true cm
-\addtolength{\hoffset}{-1.5cm}
-\addtolength{\voffset}{-1.5cm}
-
-%-------- couleurs
-\definecolor{grisf}{rgb}{.47,.47,.47} % barre de droite gris fonce
-\newcommand{\colorc}{\color{MidnightBlue}}
-\newcommand{\colorb}{\color{NavyBlue}}
-\newcommand{\colora}{\color{Cerulean}}
-
-%----------- sections et TOC
-% chapitres
-\titleformat{\chapter}[display]
-  {\normalfont\sffamily\bfseries\huge\colora\centering}{\thechapter}{1ex}
-  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{{\titlerule[1pt]}}]
-  
-% chapitres etoiles  
-\titleformat{name=\chapter,numberless}[display]
-  {\normalfont\sffamily\bfseries\LARGE\colora\centering}{}{1ex}
-  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{\titlerule[1pt]}\vspace{2ex}]
-  
-% sections  
-\titleformat{\section}[hang]{\Large\normalfont\sffamily\bfseries\colora}{{\thesection\, }}{0 em}
-  {}[{\titlerule[1pt]}\vspace{1ex}]
-
-  
-% sous section, sous sous sec, paragraphes  
-\titleformat{\subsection}[hang]{\Large\normalfont\sffamily\bfseries\colorc}{{\thesubsection\, }}{0 em}
-  {}[{\titlerule}\vspace{.7ex}]
-\titleformat{\subsubsection}[hang]{\normalfont\sffamily\bfseries\large}{{\thesubsubsection\, }}{0 em}
-  {}[{\color{grisf}\titlerule}\vspace{3pt}]
-\titleformat{\paragraph}[runin]{\normalfont\sffamily\bfseries\colorb}{}{0 em}
-  {\indent}
-
-
-
-%----------------- fancy headers -------------%
-
-\makeatletter
-\patchcmd{\@fancyhead}{\rlap}{\color{grisf}\rlap}{}{}
-\patchcmd{\headrule}{\hrule}{\color{grisf}\hrule}{}{}
-\patchcmd{\@fancyfoot}{\rlap}{\color{grisf}\rlap}{}{}
-\patchcmd{\footrule}{\hrule}{\color{grisf}\hrule}{}{}
-\makeatother
-
-                                                                    
-\fancyhf{}
-\fancyhead[R]{\sffamily Article summary }
-\fancyfoot[R]{\sffamily\small{\thepage/\pageref{LastPage}}}
-\fancyhead[L]{\sffamily\small{Jean-Baptiste Keck}}
-\fancyfoot[L]{\sffamily\small{M2 MSIAM -- High Performance Exact Computing -- 2014-2015}}
-\renewcommand{\headrulewidth}{0.2pt} %0.4
-\renewcommand{\footrulewidth}{0.2pt} %0
-\addtolength{\headheight}{0.pt}
-
-\fancypagestyle{plain}{
-  \fancyhead{}
-  \renewcommand{\headrulewidth}{0pt}
-  }
-     
-  %-- macros --%   
-  \def\hlinewd#1{%
-      \noalign{\ifnum0=`}\fi\hrule \@height #1 %
-  \futurelet\reserved@a\@xhline} 
-
-  
-  
-  %------------------- front page ------------------%
-  \title{
-      \bsc{Paper Review}
-      \vskip 1cm
-      {\colorb\textbf{How to Compute Fast a Function and All Its Derivatives}}
-      \vskip 1cm
-      {\colorc\textit{A variation on the theorem of Bauer-Strassen}}
-  }
-\author{%
-    Jean-Baptiste \bsc{Keck}
-    \vskip 0.5cm
-    \bsc{M2 Msiam}
-}
-%\date{27 janvier 2014}
-\makeatletter
-
-\def\maketitle{%
-    %\thispagestyle{empty}%
-    \begin{flushleft}
-        \normalfont\LARGE\par
-    \end{flushleft}
-    \vskip 3cm
-    \begin{center}%
-        {\colora\specialrule{.2em}{0em}{0em}}
-        \vskip 1cm
-        {\Huge \@title}%
-        \vskip 1cm
-        {\colora\specialrule{.2em}{0em}{0em}}
-        \vskip 5cm
-        {\Huge \@author\par}%
-        \vskip 2cm
-        {\Huge \@date\par}%
-        \vskip 1cm
-
-    \end{center}%
-    \clearpage
-}
-
-\newcommand{\ccite}[1]{\textbf{\cite{#1}}}
-\newcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
-%%%%%%%
+\include{header}
+\include{commands}
 
 \begin{document}
 \pagestyle{fancy}
@@ -163,7 +12,8 @@
 
 \section{Introduction}
 
-This paper is about an alternative algorithmic proof of the Baur-Strassen result given and proved in \ccite{1}, showing that the complexity of the evaluation of a rational function of several variables and all its derivatives is bounded above by three times the complexity of the evaluation of the function itself.
+This paper is about an alternative algorithmic proof of the Baur-Strassen result given and proved in \ccite{1},
+showing that the complexity of the evaluation of a rational function of several variables and all its derivatives is bounded above by three times the complexity of the evaluation of the function itself. The new proof is constructive and much simpler than the original one in \ccite{1}.
 
 \section{Notations}
 
@@ -171,65 +21,71 @@ The notation is mainly the one used in the original paper \cite{0} and \cite{1} 
 
 \vskip 0.5cm
 $\mathbb{K}$ is an infinite field.\\
-\indent$F$ is a rational function of $n$ variables $x_1,x_2,...,x_n$.\\
-\indent$\widetilde{F}$ is a rational function of $n+1$ variables $x_1,x_2,...,x_n,y$.
+\indent$F \in \mathbb{K}_n(X)$ is a rational function of $n$ variables $x_1,x_2,...,x_n$.\\
+\indent$\widetilde{F} \in \mathbb{K}_{n+1}(X)$ is a rational function of $n+1$ variables $x_1,x_2,...,x_n,y$.
 \vskip 0.3cm
-\indent The set of partial derivatives of F is denoted $F' = \left \{ \pd{F}{x_1},\pd{F}{x_2}, ... ,\pd{F}{x_n} \right \}.
+\indent The set of partial derivatives of $F$ is denoted $F' = \left \{ \pd{F}{x_1},\pd{F}{x_2}, ... ,\pd{F}{x_n} \right \}.
 \vskip 0.3cm
-Let \textbullseye\, be an arithmetical operation and $x = (x_1,x_2,...,x_n)$.\\
+Let \textbullseye\, be an arithmetical operation and $x = (x_1,x_2,...,x_n) \in \mathbb{K}^n$.\\
 $$
 \left(\textrm{a \textbullseye\, b is an \textbf{essential operation}}\right)
 \Leftrightarrow
 \[
    \left \{
    \begin{array}{l}
-       a = f(x)\textrm{ and }b = g(x) \\
+       a = f(x)\textrm{ and }b = g(x) \textrm{ with } f,g \in \mathbb{K}_n(X) \\
        \textrm{\textbf{or }}a \in \mathbb{K}, b = g(x)\textrm{ and \textbullseye\, is a division.}
    \end{array}
    \right .
 \]
 $$
 
-Let \u{A} be an algorithm computing F from $x_1,x_2,...,x_n$ and $\mathbb{K}$.
-\vskip 0.3cm
+Let $\A$ be an algorithm computing F from $x = (x_1,x_2,...,x_n)$ and $\mathbb{K}$. We have :
+
 $$
-\exists\,\, u \in \mathbb{N} \,\,\, \u{A} = \left\{ g_1,g_2,...,g_u \right\}
+\begin{equation}
+\colbox{
+\label{algo}
+\exists\,\, u \in \mathbb{N} \,\,\, \A = \left\{ g_1,g_2,...,g_u \right\}
 \textrm{ with }
-\[
    \left \{
    \begin{array}{l}
        g_k \in \left\{x_1,x_2,...,x_n\right\} \cup \mathbb{K}\\
        \textrm{\textbf{or }} g_k = g_{k_1} \textrm{ \textbullseye\, } g_{k_2}\textrm{ with }k_1,k_2 < k
    \end{array}
    \right .
-\]
+}
+\end{equation}
 $$
 
 Finally let :
 
 \begin{itemize}
-\item $s(F)$ be the number of \textbf{essential multiplications and divisions} in $\u{A}$.
-    \item $m(F)$ be the total number of \textbf{multiplications and divisions} in $\u{A}$.
-    \item $T(F)$ the total number of \textbf{essential operations} in $\u{A}$.
-    \item $\Theta(F)$ the total number of \textbf{operations} in $\u{A}$.
+\item $s(F)$ be the number of \textbf{essential multiplications and divisions} in $\A$.
+    \item $m(F)$ be the total number of \textbf{multiplications and divisions} in $\A$.
+    \item $T(F)$ the total number of \textbf{essential operations} in $\A$.
+    \item $\Theta(F)$ the total number of \textbf{operations} in $\A$.
 \end{itemize}
 
 \section{Baur-Strassen's Theorem}
-    From each algorithm $\u{A}$ computing $F$ one can derive and algorithm $\mathring{A}$ computing $F$ and $F'$ such that :
+\textbf{Theorem:} From each algorithm $\A$ computing $F$ one can derive and algorithm $\Ar$ computing $F$ and $F'$ such that :
+
 
 $$
+\begin{equation}
+    \label{SB}
+    \colbox{
     (P) \Leftrightarrow
-    \[
    \left \{
    \begin{array}{l c l}
        s(F,F') &\leq & \mathbf{3} \,s(F)\\
        m(F,F') &\leq & \mathbf{3} \,m(F)\\
        T(F,F') &\leq & \mathbf{5} \,T(F)\\
        \Theta(F,F') &\leq & \mathbf{5} \,\Theta(F)
-       
    \end{array}
    \right .
-\]
+}
+\end{equation}
 $$
 
 \vskip 0.5cm
@@ -240,11 +96,11 @@ $$
 \textbf{Foreword:} \textit{Many errors have been corrected from the original paper and I tried to make some parts clearer so that it appears less confusing. However, new errors might as well have been introduced too.}
 
 \vskip 0.2cm
-The proof is made by \textbf{induction on the length of the algorithm}. Let $\u{A}_u$ be an algorithm of length u computing a rational function $F$ and $g_1$ be the result of the first operation of $\u{A}_u$.
+The proof is made by \textbf{induction on the length of the algorithm}. Let $\Au$ be an algorithm of length u computing a rational function $F$ and $g_1$ be the result of the first operation of $\Au$.
 \vskip 0.2cm
 Define $\widetilde{F}$ a function of $n+1$ variables such that $F(x_1,x_2,...,x_n)=\widetilde{F}(x_1,x_2,...,x_n,\mathbf{y})$ with $y = g_1(x_1,x_2,...,x_n)$.
 \vskip 0.2cm
-$\u{A}_u}$ induces an algorithm $\u{A}_{u-1}$ which computes $\widetilde{F}$ from $x_1,x_2,...,x_n,g_1$ and $\mathbb{K}$ in one less operation ($\u{A}_{u-1}$ is of length $u-1$). \textbf{By induction hypothesis, $\widetilde{F}$ satisfies (P).}
+$\Au}$ induces an algorithm $\A_{u-1}$ which computes $\widetilde{F}$ from $x_1,x_2,...,x_n,g_1$ and $\mathbb{K}$ in one less operation ($\A_{u-1}$ is of length $u-1$). \textbf{By induction hypothesis, $\widetilde{F}$ satisfies (P).}
 \vskip 0.5cm
 We have $\forall h \in \llbracket 1,n \rrbracket \,\,\, \pd{F}{x_h} = \pd{\widetilde{F}}{x_h} + \pd{\widetilde{F}}{y}\cdot\pd{g_1}{x_h}\ \ (1).$
 
@@ -329,9 +185,9 @@ $$
 \[
    \left \{
    \begin{array}{l c l l l c l l l c l}
-   s(F,F') &\leq & s(\widetilde{F}},\widetilde{F}')&+&3&\leq&3\,s(\widetilde{F})&+&3&\leq&3\,s(F)\\
-   m(F,F') &\leq & m(\widetilde{F}},\widetilde{F}')&+&3&\leq&3\,m(\widetilde{F})&+&3&\leq&3\,m(F)\\
-   T(F,F') &\leq & T(\widetilde{F}},\widetilde{F}')&+&5&\leq&5\,T(\widetilde{F})&+&5&\leq&5\,T(F)\\
+   s(F,F') &\leq & s(\widetilde{F}},\widetilde{F}')&+&3&\leq&3\,s(\widetilde{F})&+&3&=&3\,s(F)\\
+   m(F,F') &\leq & m(\widetilde{F}},\widetilde{F}')&+&3&\leq&3\,m(\widetilde{F})&+&3&=&3\,m(F)\\
+   T(F,F') &\leq & T(\widetilde{F}},\widetilde{F}')&+&5&\leq&5\,T(\widetilde{F})&+&5&=&5\,T(F)\\
        \Theta(F,F') &\leq & \Theta(\widetilde{F},\widetilde{F}')&+&5&\leq&5\,\Theta(\widetilde{F})&+&5&=&5\,\Theta(F)
    \end{array}
    \right .
@@ -346,7 +202,25 @@ Those inequalities are independent of the number of variables n since we just ad
 
 From this new proof of the theorem we can deduce a constructive recursive backward way to build an algorithm for the computation of all partial derivatives of $F$ at a given point $x$ from any algorithm computing $F$ at this point.
 
-
+\vskip 0.3cm
+This paper might be the starting point for autodifferentation techniques used to numerically evaluate the derivative of a function specified by a computer program.
+Autodifferentiation exploits the fact that every computer program,
+no matter how complicated,
+executes a sequence of elementary arithmetic operations 
+(addition,
+subtraction,
+multiplication,
+division)
+like in this paper but with additional elementary functions 
+(exp,
+log,
+sin,
+cos,
+etc.).
+By applying exactly the same chain rule repeatedly to these operations,
+derivatives of arbitrary order can be computed automatically,
+using at most a small constant factor more arithmetic operations than the original program.
+Tools like Tapenade (developped at Inria) can return the forward tangent or reverse adjoint differentiated programs. 
 
 \bibliographystyle{plain}
 \bibliography{master}
