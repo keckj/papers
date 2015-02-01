@@ -5,29 +5,19 @@
 
 \maketitle 
 
-\section{Introduction}
-
-This paper,
-published in 2009 by Marc Honnorat,
-Jerome Monnier and François-Xavier Le Dimet,
-proposes a method to combine Eulerian and Lagrangian data from remote sensing observations in a variational framework for a river hydraulics model based on the 2D shallow water equations.
-In addition to classical height sensors that provides sparse Eulerian observations,
-physical particles are dropped into the fluid and advected by the flow.
-Their trajectories is then extracted from video images using image extraction techniques (image velocimetry).
-This additional Lagrangian data provides information on the surface velocity thanks to an appropriate transport model.
-It is demonstrated that this method allows significant improvements in the identification of local bed elevation,
-as well as initial conditions through numerical twin assimilation experiments.
-At the time of publication of this paper,
-no physical prototype was built and thus the problem of trajectory extraction was not tackled.
-
-
-\section{Shallow Water Model}
-
-The numerical simulation of river flows requires a precise modelling of the underlying physics and the bidimentional shallow water equations can describe accurately many free surface hydraulic configurations.
+\section{fap}
 
 \vskip 0.3cm
-With $\u(x,y,t)$ the depth averaged velocity vector, $\h(x,y,t)$ the height of the free surface, $\q = \h\u$ the local discharge, $\n(y)$ the Manning roughness coefficient, $\zb(x,y)$ the bed elevation,  this model can be written as the following :
-
+$\u(x,y,t)$
+\vskip 0.3cm
+$\h(x,y,t)$ 
+\vskip 0.3cm
+$\q = \h\u$ 
+\vskip 0.3cm
+$\n(y)$ 
+\vskip 0.3cm
+$\zb(x,y)$
+\vskip 0.3cm
 $$
 \begin{equation}
 \colbox{
@@ -51,31 +41,22 @@ $$
 }
 \end{equation}
 $$
-
-The domain boundary $\partial \Omega = \Gamma$ is split into four boundaries $\gq \cup \gz \cup \gt \cup \gw$ which correspond to open boundaries for the 3 first ones and walls for the last.
-$\gz = \{ y \in \R\ |\ \u(x_{max},y) \cdot \nv > 0 \}$ is the downstream boundary where a water elevation $\zs$ should be specified for subcritical flows $\norm{\u} < c$.
-Here $\Omega$ is a box $\left[0,x_{max}=100m \right] \times \left[ 0,y_{max}=16m \right] \times \left[ 0, z_{max} = 1.2m \right]$ with features a 0.4\% slope on the $x$-axis with an additional bump which can be seen in figure~\ref{domain} page~\pageref{domain}.
-
 \vskip 0.3cm
-The problem is that in order to carry out a realistic simulation this numerical model requires information on physical parameters such as the bed elevation $\zb$,
-roughness coefficients $\n$ in addition to initial conditions $\hz$ and $\uz$ which are usually not well known.
-Since the quality of the simulation is largely dependant on those model inputs,
-those must be defined accurately and thus we try to identify them with data assimilation.
-
+$\partial \Omega = \Gamma = \gq \cup \gz \cup \gt \cup \gw$
 \vskip 0.3cm
-Initial conditions and boundary conditions can be gathered in the control vector $\k = (\hz, \qz, \n, \zb, \qb, \zs)$ but in the paper they fix $n$ to a known piecewise linear function, $\qb$ to constant discharge $8m^3/s$, and $\zs \simeq 0.4m$ so the real control vector is rather $\k = (\hz, \qz, \zb)$.
+$\gz = \{ y \in \R\ |\ \u(x_{max},y) \cdot \nv > 0 \}$ 
+\vskip 0.3cm
+$\Omega =\left[0,x_{max}=100m \right] \times \left[ 0,y_{max}=16m \right] \times \left[ 0, z_{max} = 1.2m \right]$
+\vskip 0.3cm
+$\k = (\hz, \qz, \n, \zb, \qb, \zs)$ 
+\vskip 0.3cm
+$\qb = 8m^3/s$, 
+\vskip 0.3cm
+$\zs \simeq 0.4m$
+\vskip 0.3cm
+$\k = (\hz, \qz, \zb)$.
 
 \clearpage
-
-\begin{figure}[H]
-   \includegraphics[width=16cm]{domain2}
-   \caption{\label{domain} 
-       Description of the domain $\Omega$ (top and side view) and illustration of the proposed method.
-       Height sensors are recording the height of the free surface over the whole width $[0,y_{max}]$ of the domain at $x=15m$ and $x=70m$ which brings classical Eulerian observations for the data assimilation process.
-       In addition to this, 32 particles are uniformly dropped every $p \Delta T = 2s$ at $x=10m$ over the whole width of the domain, their trajectories are captured and are than extracted from video recording which brings Lagrangian data.
-}
-\end{figure}
-
 \section{Lagrangian Data Assimilation}
 
 The proposed method is described in figure~\ref{domain} page~\pageref{domain}.
