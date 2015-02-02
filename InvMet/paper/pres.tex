@@ -86,11 +86,35 @@ $N_m = 200$
 \vskip 0.3cm
 $\Xj(t)$,  
 \vskip 0.3cm
+\textcolor{purple}{\mathbf{$\X_{k_1}(t)$}}
+\vskip 0.3cm
+\textcolor{purple}{$\X_{k_2}(t)$}
+\vskip 0.3cm
+\textcolor{purple}{$\X_{k_3}(t)$}
+\vskip 0.3cm
 $(t^j_0, \mathbf{x}^j_0) \in p\Delta T\ \mathbb{Z} \cap [0,T] \times \{x=10m\} \times [0,y_{max}]$. 
+\vskip 0.3cm
+\begin{equation}
+\left\{
+\begin{array}{l c l}
+    \fd{\Xj}{t}(t) &=& \vb_j(t) \\
+    \Xj(t_0^j) &=& \mathbf{x}_0^j \\
+    \v &=& \gamma \u\ \ \gamma \in\ ]0,1]
+\end{array}
+\right.
+\end{equation}
 \vskip 0.3cm
 $\vb_j(t) = \v(\Xj(t), t)$ 
 \vskip 0.3cm
 $\W_j(t) = \Wt \times \Wx \subset [0,T] \times \Omega$ 
+\vskip 0.3cm
+\textcolor{blue}{$\W_x$}
+\vskip 0.3cm
+\textcolor{blue}{\mathbf{$\W_y$}}
+\vskip 0.3cm
+\textcolor{blue}{$\Wx$}
+\vskip 0.3cm
+\textbf{\textcolor{red}{Temporal window $\W_t$ is not represented}}
 \vskip 0.3cm
 $$
 \begin{equation}
@@ -106,7 +130,10 @@ $$
 \vskip 0.3cm
 $$
 \J(\k) =  
-\J(\hz, \qz, \zb)
+\J(\hz, \qz, \zb)=
+\dfrac{1}{2} \displaystyle \int_0^T \norm{Ch(t) - h^{obs}(t)}^2_{obs} \dt 
++ \dfrac{\alpha_t}{2} \displaystyle \sum_{j = 0}^{N_m} \int_{t_j^0}^{t_j^f} \abs{\X_j(t) - \Xj^{obs}(t)}^2 \dt
++ \dfrac{\alpha_p}{2} \norm{D\zb}^2_k
 $$
 \vskip 0.3cm
 $$
@@ -114,6 +141,17 @@ $$
 + \underbrace{\displaystyle \dfrac{\alpha_t}{2} \sum_{j=0}^{N_m} \int_0^T \norm{\X_j(t) - \Xj(t) }^2 \dt}_{\mathrm{filtered\ trajectories\ discrepancy}}
 + \underbrace{\displaystyle \dfrac{\alpha_p}{2} \iint_{\Omega_{xy}} \norm{\grad \zb(x,y)}^2 \dx \dy}_{\mathrm{topography\ regularization\ term}}
 $$
+\vskip 0.3cm
+\textcolor{blue}{\textbf{Observed particles:}$\ \ \Xi(t)\ \ \forall\ i \in \llbracket 1,N_{obs} \rrbracket$}
+\vskip 0.3cm
+\textcolor{red}{\textbf{Filtered particles:}$\ \ \ \ \Xj(t)\ \ \forall\ j \in \llbracket 1,N_{m} \rrbracket$}
+\vskip 0.3cm
+$
+\J_{diag}(\k) = 
+\dfrac{1}{2} \displaystyle \int_0^T \left[ \norm{h(t) - h^{ref}(t)}^2_{\Omega} + \norm{\u(t) - \u^{ref}(t)}^2_{\Omega} \right] \dt
+$
+\vskip 0.3cm
+
 
 \clearpage
 \section{Twin experiments}
