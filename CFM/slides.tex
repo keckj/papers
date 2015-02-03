@@ -1,0 +1,125 @@
+
+\include{header}
+\include{commands}
+
+
+\usetheme{Frankfurt}
+\setbeamercovered{transparent}
+\setbeamertemplate{bibliography item}[triangle]
+\addtobeamertemplate{footline}{\hfill\insertframenumber/\inserttotalframenumber\hspace{2em}\null}
+
+\begin{document}
+
+
+\title{\Large A new operator splitting algorithm for elastoviscoplastic flow problems}
+\author[Keck]{\Large Jean-Baptiste Keck}
+\institute[MSIAM]{\Large \bsc{M2 Msiam}}
+\date{\large Paper Review\\ 06/02/2015}
+
+
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+
+
+\begin{frame}{Operator notations} 
+
+    \textbf{Operators :}
+    \vskip 0.3cm
+    \tiny
+
+$
+\begin{array}{l l l c c l c l c}
+    \gradv& = & 
+    \underbrace{\D}_{deformation\ rate}& + & \underbrace{\W}_{vorticity}& = &
+    \left[\dfrac{\gradv + \gradv^T}{2}\right]& + & \left[\dfrac{\gradv - \gradv^T}{2}\right] \\
+    \\
+    \Tau & = & \underbrace{\Tau_d}_{\underset{(shear)}{deviatoric\ stress}}& + & \underbrace{\Tau_s}_{\underset{(pressure)}{hydrostatic\ stress}} &
+    = & \left[\Tau - \dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]& + & \left[\dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]
+\end{array}
+$
+    
+\vskip 0.5cm
+$
+\forall a \in \left[ -1,1\right] \hspace{0.5cm}
+\tensor{\od{\Tau}{t}} = \pd{\Tau}{t} + \left(\v . \grad \right) \Tau + \tensor{\beta_a \left( \Tau, \gradv \right)}
+\textrm{ Jaumann objective stress rate.}
+$
+\vskip 0.5cm
+$
+\hskip 2.6cm
+\beta_a \left( \Tau, \gradv \right) = \Tau . \W - \W . \Tau - a \left[ \D.\Tau + \Tau . \D \right]
+$
+\vskip 0.5cm
+$
+\forall \; \Tau \in \mathbb{R}^{d \times d} \hskip 0.5cm
+|\Tau|^2=
+\Tau : \Tau =
+tr\left(\Tau^T \Tau \right) =
+\sum_{1\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{(usual matrix Euclidean norm)}
+$
+
+\end{frame}
+
+
+\begin{frame}{\normalsize Model parameters and notations} 
+
+{\colorb\textbf{Model parameters:}}
+    \vskip 0.3cm
+    \footnotesize
+\indent\textbf{Dimension: } $d \in \left\{ 2,3\right\}$
+\vskip 0.2cm
+\indent\textbf{Jaumann operator parameter: } $a \in \left[-1,1\right]$
+\vskip 0.2cm
+\indent\textbf{Fluid properties:}
+\vskip 0.3cm
+    \tiny
+\left[
+\begin{array}{l l}
+    $\rho$ &solution\ density&
+    $\eta_s$ &solvent\ \ viscosity&
+    $\eta_m$ &polymer\ viscosity&
+    $\lambda$ &elastic\ relaxation\ time&
+    $\Tau_Y$ &yield\ stress&
+\end{array}
+\right]
+\Leftrightarrow
+\left[
+\begin{array}{l l l l}
+    $L,V$&=&\multicolumn{2}{l}{Caracteristic\ length\ and\ velocity}&
+    $W_e&=& \lambda V/L$ &Weissenberg\ number&
+    $B_i&=& \Tau_YL/\eta_m$ &Bingham\ number&
+    $R_e&=& \rho VL/(\eta_m+\eta_s) $ &Reynolds\ number&
+    $\alpha&=&\eta_m/(\eta_m+\eta_s)$ &Retardation\ parameter&
+\end{array}
+\right]
+
+\vskip 0.5cm
+
+\noindent{\normalsize \colorb\textbf{Notations:}}\\
+
+\textbf{Cauchy stress tensor:} $\Tau_{tot} = \underbrace{\Tau}_{elastic\ stress} - \underbrace{p\tensor{Id}}_{pressure} + \underbrace{2\eta_s\D}_{viscous\ friction}$
+
+\vskip 0.5cm
+\indent\textbf{Yield response:} $\mathcal{K}(|\Tau_d|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham)}.$\\
+\vskip 0.1cm
+\indent\hskip 1.5cm $\Tau_d$ is the elastic shear stress
+
+\end{frame}
+
+
+%\begin{frame}{References}
+    %\raggedright
+    %\nocite{*}
+    %\bibliographystyle{plain}
+    %\bibliography{master}
+    %\vfill
+    %\begin{center}
+        %\Large
+        %Any questions ?
+    %\end{center} 
+%\end{frame}
+
+\end{document}
