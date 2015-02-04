@@ -26,8 +26,7 @@
 
 \begin{frame}{Operator notations} 
 
-    \textbf{Operators :}
-    \vskip 0.3cm
+    \stitle{Operators :}
     \tiny
 
 $
@@ -66,46 +65,213 @@ $
 
 \begin{frame}{\normalsize Model parameters and notations} 
 
-{\colorb\textbf{Model parameters:}}
-    \vskip 0.3cm
-    \footnotesize
-\indent\textbf{Dimension: } $d \in \left\{ 2,3\right\}$
+\stitle{Model parameters}
+\footnotesize
+
+\ssubtitle{Dimension: } $d \in \left\{ 2,3\right\}$
 \vskip 0.2cm
-\indent\textbf{Jaumann operator parameter: } $a \in \left[-1,1\right]$
+\ssubtitle{Jaumann operator parameter: } $a \in \left[-1,1\right]$
 \vskip 0.2cm
-\indent\textbf{Fluid properties:}
+\ssubtitle{Fluid properties:}
 \vskip 0.3cm
     \tiny
+
+$
 \left[
 \begin{array}{l l}
-    $\rho$ &solution\ density&
-    $\eta_s$ &solvent\ \ viscosity&
-    $\eta_m$ &polymer\ viscosity&
-    $\lambda$ &elastic\ relaxation\ time&
-    $\Tau_Y$ &yield\ stress&
+    \rho &solution\ density&
+    \eta_s &solvent\ \ viscosity&
+    \eta_m &polymer\ viscosity&
+    \lambda &elastic\ relaxation\ time&
+    \Tau_Y &yield\ stress&
 \end{array}
 \right]
 \Leftrightarrow
 \left[
 \begin{array}{l l l l}
-    $L,V$&=&\multicolumn{2}{l}{Caracteristic\ length\ and\ velocity}&
-    $W_e&=& \lambda V/L$ &Weissenberg\ number&
-    $B_i&=& \Tau_YL/\eta_m$ &Bingham\ number&
-    $R_e&=& \rho VL/(\eta_m+\eta_s) $ &Reynolds\ number&
-    $\alpha&=&\eta_m/(\eta_m+\eta_s)$ &Retardation\ parameter&
+    L,V&=&\multicolumn{2}{l}{Caracteristic\ length\ and\ velocity}&
+    W_e&=& \lambda V/L &Weissenberg\ number&
+    B_i&=& \Tau_YL/\eta_m &Bingham\ number&
+    R_e&=& \rho VL/(\eta_m+\eta_s) &Reynolds\ number&
+    \alpha&=&\eta_m/(\eta_m+\eta_s) &Retardation\ parameter&
 \end{array}
 \right]
+$
 
 \vskip 0.5cm
 
-\noindent{\normalsize \colorb\textbf{Notations:}}\\
+\stitle{Additional notations}
+\footnotesize
 
-\textbf{Cauchy stress tensor:} $\Tau_{tot} = \underbrace{\Tau}_{elastic\ stress} - \underbrace{p\tensor{Id}}_{pressure} + \underbrace{2\eta_s\D}_{viscous\ friction}$
+\ssubtitle{Cauchy stress tensor:} $\Tau_{tot} = \underbrace{\Tau}_{elastic\ stress} - \underbrace{p\tensor{Id}}_{pressure} + \underbrace{2\eta_s\D}_{viscous\ friction}$
 
-\vskip 0.5cm
-\indent\textbf{Yield response:} $\mathcal{K}(|\Tau_d|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham)}.$\\
+\ssubtitle{Yield response:} $\mathcal{K}(|\alert{\Tau_d}|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham)}.$\\
 \vskip 0.1cm
-\indent\hskip 1.5cm $\Tau_d$ is the elastic shear stress
+\indent\hskip 1.5cm \alert{$\Tau_d$} is the \stress{elastic shear stress}
+
+\end{frame}
+
+
+\begin{frame}{Domain}
+
+    \stitle[0.0cm]{Experimental configuration :}
+    \footnotesize
+
+\begin{table}[h]
+    \centering
+    $
+    \begin{array}{l c c c c c r}
+        \mathlarger{\Omega \subset \mathbb{R}^d} &
+        &&   
+        \mathlarger{\partial\Omega = \Gamma_d \cup \Gamma_n \cup \Gamma_s} &
+        &&
+        \underbrace{\partial\Omega_- = \Gamma_- = \left\{x\in \partial\Omega\ |\ \v.\vector{n} < 0\right\}}_{upstream\ boundary} 
+    \end{array}
+    $
+\end{table}
+
+\begin{figure}[h!]
+   \includegraphics[scale=0.5]{domain.png}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}{Model}
+
+\scriptsize
+Find $\stress{\ \mathcal{U}} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+
+\vfill
+$
+   \left\{
+       \begin{array}{l l l l}
+           
+           (1)& 
+           W_e\left[\textcolor{blue}{\tensor{\od{\Tau}{t}}}\right] 
+           + \textcolor{red}{\mathcal{K} \left( | \Tau_d | \right) \Tau} - 2\alpha \tensor{D(\v)}&
+           =& 0_{\mathbb{R}^{d \times d}} \\
+           
+           \\
+
+           (2)&
+           R_e\left[ \pd{\v}{t} + 
+           \textcolor{RoyalPurple}{\left(\v . \grad \right) \v} \right] 
+           \underbrace{-\divv{\Tau -p\tensor{I}_d+2\eta_s\tensor{D(\v)}}}_{ -\divv{\Tau_{tot}} = -\divv{\Tau} + \grad p - (1-\alpha)\Delta\v}&
+           =& 0_{\mathbb{R}^d} \\
+
+           (3)& \div{\v} &=& 0_\mathbb{R} \\
+
+           \\
+
+           (4)& 
+           \multicolumn{3}{l}{
+           \v = \vector{v_{\Gamma_d}} \hskip 0.58cm \textrm{ in } ]0,T[\ \times\ \Gamma_d
+           \hskip 2.4cm \v . \vector{n} = 0\textrm{ in } ]0,T[ \times \Gamma_s
+           } \\
+           
+           (5)&
+           \multicolumn{3}{l}{
+           \vector{F} = \Tau \vector{n} = 0 \textrm{ in } \left]0,T\right[ \times \Gamma_n
+           \hskip 0.9cm 
+           \vector{F_t} = \Tau \vector{n} - \Tau_{nn} \vector{n} = 0 \textrm{ in } ]0,T[ \times \Gamma_s
+           } \\
+
+           (6)&
+           \multicolumn{3}{l}{
+           \Tau = \Tau_- \hskip 0.775cm \textrm{ in } \left]0,T\right[ \times \Gamma_-
+           } \\
+       \end{array}
+   \right.
+$
+\vfill
+
+\end{frame}
+
+
+\begin{frame}{Operator Splitting}
+
+\ssubtitle{We rewrite the model as:}
+\scriptsize
+\vskip 0.5cm
+
+Find $\ \stress{\mathcal{U}} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+
+\vskip 0.3cm
+\hskip 1.3cm
+    $
+    \left\{
+        \begin{array}{l}
+            \M \pd{\UU}{t} + \A{}{\UU}= 0_{\mathbb{R}^{d\times d}\times \mathbb{R}^d \times \mathbb{R}} &
+            &
+            (4) \hskip 0.5cm (5) \hskip 0.5cm (6) \hskip 0.5cm \textrm{(Boundary conditions)}
+        \end{array}
+    \right.
+    $
+
+        \vskip 0.5cm
+\hskip 1.0cm with $\M =
+    \left [
+       \begin{array}{c c c}
+           W_e&0&0&
+           0&R_e&0&
+           0&0&0&
+       \end{array}
+    \right ]
+    \textrm{ and } \A{}{\UU} =  \alert{\A{1}{\UU}} + \textcolor{blue}{\A{2}{\UU}}
+$
+
+\vskip 0.5cm
+$$
+\A{}{\UU} = 
+\underbrace{
+    \left[\begin{array}{c}
+            \textcolor{red}{\mathcal{K} \left( | \Tau_d | \right) \Tau} - 2\alpha \tensor{D(\v)}&
+            -\divv{\Tau} + \grad p - (1-\alpha)\Delta\v&
+            \div{\v}&
+\end{array}\right]}_{\alert{\A{1}{\UU}}\ contains\ all\ \alert{viscoplastic\ effects}}
++
+\underbrace{
+    \left[\begin{array}{c}
+           W_e\left[\textcolor{blue}{\left(\v . \grad \right) \Tau + \tensor{\beta_a \left( \Tau, \gradv \right)}}\right]&
+           0&
+           0&
+\end{array}\right]}_{\textcolor{blue}{\A{2}{\UU}}\ contains\ all\ \textcolor{blue}{viscoelastic\ effects}}
+$$
+
+\end{frame}
+
+
+\begin{frame}{$\Theta$-Scheme}
+
+    \scriptsize
+\ssubtitle{Three-steps $\theta$-scheme time-approximation of the previous equation :}
+
+\vskip 0.5cm
+Let $\Delta t > 0$ and $\theta \in \left] 0,1/2 \right[$ and $\UU_n$ be given. 
+    
+    \vskip 0.2cm
+    \textbf{To compute } \textcolor{blue}{$\mathbf{\UU_{n+1}}$} \textbf{compute successively the following subproblems} :
+
+    \tiny
+$$
+\begin{array}{l c c c l c l c r}
+    \alert{\mathcal{P}_1}\left(\textcolor{blue}{\Uv},\Uu\right)&\Leftrightarrow&
+    \M\dfrac{\textcolor{blue}{\Uv} - \Uu}{\theta \Delta t}&+&\A{1}{\textcolor{blue}{\Uv}}&+&\A{2}{\Uu}&=&0\\
+    \\
+    \alert{\mathcal{P}_2}\left(\textcolor{blue}{\Uw},\Uv\right)&\Leftrightarrow&
+    \M\dfrac{\textcolor{blue}{\Uw} - \Uv}{(1-2\theta) \Delta t}&+&\A{1}{\Uv}&+&\A{2}{\textcolor{blue}{\Uw}}&=&0\\
+    \\
+    \alert{\mathcal{P}_1}\left(\textcolor{blue}{\Ux},\Uw\right)&\Leftrightarrow&
+    \M\dfrac{\textcolor{blue}{\Ux} - \Uw}{\theta \Delta t}&+&\A{1}{\textcolor{blue}{\Ux}}&+&\A{2}{\Uw}&=&0
+\end{array}
+$$
+
+\vskip 0.5cm
+    \scriptsize
+    \stress{The third step is similar to the first one.}
+
 
 \end{frame}
 

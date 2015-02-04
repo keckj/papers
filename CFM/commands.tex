@@ -31,7 +31,19 @@
 \newcommand{\Dk}{\tensor{D\left( \vk \right)}}
 
 \definecolor{lightgray}{gray}{0.9}
+\definecolor{titlecolor}{RGB}{0,0,200}
+\definecolor{subtitlecolor}{RGB}{0,0,153}
+\definecolor{textcolor}{RGB}{0,128,255}
+\definecolor{RoyalPurple}{RGB}{102,51,153}
+
+
 \newcommand{\colbox}[1]{\colorbox{lightgray}{$ #1 $}}
 
-\newcommand{\title}[2][0.3cm]{ {\normalsize \textbf{#2}} \vspace{#1} }
-\newcommand{}[1]{{\small \textbf{#1}} \vskip 0.3cm}
+\newcommand{\stitle}[2][0.3cm] { 
+    {\normalsize \textcolor{titlecolor}{\textbf{#2}}} 
+    \vspace{#1} 
+}
+
+\newcommand{\ssubtitle}[1]{ {\footnotesize \textcolor{subtitlecolor}{\textbf{#1}}} }
+
+\newcommand{\stress}[1]{\textcolor{textcolor}{#1}}
