@@ -30,55 +30,54 @@
     \stitle{Operators :}
     \tiny
 
-\uncover<1>{
-$
-\begin{array}{l l l c c l c l c}
-    \gradv& = & 
+    \uncover<1>{
+        $
+        \begin{array}{l l l c c l c l c}
+            \gradv& = & 
 
-    \underbrace{\D}_{{\only<1>{\color{red}}deformation\ rate}}& + & \underbrace{\W}_{{\only<1>{\color{textcolor}}{vorticity}}}& = &
-    \left[\dfrac{\gradv + \gradv^T}{2}\right]& + & \left[\dfrac{\gradv - \gradv^T}{2}\right] \\
-\end{array}
-$
-}
-    
-\\
+            \underbrace{\D}_{{\only<1>{\color{red}}deformation\ rate}}& + & \underbrace{\W}_{{\only<1>{\color{textcolor}}{vorticity}}}& = &
+            \left[\dfrac{\gradv + \gradv^T}{2}\right]& + & \left[\dfrac{\gradv - \gradv^T}{2}\right] \\
+        \end{array}
+        $
+    }
 
-\uncover<2>{
-$
-\begin{array}{l l l c c l c l c}
-    \Tau & = & \underbrace{\Tau_d}_{\underset{(shear)}{{\only<2>{\color{red}}deviatoric\ stress}}}& + & \underbrace{\Tau_s}_{\underset{(pressure)}{{\only<2>{\color{textcolor}}hydrostatic\ stress}}} &
-    = & \left[\Tau - \dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]& + & \left[\dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]
-\end{array}
-$
-}
-    
-\vskip 0.5cm
+    \\
 
-\uncover<3>{
-$
-\forall a \in \left[ -1,1\right] \hspace{0.5cm}
-\tensor{{\only<3>{\color{textcolor}}\od{\Tau}{t}}} = \pd{\Tau}{t} + \left(\v . \grad \right) \Tau + \tensor{{\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right)}
-\textrm{\ \ the {\only<3>{\color{textcolor}}\textbf{Jaumann objective stress rate.}}}
-$
-\vskip 0.5cm
-$
-\hskip 2.6cm
-{\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right) = \Tau . \W - \W . \Tau - a \left[ \D.\Tau + \Tau . \D \right]
-$
-}
+    \uncover<2>{
+        $
+        \begin{array}{l l l c c l c l c}
+            \Tau & = & \underbrace{\Tau_d}_{\underset{(shear)}{{\only<2>{\color{red}}deviatoric\ stress}}}& + & \underbrace{\Tau_s}_{\underset{(pressure)}{{\only<2>{\color{textcolor}}hydrostatic\ stress}}} &
+            = & \left[\Tau - \dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]& + & \left[\dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]
+        \end{array}
+        $
+    }
 
-\vskip 0.5cm
+    \vskip 0.5cm
 
-\uncover<4>{
-$
-\forall \; \Tau \in \mathbb{R}^{d \times d} \hskip 0.5cm
-{\only<4>{\color{red}}|\Tau|^2}=
-\Tau : \Tau =
-tr\left(\Tau^T \Tau \right) =
-\sum_{1\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{ the usual {\only<4>{\color{textcolor}}\textbf{matrix Euclidean norm}}}
-$
-}
+    \uncover<3>{
+        $
+        \forall a \in \left[ -1,1\right] \hspace{0.5cm}
+        \tensor{{\only<3>{\color{textcolor}}\od{\Tau}{t}}} = \pd{\Tau}{t} + \left(\v . \grad \right) \Tau + \tensor{{\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right)}
+        \textrm{\ \ the {\only<3>{\color{textcolor}}\textbf{Jaumann objective stress rate.}}}
+        $
+        \vskip 0.5cm
+        $
+        \hskip 2.6cm
+        {\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right) = \Tau . \W - \W . \Tau - a \left[ \D.\Tau + \Tau . \D \right]
+        $
+    }
 
+    \vskip 0.5cm
+
+    \uncover<4>{
+        $
+        \forall \; \Tau \in \mathbb{R}^{d \times d} \hskip 0.5cm
+        {\only<4>{\color{red}}|\Tau|^2}=
+        \Tau : \Tau =
+        tr\left(\Tau^T \Tau \right) =
+        \sum_{1\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{ the usual {\only<4>{\color{textcolor}}\textbf{matrix Euclidean norm}}}
+        $
+    }
 \end{frame}
 
 
@@ -111,6 +110,7 @@ $
 \end{array}
 \right]
 $
+}
 \only<4-6>{
 $
 \Leftrightarrow
@@ -124,7 +124,6 @@ $
 \end{array}
 \right]
 $
-}
 }
 
 \vskip 0.5cm
@@ -381,7 +380,8 @@ Let $\Uk = \left[ \Tau^k, \v^k, p^k \right]^T$ be given. \alert{$\mathcal{P}_1$}
 
 \vskip 0.3cm
 \hskip 0.5cm
-$\mathcal{P}_1\left(\textcolor{blue}{\Ukk},\Uk\right)
+$
+\mathcal{P}_1\left(\textcolor{blue}{\Ukk},\Uk\right)
 \hskip 0.5cm
 \Leftrightarrow
 \hskip 0.5cm
@@ -413,11 +413,11 @@ $$
 
     \stitle{\textbf{Fixed point algorithm :}}
 
-Linearize problem $\mathcal{P}_1$ with $\textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} \simeq \underbrace{\mathcal{K} \left( \textcolor{RoyalPurple}{| \Tau_d^{k} |} \right)}_{explicit} \Tauk 
+Linearize problem $\mathcal{P}_1$ with $\textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} \simeq \underbrace{\mathcal{K} \left( \textcolor{RoyalPurple}{| \Tau_d^{k} |} \right)}_{explicit} \Tauk$
 \\
 
 \uncover<2->{
-\Rightarrow \mathcal{P}_1^{\alert{lin}}$ becomes a {\scriptsize\stress{"\textbf{simple Stokes subproblem}"}}
+$\Rightarrow \mathcal{P}_1^{\alert{lin}}$ becomes a {\scriptsize\stress{"\textbf{simple Stokes subproblem}"}}
 }
 
 \vskip 0.5cm
@@ -469,10 +469,12 @@ $\mathcal{P}_2\left(\textcolor{blue}{\Vkk},\Vk\right)
 \hskip 0.5cm
 \M\dfrac{\textcolor{blue}{\Vkk}}{\theta' \Delta t}+\A{2}{\textcolor{blue}{\Vkk}} = \mathcal{M}\dfrac{\Vk}{\theta' \Delta t} - \A{1}{\Vk} 
 = \textcolor{ForestGreen}{\mathcal{W}^k}
+$
 
 \vskip 0.5cm
 
 \uncover<2->{
+$
 \Leftrightarrow
 \left\{
     \begin{array}{l c l}
@@ -511,19 +513,73 @@ It admits a solution if $\Delta t < \dfrac{1}{\theta'} - 2\ |a|\  ||\tensor{D(\v
  
 \end{frame}
 
+\begin{frame}{Calculation vs Experiment}
+
+    \begin{figure}[h!]
+        \includegraphics[scale=0.25]{res1.png}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{Yielded regions}
+
+    \begin{figure}[h!]
+        \includegraphics[scale=0.25]{res2.png}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{Overshoot}
+    \begin{center}
+        \stitle{"Negative wake"}
+    
+        \begin{figure}[h!]
+            \includegraphics[scale=0.25]{res3.png}
+        \end{figure}
+    \end{center}
+\end{frame}
 
 
+\begin{frame}{References}
+    \raggedright
+    \nocite{*}
+    \bibliographystyle{plain}
+    \bibliography{master}
+    \vfill
+    \begin{center}
+        \Large
+        \textcolor{titlecolor}{\textbf{Any questions ?}}
+    \end{center} 
+\end{frame}
 
-%\begin{frame}{References}
-    %\raggedright
-    %\nocite{*}
-    %\bibliographystyle{plain}
-    %\bibliography{master}
-    %\vfill
-    %\begin{center}
-        %\Large
-        %Any questions ?
-    %\end{center} 
-%\end{frame}
+\begin{frame}{Convergence of the scheme}
+    \begin{center}
+
+    \only<1>{
+        \begin{figure}[h!]
+            \includegraphics[scale=0.25]{err1.png}
+        \end{figure}
+    }
+
+    \only<2>{
+        \begin{figure}[h!]
+            \includegraphics[scale=0.20]{err2.png}
+        \end{figure}
+    }
+    
+    \only<3>{
+        \begin{figure}[h!]
+            \includegraphics[scale=0.20]{err3.png}
+        \end{figure}
+    }
+    
+    \only<4>{
+        \begin{figure}[h!]
+            \includegraphics[scale=0.20]{err4.png}
+        \end{figure}
+    }
+
+    \end{center}
+\end{frame}
 
 \end{document}
