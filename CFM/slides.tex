@@ -58,7 +58,7 @@ $
 $
 \forall a \in \left[ -1,1\right] \hspace{0.5cm}
 \tensor{{\only<3>{\color{textcolor}}\od{\Tau}{t}}} = \pd{\Tau}{t} + \left(\v . \grad \right) \Tau + \tensor{{\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right)}
-\textrm{\ \ the {\only<3>{\color{textcolor}} \textbf{Jaumann objective stress rate.}}}
+\textrm{\ \ the {\only<3>{\color{textcolor}}\textbf{Jaumann objective stress rate.}}}
 $
 \vskip 0.5cm
 $
@@ -239,14 +239,14 @@ $
 \scriptsize
 \vskip 0.5cm
 
-Find $\ \stress{\mathcal{U}} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
+Find $\ \stress{\mathcal{U} = (\Tau,\v, p)^T} : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
 
 \vskip 0.3cm
 \hskip 1.3cm
     $
     \left\{
         \begin{array}{l}
-            \M \pd{\UU}{t} + \A{}{\UU}= 0_{\mathbb{R}^{d\times d}\times \mathbb{R}^d \times \mathbb{R}} &
+            \textcolor{ForestGreen}{\M} \pd{\stress{\UU}}{t} + \A{}{\stress{\UU}}= 0_{\mathbb{R}^{d\times d}\times \mathbb{R}^d \times \mathbb{R}} &
             &
             (4) \hskip 0.5cm (5) \hskip 0.5cm (6) \hskip 0.5cm \textrm{(Boundary conditions)}
         \end{array}
@@ -254,7 +254,7 @@ Find $\ \stress{\mathcal{U}} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omeg
     $
 
         \vskip 0.5cm
-\hskip 1.0cm with $\M =
+        \hskip 1.0cm with $\textcolor{ForestGreen}{\M} =
     \left [
        \begin{array}{c c c}
            W_e&0&0&
@@ -292,6 +292,7 @@ $$
 
 \begin{frame}{$\Theta$-Scheme}
 
+\beamertemplatetransparentcoveredhard
     \scriptsize
 \ssubtitle{Three-steps $\theta$-scheme time-approximation of the previous equation :}
 
@@ -304,23 +305,68 @@ Let $\Delta t > 0$ and $\theta \in \left] 0,1/2 \right[$ and $\UU_n$ be given.
     \tiny
 $$
 \begin{array}{l c c c l c l c r}
-    \alert{\mathcal{P}_1}\left(\textcolor{blue}{\Uv},\Uu\right)&\Leftrightarrow&
-    \M\dfrac{\textcolor{blue}{\Uv} - \Uu}{\theta \Delta t}&+&\A{1}{\textcolor{blue}{\Uv}}&+&\A{2}{\Uu}&=&0\\
+    \uncover<2,5>{\alert{\mathcal{P}_1}\left(\textcolor{blue}{\Uv},\Uu\right)} &
+    \uncover<2,5>{\Leftrightarrow} &
+    \uncover<2,5>{\M \dfrac{\textcolor{blue}{\Uv} - \Uu}{\theta \Delta t}} &
+    \uncover<2,5>{+} &
+    \uncover<2,5>{\A{1}{\textcolor{blue}{\Uv}}} &
+    \uncover<2,5>{+} &
+    \uncover<2,5>{\A{2}{\Uu}} & 
+    \uncover<2,5>{=} &
+    \uncover<2,5>{0} \\
     \\
-    \alert{\mathcal{P}_2}\left(\textcolor{blue}{\Uw},\Uv\right)&\Leftrightarrow&
-    \M\dfrac{\textcolor{blue}{\Uw} - \Uv}{(1-2\theta) \Delta t}&+&\A{1}{\Uv}&+&\A{2}{\textcolor{blue}{\Uw}}&=&0\\
+
+    \uncover<3,5>{\alert{\mathcal{P}_2}\left(\textcolor{blue}{\Uw},\Uv\right)} &
+    \uncover<3,5>{\Leftrightarrow} &
+    \uncover<3,5>{\M\dfrac{\textcolor{blue}{\Uw} - \Uv}{(1-2\theta) \Delta t}} &
+    \uncover<3,5>{+} &
+    \uncover<3,5>{\A{1}{\Uv}} &
+    \uncover<3,5>{+} &
+    \uncover<3,5>{\A{2}{\textcolor{blue}{\Uw}}} &
+    \uncover<3,5>{=} &
+    \uncover<3,5>{0} \\
     \\
-    \alert{\mathcal{P}_1}\left(\textcolor{blue}{\Ux},\Uw\right)&\Leftrightarrow&
-    \M\dfrac{\textcolor{blue}{\Ux} - \Uw}{\theta \Delta t}&+&\A{1}{\textcolor{blue}{\Ux}}&+&\A{2}{\Uw}&=&0
+
+    \uncover<4,5>{\alert{\mathcal{P}_1}\left(\textcolor{blue}{\Ux},\Uw\right)} &
+    \uncover<4,5>{\Leftrightarrow} &
+    \uncover<4,5>{\M\dfrac{\textcolor{blue}{\Ux} - \Uw}{\theta \Delta t}} &
+    \uncover<4,5>{+} &
+    \uncover<4,5>{\A{1}{\textcolor{blue}{\Ux}}} &
+    \uncover<4,5>{+} &
+    \uncover<4,5>{\A{2}{\Uw}} &
+    \uncover<4,5>{=} &
+    \uncover<4,5>{0}
 \end{array}
 $$
 
+\only<1>{
 \begin{figure}[h!]
-   \includegraphics[scale=0.35]{scheme.png}
+   \includegraphics[scale=0.35]{scheme_0.png}
 \end{figure}
+}
+\only<2>{
+\begin{figure}[h!]
+   \includegraphics[scale=0.35]{scheme_1.png}
+\end{figure}
+}
+\only<3>{
+\begin{figure}[h!]
+   \includegraphics[scale=0.35]{scheme_2.png}
+\end{figure}
+}
+\only<4>{
+\begin{figure}[h!]
+   \includegraphics[scale=0.35]{scheme_3.png}
+\end{figure}
+}
+\only<5>{
+\begin{figure}[h!]
+   \includegraphics[scale=0.35]{scheme_4.png}
+\end{figure}
+}
 
     \scriptsize
-    \stress{The third step is similar to the first one.}
+    \uncover<4,5>{\stress{The third step is similar to the first one.}}
 
 \end{frame}
 
@@ -329,6 +375,7 @@ $$
 \begin{frame}{First subproblem}
     \stitle{Solving the first subproblem $\mathcal{P}_1$ :}
 
+\setbeamercovered{invisible}
 \scriptsize
 Let $\Uk = \left[ \Tau^k, \v^k, p^k \right]^T$ be given. \alert{$\mathcal{P}_1$} is a \textbf{non linear Stokes problem} :
 
@@ -338,50 +385,68 @@ $\mathcal{P}_1\left(\textcolor{blue}{\Ukk},\Uk\right)
 \hskip 0.5cm
 \Leftrightarrow
 \hskip 0.5cm
-\M\dfrac{\textcolor{blue}{\Ukk}}{\theta \Delta t}+\A{1}{\textcolor{blue}{\Ukk}} = \mathcal{M}\dfrac{\Uk}{\theta \Delta t} - \A{2}{\Uk} = \mathcal{V}^k
+\M\dfrac{\textcolor{blue}{\Ukk}}{\theta \Delta t}+\A{1}{\textcolor{blue}{\Ukk}} = \mathcal{M}\dfrac{\Uk}{\theta \Delta t} - \A{2}{\Uk} = \textcolor{ForestGreen}{\mathcal{V}^k}
+$
 
-\vskip 0.5cm
+\vskip 0.3cm
+
+\uncover<2>{
+$$
 \Leftrightarrow
 \left\{
     \begin{array}{l c l}
-        W_e\dfrac{\Tau^{k+1}}{\theta\Delta t} + \textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} - 2\alpha \Dk&=&\mathcal{V}^k_1\\
+        W_e\dfrac{\Tau^{k+1}}{\theta\Delta t} + \textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} - 2\alpha \Dk&=&\textcolor{ForestGreen}{\mathcal{V}^k_1}\\
         \\
-        Re\dfrac{\vk}{\theta\Delta t}-\divv{\Tauk} + \grad \pk - (1-\alpha)\Delta\vk&=&\mathcal{V}^k_2\\
+        Re\dfrac{\vk}{\theta\Delta t}-\divv{\Tauk} + \grad \pk - (1-\alpha)\Delta\vk&=&\textcolor{ForestGreen}{\mathcal{V}^k_2}\\
         \\
-        \div{\vk}&=&0
+        \div{\vk}&=&\textcolor{ForestGreen}{0}
     \end{array}
 \right .
-$
+$$
+}
 
 \end{frame}
 
 \begin{frame}{Linearizing the first subproblem}
+    \beamertemplatetransparentcoveredhard
     \scriptsize
 
     \stitle{\textbf{Fixed point algorithm :}}
 
 Linearize problem $\mathcal{P}_1$ with $\textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} \simeq \underbrace{\mathcal{K} \left( \textcolor{RoyalPurple}{| \Tau_d^{k} |} \right)}_{explicit} \Tauk 
 \\
+
+\uncover<2->{
 \Rightarrow \mathcal{P}_1^{\alert{lin}}$ becomes a {\scriptsize\stress{"\textbf{simple Stokes subproblem}"}}
+}
 
 \vskip 0.5cm
 
+\uncover<3->{
 \ssubtitle{Step $\mathbf{s = 0}$:} 
 Let $\textcolor{blue}{\UU^k_0} = \UU^k
 \hspace{1.1cm} i.e. \hspace{0.5cm}
 \left(\Tau^k_0, \v^k_0, p^k_0\right) = \left(\Tau^k, \v^k, p^k\right)$
+}
 
 \vskip 0.3cm
+
+\uncover<4->{
 \ssubtitle{Step $\mathbf{s > 0}$:} 
 Solve $\mathcal{P}_1^{\alert{lin}} 
 \left( \textcolor{blue}{\UU^k_{s+1}}, \UU^k_s \right)$ with boundary conditions (4-5) to compute $\textcolor{blue}{\UU^k_{s+1}}$ .
+}
+
 \vskip 0.2cm
+
+\uncover<5->{
 \ssubtitle{Finally :}
 \hspace{0.3cm}
-Set $\textcolor{blue}{\Ukk} = \UU^k_{s_{\infty}} 
+Set $\textcolor{blue}{\Ukk} = \UU^k_{\alert{s_{\infty}}} 
 \hspace{0.5cm} i.e. \hspace{0.5cm}
 \left(\Tauk, \vk, \pk\right) =
 \left(\Tau^k_{s_{\infty}}, \v^k_{s_{\infty}}, p^k_{s_{\infty}}\right)$
+}
 
 \end{frame}
 
@@ -390,42 +455,59 @@ Set $\textcolor{blue}{\Ukk} = \UU^k_{s_{\infty}}
 \begin{frame}{Second subproblem}
 
 \stitle{Solving the second subproblem $\mathcal{P}_2$}
-    \scriptsize
 
-    Let $\Vk = \left[ \Tau^k, \v^k, p^k \right]^T$ and $\theta'=1-2\theta$ be given. \alert{$\mathcal{P}_2$} is a \textbf{stress transport problem} :
+\setbeamercovered{invisible}
+\scriptsize
+
+Let $\Vk = \left[ \Tau^k, \v^k, p^k \right]^T$ and $\theta'=1-2\theta$ be given. \alert{$\mathcal{P}_2$} is a \textbf{stress transport problem} :
 
 \vskip 0.3cm
+
 $\mathcal{P}_2\left(\textcolor{blue}{\Vkk},\Vk\right)
 \hskip 0.5cm
 \Leftrightarrow
 \hskip 0.5cm
-\M\dfrac{\textcolor{blue}{\Vkk}}{\theta' \Delta t}+\A{2}{\textcolor{blue}{\Vkk}} = \mathcal{M}\dfrac{\Vk}{\theta' \Delta t} - \A{1}{\Vk} = \mathcal{W}^k
+\M\dfrac{\textcolor{blue}{\Vkk}}{\theta' \Delta t}+\A{2}{\textcolor{blue}{\Vkk}} = \mathcal{M}\dfrac{\Vk}{\theta' \Delta t} - \A{1}{\Vk} 
+= \textcolor{ForestGreen}{\mathcal{W}^k}
 
 \vskip 0.5cm
+
+\uncover<2->{
 \Leftrightarrow
 \left\{
     \begin{array}{l c l}
-        \dfrac{\Tauk}{\theta'\Delta t} + \textcolor{blue}{\left(\v^{k+1} . \grad \right) \Tau^{k+1} + \tensor{\beta_a \left( \Tau^{k+1}, \gradv^{k+1} \right)}}&=&\mathcal{W}^k_1\\
+        \dfrac{\Tauk}{\theta'\Delta t} + 
+        {\only<2,3>{\color{blue}}\left({\only<4->{\color{red}}\v^{k+1}} . \grad \right) \Tau^{k+1} + \tensor{\beta_a \left( \Tau^{k+1}, {\only<4->{\color{red}}\gradv^{k+1}} \right)}}
+        &=&\textcolor{ForestGreen}{\mathcal{W}^k_1}\\
         \\
         Re\dfrac{\vk}{\theta'\Delta t}=
         Re\dfrac{\v^k}{\theta'\Delta t}+\divv{\Tau^k} - \grad p^k + (1-\alpha)\Delta\v^k
-        &=&\mathcal{W}_2^k
+        &=&\textcolor{ForestGreen}{\mathcal{W}_2^k}
     \end{array}
 \right .
+}
 $
 
 \vskip 0.5cm
+
+\uncover<3->{
 \textbf{If we previously have solved} $\mathbf{\mathcal{P}_1 \left(\UU^k, \UU^{k-1}\right)}$ \textbf{:}
 %\vskip 0.2cm
 %$\mathcal{W}_2^k 
 %= Re\left[\dfrac{\v^{k}}{\theta'\Delta t} + \dfrac{\v^{k}}{\theta\Delta t}\right] - \mathcal{V}^k_2
 %= Re\left[\dfrac{\v^{k}}{\theta'\Delta t} + \dfrac{\v^{k}}{\theta\Delta t} +  \dfrac{\v^{k-1}}{\theta\Delta t} \right]
-\alert{\vk}=\underbrace{\dfrac{1-\theta}{\theta}\v^k -  \dfrac{1-2\theta}{\theta}\v^{k-1}}_{explicit}$
+$\alert{\vk}=\underbrace{\dfrac{1-\theta}{\theta}\v^k -  \dfrac{1-2\theta}{\theta}\v^{k-1}}_{\alert{explicit}}$
+}
 
+\uncover<4->{
 $\Rightarrow \alert{\mathcal{P}_2}$ becomes a \stress{\textbf{linear Friedrich’s first-order system}}.
+}
 
 \vskip 0.2cm
+
+\uncover<5->{
 It admits a solution if $\Delta t < \dfrac{1}{\theta'} - 2\ |a|\  ||\tensor{D(\v^k)}||_\infty$
+}
  
 \end{frame}
 
