@@ -4,7 +4,9 @@
 
 
 \usetheme{Frankfurt}
-\setbeamercovered{transparent}
+\def\beamertemplatetransparentcoveredmedium{\setbeamercovered{transparent=40}}
+\def\beamertemplatetransparentcoveredhard{\setbeamercovered{transparent=20}}
+\beamertemplatetransparentcoveredmedium
 \setbeamertemplate{bibliography item}[triangle]
 \addtobeamertemplate{footline}{\hfill\insertframenumber/\inserttotalframenumber\hspace{2em}\null}
 
@@ -23,42 +25,59 @@
 \end{frame}
 
 
-
 \begin{frame}{Operator notations} 
 
     \stitle{Operators :}
     \tiny
 
+\uncover<1>{
 $
 \begin{array}{l l l c c l c l c}
     \gradv& = & 
-    \underbrace{\D}_{deformation\ rate}& + & \underbrace{\W}_{vorticity}& = &
+
+    \underbrace{\D}_{{\only<1>{\color{red}}deformation\ rate}}& + & \underbrace{\W}_{{\only<1>{\color{textcolor}}{vorticity}}}& = &
     \left[\dfrac{\gradv + \gradv^T}{2}\right]& + & \left[\dfrac{\gradv - \gradv^T}{2}\right] \\
-    \\
-    \Tau & = & \underbrace{\Tau_d}_{\underset{(shear)}{deviatoric\ stress}}& + & \underbrace{\Tau_s}_{\underset{(pressure)}{hydrostatic\ stress}} &
+\end{array}
+$
+}
+    
+\\
+
+\uncover<2>{
+$
+\begin{array}{l l l c c l c l c}
+    \Tau & = & \underbrace{\Tau_d}_{\underset{(shear)}{{\only<2>{\color{red}}deviatoric\ stress}}}& + & \underbrace{\Tau_s}_{\underset{(pressure)}{{\only<2>{\color{textcolor}}hydrostatic\ stress}}} &
     = & \left[\Tau - \dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]& + & \left[\dfrac{1}{d}tr(\Tau)\tensor{I_d}\right]
 \end{array}
 $
+}
     
 \vskip 0.5cm
+
+\uncover<3>{
 $
 \forall a \in \left[ -1,1\right] \hspace{0.5cm}
-\tensor{\od{\Tau}{t}} = \pd{\Tau}{t} + \left(\v . \grad \right) \Tau + \tensor{\beta_a \left( \Tau, \gradv \right)}
-\textrm{ Jaumann objective stress rate.}
+\tensor{{\only<3>{\color{textcolor}}\od{\Tau}{t}}} = \pd{\Tau}{t} + \left(\v . \grad \right) \Tau + \tensor{{\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right)}
+\textrm{\ \ the {\only<3>{\color{textcolor}} \textbf{Jaumann objective stress rate.}}}
 $
 \vskip 0.5cm
 $
 \hskip 2.6cm
-\beta_a \left( \Tau, \gradv \right) = \Tau . \W - \W . \Tau - a \left[ \D.\Tau + \Tau . \D \right]
+{\only<3>{\color{red}}\beta_a} \left( \Tau, \gradv \right) = \Tau . \W - \W . \Tau - a \left[ \D.\Tau + \Tau . \D \right]
 $
+}
+
 \vskip 0.5cm
+
+\uncover<4>{
 $
 \forall \; \Tau \in \mathbb{R}^{d \times d} \hskip 0.5cm
-|\Tau|^2=
+{\only<4>{\color{red}}|\Tau|^2}=
 \Tau : \Tau =
 tr\left(\Tau^T \Tau \right) =
-\sum_{1\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{(usual matrix Euclidean norm)}
+\sum_{1\leq i,j \leq d}\Tau_{ij}^2 \hskip 0.5cm \textrm{ the usual {\only<4>{\color{textcolor}}\textbf{matrix Euclidean norm}}}
 $
+}
 
 \end{frame}
 
@@ -68,10 +87,15 @@ $
 \stitle{Model parameters}
 \footnotesize
 
+\uncover<1-6>{
 \ssubtitle{Dimension: } $d \in \left\{ 2,3\right\}$
+}
 \vskip 0.2cm
+\uncover<2-6>{
 \ssubtitle{Jaumann operator parameter: } $a \in \left[-1,1\right]$
+}
 \vskip 0.2cm
+\uncover<3-6>{
 \ssubtitle{Fluid properties:}
 \vskip 0.3cm
     \tiny
@@ -86,6 +110,9 @@ $
     \Tau_Y &yield\ stress&
 \end{array}
 \right]
+$
+\only<4-6>{
+$
 \Leftrightarrow
 \left[
 \begin{array}{l l l l}
@@ -97,17 +124,26 @@ $
 \end{array}
 \right]
 $
+}
+}
 
 \vskip 0.5cm
 
+\uncover<5-6>{
 \stitle{Additional notations}
+}
 \footnotesize
 
+\uncover<5-6>{
 \ssubtitle{Cauchy stress tensor:} $\Tau_{tot} = \underbrace{\Tau}_{elastic\ stress} - \underbrace{p\tensor{Id}}_{pressure} + \underbrace{2\eta_s\D}_{viscous\ friction}$
+}
 
+
+\uncover<6>{
 \ssubtitle{Yield response:} $\mathcal{K}(|\alert{\Tau_d}|) = \left[ \dfrac{|\Tau_d| - Bi}{n |\Tau_d|}\right]_+^n = \textrm{\textbf{max}}\left(0, \; 1 - \dfrac{B_i}{|\Tau_d|} \right) \textrm{ with } n = 1 \textrm{ (Bingham)}.$\\
 \vskip 0.1cm
 \indent\hskip 1.5cm \alert{$\Tau_d$} is the \stress{elastic shear stress}
+}
 
 \end{frame}
 
@@ -123,7 +159,7 @@ $
     \begin{array}{l c c c c c r}
         \mathlarger{\Omega \subset \mathbb{R}^d} &
         &&   
-        \mathlarger{\partial\Omega = \Gamma_d \cup \Gamma_n \cup \Gamma_s} &
+        \mathlarger{\partial\Omega = \textcolor{ForestGreen}{\Gamma_d} \cup \textcolor{blue}{\Gamma_n} \cup \alert{\Gamma_s}} &
         &&
         \underbrace{\partial\Omega_- = \Gamma_- = \left\{x\in \partial\Omega\ |\ \v.\vector{n} < 0\right\}}_{upstream\ boundary} 
     \end{array}
@@ -140,6 +176,7 @@ $
 
 \begin{frame}{Model}
 
+\setbeamercovered{invisible}
 \scriptsize
 Find $\stress{\ \mathcal{U}} = (\Tau,\v, p)^T : \; \left]0,T\right[ \times \Omega \rightarrow \mathbb{R}^{d\times d} \times \mathbb{R}^d \times \mathbb{R}$ such that :
 
@@ -150,14 +187,16 @@ $
            
            (1)& 
            W_e\left[\textcolor{blue}{\tensor{\od{\Tau}{t}}}\right] 
-           + \textcolor{red}{\mathcal{K} \left( | \Tau_d | \right) \Tau} - 2\alpha \tensor{D(\v)}&
+           
+           + {\tiny \only<2->{\color{red}} \uncover<2->{\underbrace{\mathcal{K} \left( | \Tau_d | \right)}_{plastic\ dissipation}} \Tau} - 2\alpha \tensor{D(\v)}&
            =& 0_{\mathbb{R}^{d \times d}} \\
            
            \\
 
            (2)&
-           R_e\left[ \pd{\v}{t} + 
-           \textcolor{RoyalPurple}{\left(\v . \grad \right) \v} \right] 
+           R_e\left[ \pd{\v}{t} + \textcolor{RoyalPurple}{
+                   \only<3->{\cancel}{\left(\v . \grad \right) \v}
+           } \right] 
            \underbrace{-\divv{\Tau -p\tensor{I}_d+2\eta_s\tensor{D(\v)}}}_{ -\divv{\Tau_{tot}} = -\divv{\Tau} + \grad p - (1-\alpha)\Delta\v}&
            =& 0_{\mathbb{R}^d} \\
 
@@ -165,6 +204,7 @@ $
 
            \\
 
+           \uncover<4>{
            (4)& 
            \multicolumn{3}{l}{
            \v = \vector{v_{\Gamma_d}} \hskip 0.58cm \textrm{ in } ]0,T[\ \times\ \Gamma_d
@@ -182,6 +222,7 @@ $
            \multicolumn{3}{l}{
            \Tau = \Tau_- \hskip 0.775cm \textrm{ in } \left]0,T\right[ \times \Gamma_-
            } \\
+        }
        \end{array}
    \right.
 $
@@ -192,7 +233,9 @@ $
 
 \begin{frame}{Operator Splitting}
 
-\ssubtitle{We rewrite the model as:}
+\beamertemplatetransparentcoveredhard
+
+\ssubtitle{Rewrite the model as:}
 \scriptsize
 \vskip 0.5cm
 
@@ -225,19 +268,23 @@ $
 \vskip 0.5cm
 $$
 \A{}{\UU} = 
+\uncover<2->{
 \underbrace{
     \left[\begin{array}{c}
             \textcolor{red}{\mathcal{K} \left( | \Tau_d | \right) \Tau} - 2\alpha \tensor{D(\v)}&
             -\divv{\Tau} + \grad p - (1-\alpha)\Delta\v&
             \div{\v}&
 \end{array}\right]}_{\alert{\A{1}{\UU}}\ contains\ all\ \alert{viscoplastic\ effects}}
+}
 +
+\uncover<3->{
 \underbrace{
     \left[\begin{array}{c}
            W_e\left[\textcolor{blue}{\left(\v . \grad \right) \Tau + \tensor{\beta_a \left( \Tau, \gradv \right)}}\right]&
            0&
            0&
 \end{array}\right]}_{\textcolor{blue}{\A{2}{\UU}}\ contains\ all\ \textcolor{blue}{viscoelastic\ effects}}
+}
 $$
 
 \end{frame}
@@ -268,12 +315,121 @@ $$
 \end{array}
 $$
 
-\vskip 0.5cm
+\begin{figure}[h!]
+   \includegraphics[scale=0.35]{scheme.png}
+\end{figure}
+
     \scriptsize
     \stress{The third step is similar to the first one.}
 
+\end{frame}
+
+
+
+\begin{frame}{First subproblem}
+    \stitle{Solving the first subproblem $\mathcal{P}_1$ :}
+
+\scriptsize
+Let $\Uk = \left[ \Tau^k, \v^k, p^k \right]^T$ be given. \alert{$\mathcal{P}_1$} is a \textbf{non linear Stokes problem} :
+
+\vskip 0.3cm
+\hskip 0.5cm
+$\mathcal{P}_1\left(\textcolor{blue}{\Ukk},\Uk\right)
+\hskip 0.5cm
+\Leftrightarrow
+\hskip 0.5cm
+\M\dfrac{\textcolor{blue}{\Ukk}}{\theta \Delta t}+\A{1}{\textcolor{blue}{\Ukk}} = \mathcal{M}\dfrac{\Uk}{\theta \Delta t} - \A{2}{\Uk} = \mathcal{V}^k
+
+\vskip 0.5cm
+\Leftrightarrow
+\left\{
+    \begin{array}{l c l}
+        W_e\dfrac{\Tau^{k+1}}{\theta\Delta t} + \textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} - 2\alpha \Dk&=&\mathcal{V}^k_1\\
+        \\
+        Re\dfrac{\vk}{\theta\Delta t}-\divv{\Tauk} + \grad \pk - (1-\alpha)\Delta\vk&=&\mathcal{V}^k_2\\
+        \\
+        \div{\vk}&=&0
+    \end{array}
+\right .
+$
 
 \end{frame}
+
+\begin{frame}{Linearizing the first subproblem}
+    \scriptsize
+
+    \stitle{\textbf{Fixed point algorithm :}}
+
+Linearize problem $\mathcal{P}_1$ with $\textcolor{red}{\mathcal{K} \left( | \Tau_d^{k+1} | \right) \Tauk} \simeq \underbrace{\mathcal{K} \left( \textcolor{RoyalPurple}{| \Tau_d^{k} |} \right)}_{explicit} \Tauk 
+\\
+\Rightarrow \mathcal{P}_1^{\alert{lin}}$ becomes a {\scriptsize\stress{"\textbf{simple Stokes subproblem}"}}
+
+\vskip 0.5cm
+
+\ssubtitle{Step $\mathbf{s = 0}$:} 
+Let $\textcolor{blue}{\UU^k_0} = \UU^k
+\hspace{1.1cm} i.e. \hspace{0.5cm}
+\left(\Tau^k_0, \v^k_0, p^k_0\right) = \left(\Tau^k, \v^k, p^k\right)$
+
+\vskip 0.3cm
+\ssubtitle{Step $\mathbf{s > 0}$:} 
+Solve $\mathcal{P}_1^{\alert{lin}} 
+\left( \textcolor{blue}{\UU^k_{s+1}}, \UU^k_s \right)$ with boundary conditions (4-5) to compute $\textcolor{blue}{\UU^k_{s+1}}$ .
+\vskip 0.2cm
+\ssubtitle{Finally :}
+\hspace{0.3cm}
+Set $\textcolor{blue}{\Ukk} = \UU^k_{s_{\infty}} 
+\hspace{0.5cm} i.e. \hspace{0.5cm}
+\left(\Tauk, \vk, \pk\right) =
+\left(\Tau^k_{s_{\infty}}, \v^k_{s_{\infty}}, p^k_{s_{\infty}}\right)$
+
+\end{frame}
+
+
+
+\begin{frame}{Second subproblem}
+
+\stitle{Solving the second subproblem $\mathcal{P}_2$}
+    \scriptsize
+
+    Let $\Vk = \left[ \Tau^k, \v^k, p^k \right]^T$ and $\theta'=1-2\theta$ be given. \alert{$\mathcal{P}_2$} is a \textbf{stress transport problem} :
+
+\vskip 0.3cm
+$\mathcal{P}_2\left(\textcolor{blue}{\Vkk},\Vk\right)
+\hskip 0.5cm
+\Leftrightarrow
+\hskip 0.5cm
+\M\dfrac{\textcolor{blue}{\Vkk}}{\theta' \Delta t}+\A{2}{\textcolor{blue}{\Vkk}} = \mathcal{M}\dfrac{\Vk}{\theta' \Delta t} - \A{1}{\Vk} = \mathcal{W}^k
+
+\vskip 0.5cm
+\Leftrightarrow
+\left\{
+    \begin{array}{l c l}
+        \dfrac{\Tauk}{\theta'\Delta t} + \textcolor{blue}{\left(\v^{k+1} . \grad \right) \Tau^{k+1} + \tensor{\beta_a \left( \Tau^{k+1}, \gradv^{k+1} \right)}}&=&\mathcal{W}^k_1\\
+        \\
+        Re\dfrac{\vk}{\theta'\Delta t}=
+        Re\dfrac{\v^k}{\theta'\Delta t}+\divv{\Tau^k} - \grad p^k + (1-\alpha)\Delta\v^k
+        &=&\mathcal{W}_2^k
+    \end{array}
+\right .
+$
+
+\vskip 0.5cm
+\textbf{If we previously have solved} $\mathbf{\mathcal{P}_1 \left(\UU^k, \UU^{k-1}\right)}$ \textbf{:}
+%\vskip 0.2cm
+%$\mathcal{W}_2^k 
+%= Re\left[\dfrac{\v^{k}}{\theta'\Delta t} + \dfrac{\v^{k}}{\theta\Delta t}\right] - \mathcal{V}^k_2
+%= Re\left[\dfrac{\v^{k}}{\theta'\Delta t} + \dfrac{\v^{k}}{\theta\Delta t} +  \dfrac{\v^{k-1}}{\theta\Delta t} \right]
+\alert{\vk}=\underbrace{\dfrac{1-\theta}{\theta}\v^k -  \dfrac{1-2\theta}{\theta}\v^{k-1}}_{explicit}$
+
+$\Rightarrow \alert{\mathcal{P}_2}$ becomes a \stress{\textbf{linear Friedrich’s first-order system}}.
+
+\vskip 0.2cm
+It admits a solution if $\Delta t < \dfrac{1}{\theta'} - 2\ |a|\  ||\tensor{D(\v^k)}||_\infty$
+ 
+\end{frame}
+
+
 
 
 %\begin{frame}{References}

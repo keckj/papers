@@ -35,6 +35,7 @@
 \definecolor{subtitlecolor}{RGB}{0,0,153}
 \definecolor{textcolor}{RGB}{0,128,255}
 \definecolor{RoyalPurple}{RGB}{102,51,153}
+\definecolor{ForestGreen}{RGB}{34,139,34}
 
 
 \newcommand{\colbox}[1]{\colorbox{lightgray}{$ #1 $}}
@@ -47,3 +48,7 @@
 \newcommand{\ssubtitle}[1]{ {\footnotesize \textcolor{subtitlecolor}{\textbf{#1}}} }
 
 \newcommand{\stress}[1]{\textcolor{textcolor}{#1}}
+
+\newcommand{\hidecontent}[2][0.25]{{% \hidecontent[<transparency>]{<stuff>}
+  \setbox9=\hbox{#2}% Store <stuff> in \box9 to obtain height/width
+  \transparent{#1}\ooalign{\usebox9\cr\color{white}\rule{\wd9}{\ht9}\cr}}}
