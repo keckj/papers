@@ -39,6 +39,11 @@ int main(int argc, char **argv) {
     Interval<float> interval(0.0f,1.0f);
 
     DeslaurierDubuc<float,0> olol;
+    
+    for( float f :  DeslaurierDubucUtils::generateScalingFunction<float>(8u,10)) {
+        std::cout << f << " ";
+    }
+    std::cout << std::endl;
 
     return EXIT_SUCCESS;
     

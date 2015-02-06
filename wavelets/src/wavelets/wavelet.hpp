@@ -13,7 +13,7 @@ class Wavelet {
         virtual T operator()(T x) const = 0;
         virtual T operator()(unsigned int j, int k, T x) const = 0;
 
-        Interval<T> support(int j, int k) const;
+        Interval<T> support(int j = 0, int k = 0) const;
         
         void plot(Gnuplot &gp, unsigned int nPoints, unsigned int j, int k) const;
 

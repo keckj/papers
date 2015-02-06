@@ -8,102 +8,120 @@
 //#include <unsupported/Eigen/FFT>
 #include "deslaurierDubucUtils.hpp"
 
-template <typename T, unsigned int N>
+template <typename T, unsigned int M>
 class DeslaurierDubuc : public Wavelet<T> {
 
     public:
         DeslaurierDubuc();
-        DeslaurierDubuc(const DeslaurierDubuc<T,N> &other);
+        DeslaurierDubuc(const DeslaurierDubuc<T,M> &other);
         ~DeslaurierDubuc();
 
         T operator()(T x) const override;
         T operator()(unsigned int j, int k, T x) const override;
 
         static constexpr unsigned int sampleCount();
-
         static std::vector<T> getSamples();
 
     protected:
-        static constexpr unsigned int _unitSamplesCount = 100u;
+        static unsigned int _levels;
+        static T _resolution;
         static std::vector<T> _samples;
         static bool _init;
         
-        static constexpr Interval<T> computeSupport();
-
         static void init();
         static unsigned int toSampleId(T x);
 };
 
         
-template <typename T, unsigned int N>
-bool DeslaurierDubuc<T,N>::_init = false;
+template <typename T, unsigned int M>
+bool DeslaurierDubuc<T,M>::_init = false;
 
-template <typename T, unsigned int N>
-std::vector<T> DeslaurierDubuc<T,N>::_samples;
+template <typename T, unsigned int M>
+std::vector<T> DeslaurierDubuc<T,M>::_samples;
 
-template <typename T, unsigned int N>
-void DeslaurierDubuc<T,N>::init() {
+template <typename T, unsigned int M>
+T DeslaurierDubuc<T,M>::_resolution = T(0);
+
+template <typename T, unsigned int M>
+unsigned int DeslaurierDubuc<T,M>::_levels = 0u;
+
+template <typename T, unsigned int M>
+void DeslaurierDubuc<T,M>::init() {
     if(_init)
         return;
+
+    _levels = 10u;
+    _resolution = T(1)/std::pow<T>(2, _levels);
+    std::cout << "Generaring Deslaurier-Dubuc wavelet of order " << M << " with " << _levels 
+        << " convolutions (" << (1u<<_levels) << " samples per unit, resolution dx=" << _resolution << ")..." << std::endl;
+    _samples = DeslaurierDubucUtils::generateScalingFunction<T>(M, _levels);
+    _init = true;
 }
         
-template <typename T, unsigned int N>
-unsigned int DeslaurierDubuc<T,N>::toSampleId(T x) {
-    Interval<T> sup = computeSupport();
+template <typename T, unsigned int M>
+unsigned int DeslaurierDubuc<T,M>::toSampleId(T x) {
+    assert(_init);
+    Interval<T> sup = DeslaurierDubucUtils::computeSupport<T>(M);
     assert(sup.contains(x));
-    return static_cast<unsigned int>((x-sup.inf)/sup.length() * (sampleCount() - 1u));
+    return floor((x-sup.inf)/sup.length() * (sampleCount() - 1u));
 }
         
-template <typename T, unsigned int N>
-DeslaurierDubuc<T,N>::DeslaurierDubuc() : 
-    Wavelet<T>(DeslaurierDubuc<T,N>::computeSupport()) {
+template <typename T, unsigned int M>
+DeslaurierDubuc<T,M>::DeslaurierDubuc() : 
+    Wavelet<T>(DeslaurierDubucUtils::computeSupport<T>(M)) {
         init();
 }
 
-template <typename T, unsigned int N>
-DeslaurierDubuc<T,N>::DeslaurierDubuc(const DeslaurierDubuc<T,N> &other) : Wavelet<T>(other) {
+template <typename T, unsigned int M>
+DeslaurierDubuc<T,M>::DeslaurierDubuc(const DeslaurierDubuc<T,M> &other) : Wavelet<T>(other) {
 }
 
-template <typename T, unsigned int N>
-DeslaurierDubuc<T,N>::~DeslaurierDubuc() {
+template <typename T, unsigned int M>
+DeslaurierDubuc<T,M>::~DeslaurierDubuc() {
 }
 
-template <typename T, unsigned int N>
-T DeslaurierDubuc<T,N>::operator()(T x) const {
-    if(this->support(0,0).contains(x)) {
-        return T(1) - sqrt(x*x);
-    }
-    else {
+template <typename T, unsigned int M>
+T DeslaurierDubuc<T,M>::operator()(T x) const {
+
+    if(! this->support().contains(x)) {
         return T(0);
     }
+
+    unsigned int sampleIdLow, sampleIdHigh;
+
+    sampleIdLow = toSampleId(x);
+    if(sampleIdLow == _samples.size())
+        sampleIdLow--;
+    
+    sampleIdHigh = sampleIdLow + 1u;
+
+    T xlow =  sampleIdLow  * _resolution; 
+    T xhigh = sampleIdHigh * _resolution; 
+    T ylow =  _samples[sampleIdLow];
+    T yhigh = _samples[sampleIdHigh];
+
+    T a = (yhigh - ylow)/(xhigh - xlow);
+    T b = ylow - a * xlow;
+
+    return (a*x + b);
 }
 
-template <typename T, unsigned int N>
-T DeslaurierDubuc<T,N>::operator()(unsigned int j, int k, T x) const {
-    if(N == 0)
+template <typename T, unsigned int M>
+T DeslaurierDubuc<T,M>::operator()(unsigned int j, int k, T x) const {
+    if(M == 0)
         return this->operator()(T(std::pow(2,j))*x - T(k));
     else 
         return 0;
 }
         
-template <typename T, unsigned int N>
-constexpr Interval<T> DeslaurierDubuc<T,N>::computeSupport() {
-    switch(N) {
-        case(0u): 
-            return Interval<T>(-1,1);
-        default:
-            return Interval<T>(-T(2)*N + 1/T(2) ,T(2)*N - 1/T(2));
-    }
-}
-        
-template <typename T, unsigned int N>
-std::vector<T> DeslaurierDubuc<T,N>::getSamples() {
+template <typename T, unsigned int M>
+std::vector<T> DeslaurierDubuc<T,M>::getSamples() {
     return _samples;
 }
 
-template <typename T, unsigned int N>
-constexpr unsigned int DeslaurierDubuc<T,N>::sampleCount() {
-    return static_cast<unsigned int>(computeSupport().length()*_unitSamplesCount);
+template <typename T, unsigned int M>
+constexpr unsigned int DeslaurierDubuc<T,M>::sampleCount() {
+    return _samples.size();
 }
 
 #endif /* end of include guard: DESLAURIERDUBUC_H */

@@ -3,6 +3,7 @@
 #define INTERVAL_H
 
 #include <cassert>
+#include <iostream>
 
 template <typename T>
 struct Interval {
