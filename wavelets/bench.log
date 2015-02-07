@@ -1,0 +1,47 @@
+[Random] Seed init !
+[Globals] Init
+Bench:
+
+Generaring Deslaurier-Dubuc wavelet of order 1 with 14 convolutions (16384 samples per unit, resolution dx=6.10352e-05)...
+Benching 10 random samples with order 1... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 581.942 : 0.0581942 : 20.5137 : 15ms
+Benching 50 random samples with order 1... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 1382.95 : 0.138295 : 129.398 : 36ms
+Benching 100 random samples with order 1... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 6571.58 : 0.657158 : 751.83 : 71ms
+Benching 200 random samples with order 1... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 12614.7 : 1.26147 : 1964.95 : 199ms
+Benching 500 random samples with order 1... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 22095.9 : 2.20959 : 4427.19 : 1348ms
+
+Generaring Deslaurier-Dubuc wavelet of order 2 with 14 convolutions (16384 samples per unit, resolution dx=6.10352e-05)...
+Benching 10 random samples with order 2... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 1693 : 0.1693 : 56.5307 : 17ms
+Benching 50 random samples with order 2... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 133.437 : 0.0133437 : 7.36707 : 43ms
+Benching 100 random samples with order 2... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 37.137 : 0.0037137 : 2.37427 : 59ms
+Benching 200 random samples with order 2... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 6.82826 : 0.000682826 : 0.573492 : 88ms
+Benching 500 random samples with order 2... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 0.633857 : 6.33857e-05 : 0.105334 : 256ms
+
+Generaring Deslaurier-Dubuc wavelet of order 3 with 14 convolutions (16384 samples per unit, resolution dx=6.10352e-05)...
+Benching 10 random samples with order 3... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 872.448 : 0.0872448 : 29.6946 : 18ms
+Benching 50 random samples with order 3... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 126.751 : 0.0126751 : 7.12447 : 56ms
+Benching 100 random samples with order 3... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 32.0711 : 0.00320711 : 2.01135 : 78ms
+Benching 200 random samples with order 3... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 5.37304 : 0.000537304 : 0.471498 : 114ms
+Benching 500 random samples with order 3... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 8.49887 : 0.000849887 : 2.03367 : 295ms
+
+Generaring Deslaurier-Dubuc wavelet of order 5 with 14 convolutions (16384 samples per unit, resolution dx=6.10352e-05)...
+Benching 10 random samples with order 5... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 925.311 : 0.0925311 : 29.7676 : 20ms
+Benching 50 random samples with order 5... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 121.201 : 0.0121201 : 6.77455 : 75ms
+Benching 100 random samples with order 5... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 31.0692 : 0.00310692 : 2.01155 : 112ms
+Benching 200 random samples with order 5... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 4.20727 : 0.000420727 : 0.379687 : 164ms
+Benching 500 random samples with order 5... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 0.454845 : 4.54845e-05 : 0.125543 : 373ms
+
+Generaring Deslaurier-Dubuc wavelet of order 10 with 14 convolutions (16384 samples per unit, resolution dx=6.10352e-05)...
+Benching 10 random samples with order 10... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 764.501 : 0.0764501 : 25.164 : 21ms
+Benching 50 random samples with order 10... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 122.57 : 0.012257 : 6.718 : 102ms
+Benching 100 random samples with order 10... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 29.2024 : 0.00292024 : 1.96789 : 165ms
+Benching 200 random samples with order 10... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 3.30657 : 0.000330657 : 0.311776 : 250ms
+Benching 500 random samples with order 10... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 0.25441 : 2.5441e-05 : 0.0545699 : 506ms
+
+Generaring Deslaurier-Dubuc wavelet of order 50 with 14 convolutions (16384 samples per unit, resolution dx=6.10352e-05)...
+Benching 10 random samples with order 50... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 1167.34 : 0.116734 : 38.678 : 21ms
+Benching 50 random samples with order 50... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 116.498 : 0.0116498 : 6.44599 : 132ms
+Benching 100 random samples with order 50... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 23.2566 : 0.00232566 : 1.61768 : 275ms
+Benching 200 random samples with order 50... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 2.11907 : 0.000211907 : 0.261533 : 526ms
+Benching 500 random samples with order 50... 0.0%  10.0%  20.0%  30.0%  40.0%  50.0%  60.0%  70.0%  80.0%  90.0%  100%  => 0.374802 : 3.74802e-05 : 0.0760511 : 1145ms
+
+All done, exiting !

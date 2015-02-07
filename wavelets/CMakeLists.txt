@@ -60,7 +60,10 @@ add_definitions("${COMPILER_DEFINES}")
 set(BUILD_SHARED_LIBS OFF)
 
 #Set executable sources
-list(APPEND executable_sources "${CMAKE_SOURCE_DIR}/src/main.cpp")
+list(APPEND executable_sources 
+    "${CMAKE_SOURCE_DIR}/src/main.cpp"
+    "${CMAKE_SOURCE_DIR}/src/bench.cpp"
+    )
 
 #Find source files
 file(GLOB_RECURSE header_files src/*.hpp)

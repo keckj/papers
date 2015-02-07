@@ -33,6 +33,7 @@ struct Sample {
 
     T norm2() const;
     T norm() const;
+    T normInf() const;
 };
     
 template <unsigned int N, typename T>
@@ -197,8 +198,21 @@ T Sample<N,T>::norm2() const {
 
 template <unsigned int N, typename T>
 T Sample<N,T>::norm() const {
-    return std::pow(this->norm2(), 0.5);
+    return std::pow<T>(this->norm2(), 0.5);
 }
+
+template <unsigned int N, typename T>
+T Sample<N,T>::normInf() const {
+    T normInf = T(0);
+    for (unsigned int i = 0; i < N; i++) {
+        T val = std::abs<T>(this->data[i].y);
+        if(val > normInf) {
+            normInf = val;
+        }
+    }
+    return normInf;
+}
+
 
 
 #endif /* end of include guard: SAMPLE_H */
