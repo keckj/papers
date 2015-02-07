@@ -7,7 +7,7 @@
 template <unsigned int N, typename T>
 struct FunctionSample : public Sample<N,T> {
 
-    explicit FunctionSample(const Interval<T> &interval, std::function<T(T)> lambda);
+    explicit FunctionSample(const Interval<T> &interval, const std::function<T(T)> &lambda);
     FunctionSample(const Sample<N,T> &other);
     virtual ~FunctionSample();
 
@@ -20,12 +20,12 @@ struct FunctionSample : public Sample<N,T> {
 };
     
 template <unsigned int N, typename T>
-FunctionSample<N,T>::FunctionSample(const Interval<T> &interval, std::function<T(T)> lambda) :
+FunctionSample<N,T>::FunctionSample(const Interval<T> &interval, const std::function<T(T)> &lambda) :
     Sample<N,T>(interval) {
         _min = lambda(interval.inf);
         _max = lambda(interval.inf);
         for (unsigned int i = 0; i < N; i++) {
-            T x = interval.inf + Random::randf()*(interval.sup - interval.inf);
+            T x = interval.inf + i*(interval.sup - interval.inf)/T(N-1);
             T y = lambda(x);
             this->data[i] = Point<T>(x,y);
 

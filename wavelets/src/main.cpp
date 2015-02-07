@@ -10,6 +10,7 @@
 #include "binaryTreeNode.hpp"
 #include "sample.hpp"
 #include "functionSample.hpp"
+#include "randomSample.hpp"
 #include "point.hpp"
 #include "interval.hpp"
 #include "gnuplot.hpp"
@@ -34,22 +35,13 @@ int main(int argc, char **argv) {
   
     
     // configuration
-    constexpr unsigned int nData = 100u;
+    constexpr unsigned int nData = 200u;
     constexpr unsigned int nDataSample = 1000u;
-    Interval<float> interval(0.0f,1.0f);
+    const Interval<float> interval(0.0f,1.0f);
 
-    DeslaurierDubuc<float,0> olol;
-    
-    for( float f :  DeslaurierDubucUtils::generateScalingFunction<float>(8u,10)) {
-        std::cout << f << " ";
-    }
-    std::cout << std::endl;
-
-    return EXIT_SUCCESS;
-    
     //generate and plot samples
     FunctionSample<nDataSample, float> samplePlot(interval, F);
-    FunctionSample<nData, float> sample(interval, F);
+    RandomSample<nData, float> sample(interval, F);
 
     const PlotBox<float>& box = PlotBox<float>(interval.inf,interval.sup,samplePlot.min(),samplePlot.max()).dilate(1.0);
     //build tree with samples (ALLOCATION)
@@ -63,7 +55,7 @@ int main(int argc, char **argv) {
     tree->computePlacementCondition(1,0.5);
     
     //map wavelets to tree nodes
-    DeslaurierDubuc<float,0> db;
+    DeslaurierDubuc<float,10> db;
     WaveletMapper<float> simpleDDTreeMapper = [&db](unsigned int j, int k)->Wavelet<float>& { return db; };
     unsigned int n = tree->countValidNodes();
     
@@ -83,6 +75,10 @@ int main(int argc, char **argv) {
 
     //build wavelet tree with the coefficients
     WaveletTree<float> *waveletTree = WaveletTree<float>::makeTree(tree, simpleDDTreeMapper, coefficients);
+
+    FunctionSample<nDataSample, float> reconstructedSample(interval, *waveletTree);
+    float L2_distance = (samplePlot - reconstructedSample).norm();
+    std::cout << "l2 norm ||F' - F|| = " << L2_distance << " !" << std::endl;
 
     //plot everything
     Gnuplot gp("tee plot.gp | gnuplot -persist");

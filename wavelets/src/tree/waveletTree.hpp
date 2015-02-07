@@ -12,6 +12,7 @@ class WaveletTree {
 
     public:
         explicit WaveletTree(const TreeNode<T> *tree, const Wavelet<T> &wavelet, T coef);
+        WaveletTree(const WaveletTree<T> &other);
         virtual ~WaveletTree();
 
         const Wavelet<T>& wavelet() const;
@@ -66,10 +67,28 @@ WaveletTree<T>::WaveletTree(const TreeNode<T> *tree, const Wavelet<T> &wavelet, 
     _nChilds(tree->nChilds()), _childs(nullptr),
     _isValid(tree->isValid()&&tree->isFilled()), _coefficient(coef), 
     _wavelet(wavelet) {
-
-    _childs = new WaveletTree*[_nChilds]; 
-    for (unsigned int i = 0; i < _nChilds; i++) {
-        _childs[i] = nullptr;
+    
+        _childs = new WaveletTree<T>*[tree->nChilds()];
+        for (unsigned int i = 0; i < tree->nChilds(); i++) {
+            _childs[i] = nullptr;
+        }
+}
+        
+template <typename T>
+WaveletTree<T>::WaveletTree(const WaveletTree<T> &other) :
+    _level(other.level()), _offset(other.offset()),
+    _nChilds(other.nChilds()), _childs(nullptr),
+    _isValid(other.isValid()), _coefficient(other.coefficient()),
+    _wavelet(other._wavelet)
+{
+    if(other._childs != nullptr) {
+        this->_childs = new WaveletTree<T>*[other.nChilds()];
+        for (unsigned int i = 0; i < other.nChilds(); i++) {
+            if(other.getChild(i) == nullptr)
+                this->_childs[i] = nullptr;
+            else
+                this->_childs[i] = new WaveletTree<T>(*other.getChild(i));
+        }
     }
 }
        
@@ -79,7 +98,7 @@ WaveletTree<T>* WaveletTree<T>::makeTree(const TreeNode<T> *node,
         const Eigen::VectorXf &coefficents) {
     
         unsigned int count = 0u;
-        std::cout << node->interval() << std::endl;
+        //std::cout << node->interval() << std::endl;
         return WaveletTree<T>::makeTreeRec(node, mapper, coefficents, count);
 }
 
@@ -99,13 +118,10 @@ WaveletTree<T>* WaveletTree<T>::makeTreeRec(const TreeNode<T> *node,
         waveNode = new WaveletTree<T>(node, mapper(node->level(), node->offset()),T(0));
     }
 
-    if(node->isWeakLinked())
-        return waveNode;
-    
     const TreeNode<T> *child;
     for (unsigned int i = 0; i < node->nChilds(); i++) {
         child = node->getChild(i);
-        if(child != nullptr && child->isFilled())
+        if(!node->isWeakLinked() && child != nullptr && child->isFilled())
             waveNode->child(i) = makeTreeRec(child, mapper, coefficents, count);
     }
 
@@ -114,10 +130,15 @@ WaveletTree<T>* WaveletTree<T>::makeTreeRec(const TreeNode<T> *node,
 
 template <typename T>
 WaveletTree<T>::~WaveletTree() {
-    for (unsigned int i = 0; i < _nChilds; i++) {
-        delete _childs[i];
+   
+    if(_childs != nullptr) {
+        for (unsigned int i = 0; i < _nChilds; i++) {
+            delete _childs[i];
+        }
     }
+
     delete [] _childs;
+    _childs = nullptr;
 }
 
 template <typename T>

@@ -12,7 +12,7 @@ template <unsigned int N, typename T>
 struct Sample {
    
     explicit Sample(const Interval<T> &interval, T x[] = nullptr, T y[] = nullptr);
-    explicit Sample(const Interval<T> &interval, std::function<Point<T>(unsigned int, Interval<T>)> lambda);
+    explicit Sample(const Interval<T> &interval, const std::function<Point<T>(unsigned int, Interval<T>)> &lambda);
     Sample(const Sample<N,T> &other);
     virtual ~Sample();
 
@@ -22,7 +22,7 @@ struct Sample {
 
     void operator+=(const Sample<N,T> &b);
     void operator+=(T b);
-
+    
     void operator*=(const Sample<N,T> &b);
     void operator*=(T b);
 
@@ -30,10 +30,13 @@ struct Sample {
 
     void plotPoints(Gnuplot &gp, const PlotBox<T> &box) const;
     void plotLine(Gnuplot &gp, const PlotBox<T> &box) const;
+
+    T norm2() const;
+    T norm() const;
 };
     
 template <unsigned int N, typename T>
-Sample<N,T>::Sample(const Interval<T> &interval, std::function<Point<T>(unsigned int, Interval<T>)> lambda) :
+Sample<N,T>::Sample(const Interval<T> &interval, const std::function<Point<T>(unsigned int, Interval<T>)> &lambda) :
     interval(interval)
 {
         for (unsigned int i = 0; i < N; i++) {
@@ -94,6 +97,16 @@ Sample<N,T> operator+(const Sample<N,T>&a, const Sample<N,T> &b) {
     for(unsigned int i = 0; i < N; i++) {
         sample.data[i].x = a.data[i].x;
         sample.data[i].y = a.data[i].y + b.data[i].y;
+    }
+    return sample;
+}
+
+template <unsigned int N, typename T>
+Sample<N,T> operator-(const Sample<N,T>&a, const Sample<N,T> &b) {
+    Sample<N,T> sample(a);
+    for(unsigned int i = 0; i < N; i++) {
+        sample.data[i].x = a.data[i].x;
+        sample.data[i].y = a.data[i].y - b.data[i].y;
     }
     return sample;
 }
@@ -173,6 +186,19 @@ void Sample<N,T>::plotPoints(Gnuplot &gp, const PlotBox<T> &box) const {
     gp.send1d(pts);
 }
 
+template <unsigned int N, typename T>
+T Sample<N,T>::norm2() const {
+    T norm2 = T(0);
+    for (unsigned int i = 0; i < N; i++) {
+        norm2 += this->data[i].y*this->data[i].y;
+    }
+    return norm2;
+}
+
+template <unsigned int N, typename T>
+T Sample<N,T>::norm() const {
+    return std::pow(this->norm2(), 0.5);
+}
 
 
 #endif /* end of include guard: SAMPLE_H */

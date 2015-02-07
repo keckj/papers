@@ -62,9 +62,9 @@ void Wavelet<T>::plot(Gnuplot &gp, unsigned int nPoints, unsigned int j = 0u, in
     }
     
     gp << "set xr [" << this->support(j,k).inf << ":" << this->support(j,k).sup <<  "]\n";
-    gp << "set yr [0:1]\n";
+    gp << "set yr [-0.25:1]\n";
     gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
-    gp << "plot '-' with linespoints ls 1 title 'wavelet'\n";
+    gp << "plot '-' with lines ls 1 title 'wavelet'\n";
     gp.send1d(pts);
 }   
 
