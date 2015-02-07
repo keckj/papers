@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     
     // configuration
     constexpr unsigned int nData = 200u;
-    constexpr unsigned int nDataSample = 1000u;
+    constexpr unsigned int nDataSample = 10000u;
     const Interval<float> interval(0.0f,1.0f);
 
     //generate and plot samples
@@ -87,6 +87,7 @@ int main(int argc, char **argv) {
     samplePlot.plotLine(gp, box);
     sample.plotPoints(gp, box);
     tree->plotValidPoints(gp, box);
+    waveletTree->plot(gp, box, nDataSample);
 
     gp << "unset multiplot\n";
     gp << "set term wxt 1 dashed\n";
@@ -95,11 +96,11 @@ int main(int argc, char **argv) {
     tree->plot(gp, box, true, true);
     tree->plotValid(gp, box);
 
-    gp << "unset multiplot\n";
-    gp << "set term wxt 2\n";
-    gp << "set multiplot\n";
-    gp << "unset label\n";
-    waveletTree->plot(gp, box, nDataSample);
+    //gp << "unset multiplot\n";
+    //gp << "set term wxt 2\n";
+    //gp << "set multiplot\n";
+    //gp << "unset label\n";
+    //waveletTree->plot(gp, box, nDataSample);
 
     footer();
 

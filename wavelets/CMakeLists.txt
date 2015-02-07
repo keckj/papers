@@ -13,6 +13,7 @@ set(WAVELETS_VERSION "${WAVELETS_MAJOR_VERSION}.${WAVELETS_MINOR_VERSION}.${WAVE
 
 find_package(Boost COMPONENTS system filesystem iostreams REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(ImageMagick COMPONENTS MagickCore Magick++ REQUIRED)
 
 #Compiler options
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -39,7 +40,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_DEBUG} ")
 
 #Compiler defines
-set(COMPILER_DEFINES "-D_REENTRANT")
+set(COMPILER_DEFINES "-D_REENTRANT -DMAGICKCORE_QUANTUM_DEPTH=16 -DMAGICKCORE_HDRI_ENABLE=0")
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug") 
     set(COMPILER_DEFINES "${COMPILER_DEFINES} -D_DEBUG")
     set(BUILD_TYPE "DEBUG")
@@ -63,6 +64,7 @@ set(BUILD_SHARED_LIBS OFF)
 list(APPEND executable_sources 
     "${CMAKE_SOURCE_DIR}/src/main.cpp"
     "${CMAKE_SOURCE_DIR}/src/bench.cpp"
+    "${CMAKE_SOURCE_DIR}/src/animation.cpp"
     )
 
 #Find source files
@@ -98,6 +100,7 @@ include_directories(${LOCAL_INCLUDE_DIRS})
 include_directories(SYSTEM 
     ${Boost_INCLUDEDIR}   #Boost
     ${EIGEN3_INCLUDE_DIR} #Eigen
+    ${ImageMagick_INCLUDE_DIRS} #ImageMagick
     )
 
 #Library directories
@@ -123,6 +126,7 @@ foreach(main_source ${executable_sources})
         ${exec_name} 
         ${CORE_LIB}          #Core
         ${Boost_LIBRARIES}   #Boost
+        ${ImageMagick_LIBRARIES} #ImageMagick
     )
 endforeach()
 

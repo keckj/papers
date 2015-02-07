@@ -10,10 +10,15 @@
 
 template <unsigned int N, typename T>
 struct Sample {
-   
+  
     explicit Sample(const Interval<T> &interval, T x[] = nullptr, T y[] = nullptr);
     explicit Sample(const Interval<T> &interval, const std::function<Point<T>(unsigned int, Interval<T>)> &lambda);
+    
     Sample(const Sample<N,T> &other);
+    
+    template <unsigned int P, unsigned int Q>
+    explicit Sample(const Sample<P,T> &a, const Sample<Q,T> &b);
+
     virtual ~Sample();
 
     Interval<T> interval;
@@ -28,7 +33,7 @@ struct Sample {
 
     Point<T> operator[](unsigned int k);
 
-    void plotPoints(Gnuplot &gp, const PlotBox<T> &box) const;
+    void plotPoints(Gnuplot &gp, const PlotBox<T> &box, unsigned int maxNumber = 0) const;
     void plotLine(Gnuplot &gp, const PlotBox<T> &box) const;
 
     T norm2() const;
@@ -59,6 +64,27 @@ template <unsigned int N, typename T>
 Sample<N,T>::Sample(const Sample<N,T> &other) :
     interval(other.interval) {
 }
+
+template <unsigned int N, typename T>
+template <unsigned int P, unsigned int Q>
+Sample<N,T>::Sample(const Sample<P,T> &a, const Sample<Q,T> &b) {
+    
+    assert(P+Q == N);
+
+    T inf = std::min(a.interval().inf, b.interval().inf);
+    T sup = std::max(a.interval().max, b.interval().max);
+
+    Sample<N,T> sample(Interval<T>(inf, sup));
+
+    for (unsigned int i = 0; i < P; i++) {
+        sample[i] = a[i];
+    }
+
+    for (unsigned int i = 0; i < Q; i++) {
+        sample[P+i] = b[i];
+    }
+}
+    
 
 template <unsigned int N, typename T>
 Sample<N,T>::~Sample() {
@@ -172,11 +198,18 @@ void Sample<N,T>::plotLine(Gnuplot &gp, const PlotBox<T> &box ) const {
 }
 
 template <unsigned int N, typename T>
-void Sample<N,T>::plotPoints(Gnuplot &gp, const PlotBox<T> &box) const {
+void Sample<N,T>::plotPoints(Gnuplot &gp, const PlotBox<T> &box, unsigned int maxNumber) const {
 
     std::vector<std::tuple<float, float>> pts;
 
-    for (unsigned int i = 0; i < N; i++) {
+    unsigned int maxPts;
+
+    if(maxNumber == 0)
+        maxPts = N;
+    else 
+        maxPts = std::min(N, maxNumber);
+
+    for (unsigned int i = 0; i < maxPts; i++) {
         Point<T> X = this->data[i];
         pts.push_back(std::make_tuple(X.x,X.y));
     }
