@@ -187,7 +187,7 @@ void WaveletTree<T>::plot(Gnuplot &gp, const PlotBox<T> &box, unsigned int nPoin
     
     gp << box;
     gp << "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5\n";
-    gp << "plot '-' with lines ls 1 title 'wavelet'\n";
+    gp << "plot '-' with lines ls 1 title ''\n";
     gp.send1d(pts);
 }
 

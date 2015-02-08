@@ -103,9 +103,9 @@ def generateWavelet(j,k,pmax,maxLevels,interval,boundaryMode='truncate'):
   return [phi,colorId]
       
 
-plt.title("Centered scaling functions")
 
-jmax = 3; 
+plt.title("Wavelets level = 5")
+jmax = 5; 
 pmax = 5;
 
 maxLevels = 10;
@@ -125,8 +125,8 @@ for j in range(0,jmax+1):
 
 plt.show()
 
-#jmax = 0; 
-#levels = 1;
+#jmax = 1; 
+#levels = 0;
 
 #pmax = jmax+1;
 #interval = [-2*pmax+1,2*pmax-1]
@@ -136,5 +136,5 @@ plt.show()
 #x=np.linspace(interval[0],interval[1],nPoints)
 #plt.plot(x, generateScalingFunction(pmax,levels),marker='x')
 
-plt.show()
+#plt.show()
 

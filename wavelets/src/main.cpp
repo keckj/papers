@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
   
     
     // configuration
-    constexpr unsigned int nData = 200u;
+    constexpr unsigned int nData = 100u;
     constexpr unsigned int nDataSample = 10000u;
     const Interval<float> interval(0.0f,1.0f);
 
@@ -82,12 +82,13 @@ int main(int argc, char **argv) {
 
     //plot everything
     Gnuplot gp("tee plot.gp | gnuplot -persist");
-    gp << "set term wxt dashed\n";
-    gp << "set multiplot\n";
-    samplePlot.plotLine(gp, box);
-    sample.plotPoints(gp, box);
-    tree->plotValidPoints(gp, box);
-    waveletTree->plot(gp, box, nDataSample);
+    //gp << "set term wxt dashed\n";
+    //gp << "set multiplot\n";
+    //gp << "set notitle\n";
+    //samplePlot.plotLine(gp, box);
+    //sample.plotPoints(gp, box);
+    //tree->plotValidPoints(gp, box);
+    //waveletTree->plot(gp, box, nDataSample);
 
     gp << "unset multiplot\n";
     gp << "set term wxt 1 dashed\n";
@@ -131,7 +132,7 @@ void footer() {
 }
 
 void init() {
-    Random::init();
+    //Random::init();
 
     Globals::init();
     Globals::check();

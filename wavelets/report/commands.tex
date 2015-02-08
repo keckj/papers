@@ -1,0 +1,39 @@
+
+\newcommand{\ccite}[1]{\textbf{\cite{#1}}}
+\newcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
+\renewcommand{\vector}[1]{\overrightarrow{#1}}
+
+\definecolor{lightgray}{gray}{0.9}
+\definecolor{titlecolor}{RGB}{0,0,200}
+\definecolor{subtitlecolor}{RGB}{0,0,153}
+\definecolor{textcolor}{RGB}{0,128,255}
+\definecolor{RoyalPurple}{RGB}{102,51,153}
+\definecolor{ForestGreen}{RGB}{34,139,34}
+
+\newcommand{\colbox}[1]{\colorbox{lightgray}{$ #1 $}}
+
+\newcommand{\stitle}[2][0.3cm] { 
+    {\normalsize \textcolor{titlecolor}{\textbf{#2}}} 
+    \vspace{#1} 
+}
+
+\newcommand{\ssubtitle}[1]{ {\footnotesize \textcolor{subtitlecolor}{\textbf{#1}}} }
+
+\newcommand{\stress}[1]{\textcolor{textcolor}{#1}}
+
+\newcommand{\hidecontent}[2][0.25]{{% \hidecontent[<transparency>]{<stuff>}
+  \setbox9=\hbox{#2}% Store <stuff> in \box9 to obtain height/width
+  \transparent{#1}\ooalign{\usebox9\cr\color{white}\rule{\wd9}{\ht9}\cr}}}
+
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\J}{\mathcal{J}}
+\renewcommand{\P}{\varphi}
+\newcommand{\Ph}{\widehat{\P}}
+\newcommand{\abs}[1]{| #1 |}
