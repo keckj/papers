@@ -1,7 +1,5 @@
-
 \include{header}
 \include{commands}
-
 
 \usetheme{Frankfurt}
 \def\beamertemplatetransparentcoveredmedium{\setbeamercovered{transparent=40}}
@@ -11,7 +9,6 @@
 \addtobeamertemplate{footline}{\hfill\insertframenumber/\inserttotalframenumber\hspace{2em}\null}
 
 \begin{document}
-
 
 \title{\Large Scattered Data Interpolation using Wavelet Trees}
 \author[Keck]{\Large Jean-Baptiste Keck}
@@ -72,7 +69,7 @@
         \footnotesize
 
         \begin{itemize}
-            \item Can explicitely compute filter coefficients \alert{$h_n$} with Lagrange polynomials of order $\alert{p}\ \forall n \in \llbracket -2p+1, 2p-1 \rrbracket$.
+            \item Can explicitly compute filter coefficients \alert{$h_n$} with Lagrange polynomials of order $\alert{p}\ \forall n \in \llbracket -2p+1, 2p-1 \rrbracket$.
         \end{itemize}
 
         \vskip 0.2cm
@@ -578,7 +575,7 @@
                 }
             \end{frame}
 
-            \begin{frame}{Error and perfomance versus order and number of samples}
+            \begin{frame}{Error and performance versus order and number of samples}
                 \only<1>{
                     \begin{figure}[H]
                         \includegraphics[scale=0.5]{execution_times}
