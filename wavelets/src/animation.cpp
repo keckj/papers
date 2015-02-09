@@ -41,10 +41,12 @@ int main(int argc, char **argv) {
     header();
     
     // configuration
-    constexpr unsigned int maxData = 200u;                // 100 samples
-    constexpr unsigned int addedPointsPerFrame = 1u;      // 1 additional sample per frame
-    constexpr unsigned int deltaT = 10u;                  // 25 milisec. animation dt
-    constexpr unsigned int order = 10u;                   // order of the DD wavelet
+    constexpr unsigned int maxData = 200u;              // 100 samples
+    constexpr unsigned int addedPointsPerFrame = 1u;    // 1 additional sample per frame
+    constexpr unsigned int maxDeltaT = 25u;             // 50 milisec. animation dt for first frames
+    constexpr unsigned int minDeltaT = 1u;              // 10 milisec. animation dt for last frame
+    constexpr double power = 20.0;                      // dt decreases with cos(x*pi/2)^power
+    constexpr unsigned int order = 10u;                 // order of the DD wavelet
 
     constexpr unsigned int nDataSample = 10000u;
     const Interval<float> interval(0.0f,1.0f);
@@ -73,7 +75,6 @@ int main(int argc, char **argv) {
     Magick::Image img;
         
     std::cout << "Generating frames :" << std::endl;
-
     // GNUPLOT CORRUPT LAST GENERATED IMAGE -- so just create one more
     for (unsigned int i = 1; i <= nFrames+1; i++) {
         if(i == nFrames + 1)
@@ -128,7 +129,10 @@ int main(int argc, char **argv) {
     for (unsigned int i = 1; i <= nFrames; i++) {
         std::string imgPath = "img/interpolation_" + std::to_string(i) + ".png";
         img.read(imgPath);
-        img.animationDelay(deltaT);
+        double x = static_cast<double>(i)/(nFrames); 
+        unsigned int dT = static_cast<unsigned int>(maxDeltaT * std::pow(cos(x*3.14159265/2),power));
+        dT = std::max(dT, minDeltaT);
+        img.animationDelay(dT);
         images.push_back(img);
     }
 
