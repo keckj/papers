@@ -105,22 +105,29 @@ def generateWavelet(j,k,pmax,maxLevels,interval,boundaryMode='truncate'):
       
 
 
+
 ## Parameters ############################
 
-p = 1;      #Scaling function order p
-levels = 5; #Number of convolutions
+jmax = 4;  #wavelet level j
+pmax = 5;  #maximal order of the scaling functions
+maxLevels = 10; #number of convolutions used to generate the scaling functions
 
 #########################################
 
-plt.title("Interpolating scaling function")
+plt.title("Wavelets on the interval")
+interval = [0,1]
+colors = ['b','g','r','c','m','y','k']
 
-pmax = p+1;
-interval = [-2*pmax+1,2*pmax-1]
-
-nPoints = 2**(levels)*(interval[1]-interval[0]) + 1
-
+nPoints = 2**(maxLevels)*(interval[1]-interval[0]) + 1
 x=np.linspace(interval[0],interval[1],nPoints)
-plt.plot(x, generateScalingFunction(pmax,levels),marker='x')
+
+for j in range(0,jmax+1):
+    for k in range(0,2**j+1):
+        if j==0 or (j>0 and k%2==1):
+            W = generateWavelet(j,k,pmax,maxLevels,interval,boundaryMode='adapt')
+            if(j==jmax):
+                plt.plot(x, W[0],color=colors[W[1]%len(colors)])
+
 
 plt.show()
 

@@ -23,20 +23,23 @@ void init();
 void header();
 void footer();
 
-//interpolated function
+// FUNCTION TO INTERPOLATE /////////////////
 float F(float t) {
     return cos(75*t)*exp(t)*cos(10*t);
 }
+//////////////////////////////////////////
+
 
 int main(int argc, char **argv) {
 
     init();
     header();
   
+    ///// CONFIGURATION /////
+    constexpr unsigned int nData = 100u;          // Number of uniformly sampled points
+    constexpr unsigned int nDataSample = 10000u;  // Number of points used for plotting and l2 norm
+    ////////////////////////////////////
     
-    // configuration
-    constexpr unsigned int nData = 100u;
-    constexpr unsigned int nDataSample = 10000u;
     const Interval<float> interval(0.0f,1.0f);
 
     //generate and plot samples
@@ -78,17 +81,17 @@ int main(int argc, char **argv) {
 
     FunctionSample<nDataSample, float> reconstructedSample(interval, *waveletTree);
     float L2_distance = (samplePlot - reconstructedSample).norm();
-    std::cout << "l2 norm ||F' - F|| = " << L2_distance << " !" << std::endl;
+    std::cout << "l2 norm of the residue ||F' - F|| = " << L2_distance << " !" << std::endl;
 
     //plot everything
     Gnuplot gp("tee plot.gp | gnuplot -persist");
-    //gp << "set term wxt dashed\n";
-    //gp << "set multiplot\n";
-    //gp << "set notitle\n";
-    //samplePlot.plotLine(gp, box);
-    //sample.plotPoints(gp, box);
-    //tree->plotValidPoints(gp, box);
-    //waveletTree->plot(gp, box, nDataSample);
+    gp << "set term wxt dashed\n";
+    gp << "set multiplot\n";
+    gp << "set notitle\n";
+    samplePlot.plotLine(gp, box);
+    sample.plotPoints(gp, box);
+    tree->plotValidPoints(gp, box);
+    waveletTree->plot(gp, box, nDataSample);
 
     gp << "unset multiplot\n";
     gp << "set term wxt 1 dashed\n";
@@ -107,10 +110,6 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-    
-//Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
-//std::cout << x.format(CleanFmt) << std::endl;
-    
 
 void header() {
     std::cout << std::endl;
@@ -120,7 +119,7 @@ void header() {
     std::cout << std::endl;
     std::cout << "Author:   Keck Jean-Baptiste -- Ensimag - MSIAM 2014-2015" << std::endl;
     std::cout << std::endl;
-    std::cout << "Overview: This is a partial implementation of Christophe P. Bernard thesis on interpolating Delaurier and Dubuc wavelets in the context of wavelet paper review." << std::endl;
+    std::cout << "Overview: This is a partial implementation of Christophe P. Bernard thesis on interpolating Deslauriers and Dubuc wavelets in the context of wavelet paper review." << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << "Program is running in " STRINGIFY_MACRO(COMPILE_MODE) " mode !" << std::endl;
@@ -132,7 +131,7 @@ void footer() {
 }
 
 void init() {
-    //Random::init();
+    Random::init();
 
     Globals::init();
     Globals::check();
